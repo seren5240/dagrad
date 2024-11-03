@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dagrad.daglearner &mdash; Dagrad v1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Dagrad
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#install-via-pypi">Install via PyPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#install-from-source">Install from source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#running-examples">Running examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#running-the-notears">Running the NOTEARS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#running-the-dagma">Running the DAGMA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#running-the-topo">Running the TOPO</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../main_function.html">Main API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../working_function.html">Working function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../working_function.html#notears">Notears</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../working_function.html#dagma">Dagma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../working_function.html#topo">Topo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../options.html">Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../options.html#general-options">General Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../options.html#method-options">Method Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../options.html#optimizer-options">Optimizer Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../customization.html#loss-function-loss-fn">Loss function(<code class="docutils literal notranslate"><span class="pre">'loss_fn'</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../customization.html#linear-model">Linear model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../customization.html#nonlinear-model">Nonlinear model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../customization.html#regularization-reg">Regularization(<code class="docutils literal notranslate"><span class="pre">'reg'</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../customization.html#acyclicity-function-h">Acyclicity function (<code class="docutils literal notranslate"><span class="pre">'h'</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Dagrad</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dagrad.daglearner</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dagrad.daglearner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">.utils.configure</span> <span class="kn">import</span> <span class="n">METHODS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">LOSS_FUNCTIONS</span><span class="p">,</span> <span class="n">H_FUNCTIONS</span><span class="p">,</span> <span class="n">REGULARIZERS</span>
+<span class="kn">from</span> <span class="nn">.utils.configure</span> <span class="kn">import</span> <span class="n">allowed_general_options</span><span class="p">,</span> <span class="n">allowed_method_options</span><span class="p">,</span> <span class="n">allowed_optimizer_options</span><span class="p">,</span> <span class="n">loss_functions</span>
+<span class="kn">from</span> <span class="nn">.utils.general_utils</span> <span class="kn">import</span> <span class="n">validate_options</span><span class="p">,</span> <span class="n">merge_dicts_if_needed</span><span class="p">,</span><span class="n">get_default</span><span class="p">,</span> <span class="n">set_tuning_method_from_options</span><span class="p">,</span> <span class="n">set_functions</span>
+<span class="kn">from</span> <span class="nn">.utils.utils</span> <span class="kn">import</span> <span class="n">is_dag</span><span class="p">,</span> <span class="n">threshold_till_dag</span><span class="p">,</span> <span class="n">simulate_dag</span><span class="p">,</span> <span class="n">simulate_linear_sem</span><span class="p">,</span> <span class="n">simulate_nonlinear_sem</span><span class="p">,</span> <span class="n">set_random_seed</span><span class="p">,</span> <span class="n">simulate_parameter</span><span class="p">,</span> <span class="n">count_accuracy</span><span class="p">,</span> <span class="n">generate_linear_data</span><span class="p">,</span> <span class="n">generate_nonlinear_data</span>
+<span class="kn">from</span> <span class="nn">.method.notears</span> <span class="kn">import</span> <span class="n">notears_linear_numpy</span><span class="p">,</span><span class="n">notears_linear_torch</span><span class="p">,</span> <span class="n">notears_nonlinear</span>
+<span class="kn">from</span> <span class="nn">.method.dagma</span> <span class="kn">import</span> <span class="n">dagma_linear_numpy</span><span class="p">,</span> <span class="n">dagma_linear_torch</span><span class="p">,</span><span class="n">dagma_nonlinear</span>
+<span class="kn">from</span> <span class="nn">.method.topo</span> <span class="kn">import</span> <span class="n">topo_linear</span><span class="p">,</span> <span class="n">topo_nonlinear</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dagrad&#39;</span><span class="p">,</span><span class="s1">&#39;topo&#39;</span><span class="p">,</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span><span class="s1">&#39;dagma&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="dagrad"><a class="viewcode-back" href="../../main_function.html#dagrad.daglearner.dagrad">[docs]</a><span class="k">def</span> <span class="nf">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> 
+            <span class="n">method</span><span class="o">=</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span> 
+            <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">loss_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">h_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">reg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">compute_lib</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">general_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">method_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+            <span class="n">optimizer_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function learns the structure of a DAG from observational data using different methods.</span>
+<span class="sd">    :math:`n`  number of samples, </span>
+<span class="sd">    :math:`p`  number of features.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : numpy.array of shape :math:`(n, p)`</span>
+<span class="sd">        The data matrix.</span>
+
+<span class="sd">    method : str, default=&#39;notears&#39;</span>
+<span class="sd">        The method to learn the DAG. One of [:code:`&#39;notears&#39;`, :code:`&#39;dagma&#39;`, :code:`&#39;topo&#39;`].</span>
+
+<span class="sd">    model : str, default=None</span>
+<span class="sd">        The model of data generating process . One of [:code:`&#39;linear&#39;`, :code:`&#39;nonlinear&#39;`]. If None, it is set to :code:`&#39;linear&#39;`.</span>
+
+<span class="sd">    loss_fn : str, default=None</span>
+<span class="sd">        The loss function to use. One of [:code:`&#39;l2&#39;`, :code:`&#39;logistic&#39;`, :code:`&#39;logll&#39;`, :code:`&#39;user_loss&#39;`]. If None, it is set to :code:`&#39;l2&#39;`.</span>
+<span class="sd">        </span>
+<span class="sd">        - For :code:`&#39;user_loss&#39;`, is not implemented yet, and it can be customized by the user.</span>
+
+<span class="sd">    h_fn : str, default=None</span>
+<span class="sd">        The function to compute the acyclicity constraint. One of [:code:`&#39;h_exp_sq&#39;`, :code:`&#39;h_exp_abs&#39;`, :code:`&#39;h_poly_sq&#39;`, :code:`&#39;h_poly_abs&#39;`, </span>
+<span class="sd">        :code:`&#39;h_logdet_sq&#39;`, :code:`&#39;h_logdet_abs&#39;`, :code:`&#39;h_logdet_topo&#39;`, :code:`&#39;h_logdet_abs&#39;`, :code:`&#39;user_h&#39;`]. If None, it is set to :code:`&#39;h_exp_sq&#39;`.</span>
+
+<span class="sd">        - :code:`&#39;abs&#39;` stands for absolute value.</span>
+<span class="sd">        - :code:`&#39;sq&#39;` stands for square.</span>
+<span class="sd">        - :code:`&#39;poly&#39;` stands for polynomial.</span>
+<span class="sd">        - :code:`&#39;logdet&#39;` stands for log determinant.</span>
+<span class="sd">        - :code:`&#39;topo&#39;` is only specific to method :code:`&#39;topo&#39;`.</span>
+<span class="sd">        - :code:`&#39;user_h&#39;` is not implemented yet, and it can be customized by the user.</span>
+
+<span class="sd">    reg : str, default=None</span>
+<span class="sd">        The regularizer to use. One of [:code:`&#39;l1&#39;`, :code:`&#39;l2&#39;`, :code:`&#39;mcp&#39;`, :code:`&#39;none&#39;`, :code:`&#39;user_reg&#39;`]. </span>
+<span class="sd">        If None, it is set to :code:`&#39;l1&#39;`.</span>
+
+<span class="sd">        - :code:`&#39;user_reg&#39;` is not implemented yet, and it can be customized by the user.</span>
+<span class="sd">        - :code:`&#39;mcp&#39;` stands for minimax concave penalty.</span>
+<span class="sd">        - :code:`&#39;none&#39;` stands for no regularization.</span>
+
+<span class="sd">    optimizer : str, default=None</span>
+<span class="sd">        The optimizer to use. One of [:code:`&#39;lbfgs&#39;`, :code:`&#39;adam&#39;`, :code:`&#39;sklearn&#39;`]. If None, it is set to :code:`&#39;lbfgs&#39;`.</span>
+
+<span class="sd">        - :code:`&#39;sklearn&#39;` is only used for method :code:`&#39;topo&#39;`.</span>
+<span class="sd">        - Method :code:`&#39;dagma&#39;` is only compatible with the :code:`&#39;adam&#39;` optimizer.</span>
+
+<span class="sd">    compute_lib : str, default=None</span>
+<span class="sd">        The library to use for computation. One of [:code:`&#39;numpy&#39;`, :code:`&#39;torch&#39;`]. If None, it is set to :code:`&#39;numpy&#39;`.</span>
+
+<span class="sd">        All nonlinear models use :code:`torch` for computation.</span>
+<span class="sd">        Method :code:`&#39;topo&#39;` is only compatible with the :code:`&#39;numpy&#39;` compute_lib.</span>
+
+<span class="sd">    device : str, default=None</span>
+<span class="sd">        The device to use for computation. One of [:code:`&#39;cpu&#39;`, :code:`&#39;cuda&#39;`]. If None, it is set to :code:`&#39;cpu&#39;`.</span>
+
+<span class="sd">    general_options : dict, default=None</span>
+<span class="sd">        General options for the method. If None, it is set to default values. Please refer to :ref:`options` for more details.</span>
+
+<span class="sd">        Allowed options are:</span>
+<span class="sd">        </span>
+<span class="sd">        - :code:`&#39;lambda1&#39;`: float, default=0.1</span>
+<span class="sd">            Weight for l1 penalty.</span>
+<span class="sd">        - :code:`&#39;lambda2&#39;`: float, default=0.01</span>
+<span class="sd">            Weight for l2 penalty.</span>
+<span class="sd">        - :code:`&#39;gamma&#39;`: float, default=1.0</span>
+<span class="sd">            Hyperparameter for (quasi-)MCP.</span>
+<span class="sd">        - :code:`&#39;w_threshold&#39;`: float, default=0.3</span>
+<span class="sd">            Threshold for the output adjacency matrix.</span>
+<span class="sd">        - :code:`&#39;initialization&#39;`: None or np.ndarray or torch.Tensor or nn.Module, default=None</span>
+<span class="sd">            Initialization for the parameters of the model.</span>
+<span class="sd">        - :code:`&#39;tuning_method&#39;`: str or None, default=None</span>
+<span class="sd">            Method for tuning hyperparameters. One of :code:`&#39;cv&#39;`, :code:`&#39;decay&#39;`.</span>
+<span class="sd">        - :code:`&#39;K&#39;`: int, default=5</span>
+<span class="sd">            Number of folds for cross-validation.</span>
+<span class="sd">        - :code:`&#39;reg_paras&#39;`: list, default=None</span>
+<span class="sd">            List of regularization parameters.</span>
+<span class="sd">        - :code:`&#39;user_params&#39;`: Any, default=None</span>
+<span class="sd">            User-defined parameters.</span>
+
+<span class="sd">    method_options : dict, default=None</span>
+<span class="sd">        Method-specific options for the method. If None, it is set to default values.</span>
+
+<span class="sd">        More options are available for each method. Please refer to :ref:`options` for more details, </span>
+<span class="sd">        or check :code:`allowed_method_options` in :code:`dagrad/utils/configure.py`.</span>
+
+<span class="sd">    optimizer_options : dict, default=None</span>
+<span class="sd">        Optimizer-specific options for the optimizer. If None, it is set to default values.</span>
+
+<span class="sd">        More options are available for each optimizer. Please refer to :ref:`options` for more details, </span>
+<span class="sd">        or check :code:`allowed_optimizer_options` in :code:`dagrad/utils/configure.py`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    W_est : array-like of shape :math:`(p, p)`</span>
+<span class="sd">        The estimated adjacency matrix of the DAG.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get default values</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">get_default</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># check if inputs are valid</span>
+    <span class="k">assert</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">METHODS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;method must be one of </span><span class="si">{</span><span class="n">METHODS</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">],</span> <span class="s2">&quot;model must be one of [&#39;linear&#39;, &#39;nonlinear&#39;]&quot;</span>
+    <span class="k">assert</span> <span class="n">loss_fn</span> <span class="ow">in</span> <span class="n">LOSS_FUNCTIONS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;loss_fn must be one of </span><span class="si">{</span><span class="n">LOSS_FUNCTIONS</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">h_fn</span> <span class="ow">in</span> <span class="n">H_FUNCTIONS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;h_fn must be one of </span><span class="si">{</span><span class="n">H_FUNCTIONS</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">optimizer</span> <span class="ow">in</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;optimizer must be one of </span><span class="si">{</span><span class="n">OPTIMIZERS</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">REGULARIZERS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;regularizer must be one of </span><span class="si">{</span><span class="n">REGULARIZERS</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">compute_lib</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">],</span> <span class="s2">&quot;compute_lib must be one of [&#39;numpy&#39;, &#39;torch&#39;]&quot;</span>
+    <span class="k">assert</span> <span class="n">device</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda&#39;</span><span class="p">],</span> <span class="s2">&quot;device must be one of [&#39;cpu&#39;, &#39;cuda&#39;]&quot;</span>
+
+    <span class="c1"># check if options are valid</span>
+    <span class="k">if</span> <span class="n">general_options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">general_options</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">validate_options</span><span class="p">(</span><span class="n">general_options</span><span class="p">,</span> <span class="n">allowed_general_options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">method_options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">method_options</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">validate_options</span><span class="p">(</span><span class="n">method_options</span><span class="p">,</span> <span class="n">allowed_method_options</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">method</span><span class="p">])</span> 
+
+    <span class="k">if</span> <span class="n">optimizer_options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optimizer_options</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">validate_options</span><span class="p">(</span><span class="n">optimizer_options</span><span class="p">,</span> <span class="n">merge_dicts_if_needed</span><span class="p">(</span><span class="n">allowed_optimizer_options</span><span class="p">[</span><span class="n">compute_lib</span><span class="p">][</span><span class="n">optimizer</span><span class="p">]))</span> 
+
+    <span class="c1"># check if the options are compatible with the method</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;dagma&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">h_fn</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;h_logdet_sq&#39;</span><span class="p">,</span><span class="s1">&#39;h_logdet_abs&#39;</span><span class="p">]):</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;DAGMA is framework using logdet acyclicity constraint. Changing h_fn to h_logdet_sq&quot;</span><span class="p">)</span>
+        <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_logdet_sq&#39;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;dagma&#39;</span> <span class="ow">and</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;lbfgs&#39;</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;DAGMA is not compatible with lbfgs optimizer for now[ADD LBFGS in future]. Changing optimizer to adam&quot;</span><span class="p">)</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;adam&#39;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;notears&#39;</span> <span class="ow">and</span> <span class="n">h_fn</span> <span class="o">==</span> <span class="s1">&#39;h_logdet_sq&#39;</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Logdet acyclicity constraint is restricted to DAGMA. Changing h_fn to h_exp_sq&quot;</span><span class="p">)</span>
+        <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_exp_sq&#39;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;topo&#39;</span> <span class="ow">and</span> <span class="s1">&#39;topo&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">h_fn</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;TOPO has its own acyclicity constraint. Changing h_fn to h_logdet_topo&quot;</span><span class="p">)</span>
+        <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_logdet_topo&#39;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;topo&#39;</span> <span class="ow">and</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span> <span class="ow">or</span> <span class="n">compute_lib</span> <span class="o">==</span><span class="s1">&#39;torch&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;For Linear Model, TOPO is not good for PyTorch, please use compute_lib = &#39;numpy&#39; and device = &#39;cpu&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;sklearn&#39;</span> <span class="ow">and</span> <span class="n">method</span><span class="o">!=</span> <span class="s1">&#39;topo&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sklearn is only used for TOPO method.&quot;</span><span class="p">)</span>
+
+    <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span> <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">else</span> <span class="n">compute_lib</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;topo&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">loss_fn</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;l2&#39;</span><span class="p">,</span> <span class="s1">&#39;logsitc&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">optimizer</span> <span class="o">!=</span> <span class="s1">&#39;sklearn&#39;</span> <span class="ow">and</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;For l2 or logistic loss, TOPO would be faster using optimizer: sklearn. But you are currently using optimizer: </span><span class="si">{</span><span class="n">optimizer</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    
+
+    <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">general_options</span><span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">method_options</span><span class="p">)</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">optimizer_options</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span><span class="s1">&#39;nonlinear&#39;</span> <span class="ow">and</span> <span class="s1">&#39;tuning_method&#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameter tuning is not implemented for nonlinear models, since it is computational intense.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">compute_lib</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;notears&#39;</span><span class="p">:</span>
+                <span class="c1"># if the setting corresponds to the original notears implementation, use the original implementation</span>
+                <span class="k">if</span> <span class="n">loss_fn</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;logistic&#39;</span><span class="p">,</span> <span class="s1">&#39;l2&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">h_fn</span> <span class="o">==</span><span class="s1">&#39;h_exp_sq&#39;</span> <span class="ow">and</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l1&#39;</span> <span class="ow">and</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;lbfgs&#39;</span> <span class="ow">and</span> <span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;tuning_method&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">or</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="kn">from</span> <span class="nn">notears.linear</span> <span class="kn">import</span> <span class="n">notears_linear</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using Original NOTEARS Implementation for Linear Model&#39;</span><span class="p">)</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">notears_linear</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                           <span class="n">lambda1</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lambda1&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> 
+                                           <span class="n">loss_type</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                            <span class="n">max_iter</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;main_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> 
+                                            <span class="n">h_tol</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h_tol&#39;</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">),</span> 
+                                            <span class="n">rho_max</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rho_max&#39;</span><span class="p">,</span> <span class="mf">1e+16</span><span class="p">),</span> 
+                                            <span class="n">w_threshold</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w_threshold&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s1">&#39;tuning_method&#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">W_est</span> <span class="o">=</span> <span class="n">parameter_tuning</span><span class="p">(</span><span class="n">dag_learning_func</span> <span class="o">=</span> <span class="n">notears_linear_numpy</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">W_est</span> <span class="o">=</span> <span class="n">notears_linear_numpy</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;dagma&#39;</span><span class="p">:</span>
+                <span class="c1"># if the setting corresponds to the original dagma implementation, use the original implementation</span>
+                <span class="k">if</span> <span class="n">loss_fn</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;logistic&#39;</span><span class="p">,</span> <span class="s1">&#39;l2&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">h_fn</span> <span class="o">==</span><span class="s1">&#39;h_logdet_sq&#39;</span> <span class="ow">and</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l1&#39;</span> <span class="ow">and</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;adam&#39;</span> <span class="ow">and</span> <span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cpu&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;tuning_method&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">or</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="kn">from</span> <span class="nn">dagma.linear</span> <span class="kn">import</span> <span class="n">DagmaLinear</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using Original DAGMA Implementation for Linear Model&#39;</span><span class="p">)</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">DagmaLinear</span><span class="p">(</span><span class="n">loss_type</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">lambda1</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lambda1&#39;</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">),</span> 
+                                      <span class="n">w_threshold</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w_threshold&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span> 
+                                      <span class="n">T</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> 
+                                      <span class="n">mu_init</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mu_init&#39;</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span> 
+                                      <span class="n">mu_factor</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mu_factor&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> 
+                                      <span class="n">s</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">.8</span><span class="p">,</span> <span class="mf">.7</span><span class="p">,</span> <span class="mf">.6</span><span class="p">]),</span>
+                                      <span class="n">warm_iter</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;warm_iter&#39;</span><span class="p">,</span><span class="mf">3e4</span><span class="p">),</span> 
+                                      <span class="n">max_iter</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;main_iter&#39;</span><span class="p">,</span> <span class="mf">6e4</span><span class="p">),</span> 
+                                      <span class="n">lr</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lr&#39;</span><span class="p">,</span> <span class="mf">0.0003</span><span class="p">),</span> 
+                                      <span class="n">checkpoint</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;check_iterate&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+                                      <span class="n">beta_1</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;betas&#39;</span><span class="p">,(</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.999</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> 
+                                      <span class="n">beta_2</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;betas&#39;</span><span class="p">,(</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.999</span><span class="p">))[</span><span class="mi">1</span><span class="p">],</span>
+                                      <span class="n">exclude_edges</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;exclude_edges&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> 
+                                      <span class="n">include_edges</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;include_edges&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s1">&#39;tuning_method&#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">W_est</span> <span class="o">=</span> <span class="n">parameter_tuning</span><span class="p">(</span><span class="n">dag_learning_func</span> <span class="o">=</span> <span class="n">dagma_linear_numpy</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">W_est</span> <span class="o">=</span> <span class="n">dagma_linear_numpy</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;topo&#39;</span><span class="p">:</span>
+                <span class="c1"># the original implementation of TOPO is same as current implementation, so use the current implementation</span>
+                <span class="k">if</span> <span class="s1">&#39;tuning_method&#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">parameter_tuning</span><span class="p">(</span><span class="n">dag_learning_func</span> <span class="o">=</span> <span class="n">topo_linear</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">topo_linear</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span>  <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">compute_lib</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;notears&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;tuning_method&#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">parameter_tuning</span><span class="p">(</span><span class="n">dag_learning_func</span> <span class="o">=</span> <span class="n">notears_linear_torch</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">notears_linear_torch</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                        <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;topo&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;For Linear Model, Torch is not implemented for method &#39;topo&#39;, please use &#39;numpy&#39; as computation library.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;dagma&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;tuning_method&#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;tuning_method&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">parameter_tuning</span><span class="p">(</span><span class="n">dag_learning_func</span> <span class="o">=</span> <span class="n">dagma_linear_torch</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">dagma_linear_torch</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                        <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">:</span>
+        <span class="n">options</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
+        
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span><span class="s1">&#39;notears&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span> <span class="ow">and</span> <span class="n">h_fn</span> <span class="o">==</span> <span class="s1">&#39;h_exp_sq&#39;</span> <span class="ow">and</span> <span class="s1">&#39;reg&#39;</span><span class="o">==</span><span class="s1">&#39;l1&#39;</span> <span class="ow">and</span> <span class="n">optimizer</span> <span class="o">==</span><span class="s1">&#39;lbfgs&#39;</span> <span class="ow">and</span> <span class="n">device</span> <span class="o">==</span><span class="s1">&#39;cpu&#39;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using Original NOTEARS Implementation for Nonlinear Model&#39;</span><span class="p">)</span>
+                <span class="kn">from</span> <span class="nn">notears.nonlinear</span> <span class="kn">import</span> <span class="n">notears_nonlinear</span> <span class="k">as</span> <span class="n">notears_nonlinear_original</span>
+                <span class="kn">from</span> <span class="nn">notears.nonlinear</span> <span class="kn">import</span> <span class="n">NotearsMLP</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">NotearsMLP</span><span class="p">(</span><span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> 
+                                   <span class="n">bias</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span><span class="kc">True</span><span class="p">))</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">notears_nonlinear_original</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span>
+                                          <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span>
+                                          <span class="n">lambda1</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lambda1&#39;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span>
+                                          <span class="n">lambda2</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lambda2&#39;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span>
+                                          <span class="n">max_iter</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;main_iter&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+                                          <span class="n">h_tol</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;h_tol&#39;</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">),</span>
+                                          <span class="n">rho_max</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rho_max&#39;</span><span class="p">,</span> <span class="mf">1e+16</span><span class="p">),</span>
+                                          <span class="n">w_threshold</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w_threshold&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
+                                        <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">notears_nonlinear</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+                
+        
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;dagma&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">loss_fn</span> <span class="o">==</span><span class="s1">&#39;logll&#39;</span> <span class="ow">and</span> <span class="n">h_fn</span> <span class="o">==</span> <span class="s1">&#39;h_logdet_sq&#39;</span> <span class="ow">and</span> <span class="s1">&#39;reg&#39;</span><span class="o">==</span><span class="s1">&#39;l1&#39;</span> <span class="ow">and</span> <span class="n">optimizer</span> <span class="o">==</span><span class="s1">&#39;adam&#39;</span> <span class="ow">and</span> <span class="n">device</span> <span class="o">==</span><span class="s1">&#39;cpu&#39;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using Original DAGMA Implementation for Nonlinear Model&#39;</span><span class="p">)</span>
+                <span class="kn">from</span> <span class="nn">dagma.nonlinear</span> <span class="kn">import</span> <span class="n">DagmaNonlinear</span><span class="p">,</span> <span class="n">DagmaMLP</span>
+                <span class="kn">import</span> <span class="nn">torch</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">DagmaNonlinear</span><span class="p">(</span><span class="n">DagmaMLP</span><span class="p">(</span><span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> 
+                                        <span class="n">bias</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span><span class="kc">True</span><span class="p">),</span>
+                                        <span class="n">dtype</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">double</span><span class="p">)),</span>
+                                        <span class="n">verbose</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                                        <span class="n">dtype</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+                                        <span class="p">)</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                  <span class="n">lambda1</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lambda1&#39;</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">),</span> 
+                                  <span class="n">lambda2</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lambda2&#39;</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">),</span>
+                                  <span class="n">T</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                                  <span class="n">mu_init</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mu_init&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                                  <span class="n">mu_factor</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mu_factor&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+                                  <span class="n">s</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span>
+                                  <span class="n">warm_iter</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;warm_iter&#39;</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">),</span>
+                                  <span class="n">main_iter</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;main_iter&#39;</span><span class="p">,</span> <span class="mf">8e4</span><span class="p">),</span>
+                                  <span class="n">lr</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lr&#39;</span><span class="p">,</span> <span class="mf">0.0002</span><span class="p">),</span>
+                                  <span class="n">w_threshold</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;w_threshold&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
+                                  <span class="n">checkpoint</span><span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;check_iterate&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">dagma_nonlinear</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span><span class="s1">&#39;topo&#39;</span><span class="p">:</span>
+            <span class="n">W_est</span> <span class="o">=</span> <span class="n">topo_nonlinear</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                    <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">W_est</span></div>
+
+<span class="k">def</span> <span class="nf">parameter_tuning</span><span class="p">(</span><span class="n">dag_learning_func</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+
+    <span class="n">tuning_method</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">reg_paras</span><span class="p">,</span> <span class="n">initialization</span> <span class="o">=</span> <span class="n">set_tuning_method_from_options</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">tuning_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;cv&#39;</span><span class="p">,</span><span class="s1">&#39;decay&#39;</span><span class="p">],</span> <span class="s2">&quot;Tuning method must be one of [&#39;cv&#39;,&#39;decay&#39;]&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">cross_validation</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">reg_paras</span><span class="p">,</span> <span class="n">W_init</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">_loss</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">loss_functions</span><span class="p">)</span>
+        <span class="n">n</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">indices</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">fold_size</span> <span class="o">=</span> <span class="n">n</span><span class="o">//</span><span class="n">K</span>
+        <span class="n">folds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">folds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">k</span><span class="o">*</span><span class="n">fold_size</span><span class="p">:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">folds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">k</span><span class="o">*</span><span class="n">fold_size</span><span class="p">:(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">fold_size</span><span class="p">])</span>
+        <span class="n">Err_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Here we need to consider whether we are using torch or numpy, left for future implementation</span>
+        <span class="k">if</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l1&#39;</span> <span class="ow">or</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">[</span><span class="mi">0</span><span class="p">],(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span> <span class="s2">&quot;For l1 or l2 regularization, only one parameter is needed.&quot;</span>
+            <span class="n">lambda1s</span> <span class="o">=</span> <span class="n">reg_paras</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Working with </span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s2"> fold cross validation on </span><span class="si">{</span><span class="n">reg</span><span class="si">}</span><span class="s2"> with lambda1s: </span><span class="si">{</span><span class="n">lambda1s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">lambda1</span> <span class="ow">in</span> <span class="n">lambda1s</span><span class="p">:</span>
+                <span class="n">Err_total</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+                    <span class="n">test_indices</span> <span class="o">=</span> <span class="n">folds</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="n">train_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">folds</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="n">k</span><span class="p">])</span>
+                    <span class="n">X_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train_indices</span><span class="p">]</span>
+                    <span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">test_indices</span><span class="p">]</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">,</span> 
+                                            <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                            <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">lambda1</span><span class="p">,</span> <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_init</span><span class="p">})</span>
+                    
+                    <span class="n">Err</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W_est</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X_test</span><span class="p">)</span>
+                    <span class="n">Err_total</span> <span class="o">+=</span> <span class="n">Err</span>
+                <span class="n">Err_average</span> <span class="o">=</span> <span class="n">Err_total</span> <span class="o">/</span> <span class="n">K</span>
+                <span class="n">Err_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Err_average</span><span class="p">)</span>
+            <span class="n">opt_lambda</span><span class="o">=</span> <span class="n">lambda1s</span><span class="p">[</span><span class="n">Err_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Err_list</span><span class="p">))]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimal lambda1: </span><span class="si">{</span><span class="n">opt_lambda</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrain the model with optimal lambda1&quot;</span><span class="p">)</span>
+            <span class="c1"># retrain the model </span>
+            <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                            <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                            <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">opt_lambda</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_init</span><span class="p">})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model retrained with optimal lambda1&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">):</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">threshold_till_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">W_est</span>
+        
+        <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span><span class="s1">&#39;mcp&#39;</span><span class="p">:</span>
+            
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span> <span class="s2">&quot;For mcp regularization, two parameters are needed. First parameter is lambda1 and second parameter is gamma.&quot;</span>
+            <span class="n">lambda1s</span><span class="p">,</span> <span class="n">gammas</span> <span class="o">=</span> <span class="n">reg_paras</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reg_paras</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Working with </span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s2"> fold cross validation on </span><span class="si">{</span><span class="n">reg</span><span class="si">}</span><span class="s2"> with gammas: </span><span class="si">{</span><span class="n">gammas</span><span class="si">}</span><span class="s2"> and lambda1s: </span><span class="si">{</span><span class="n">lambda1s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">reg_space</span> <span class="o">=</span> <span class="p">[[</span><span class="n">gamma</span><span class="p">,</span> <span class="n">lambda1</span><span class="p">]</span> <span class="k">for</span> <span class="n">gamma</span> <span class="ow">in</span> <span class="n">gammas</span> <span class="k">for</span> <span class="n">lambda1</span> <span class="ow">in</span> <span class="n">lambda1s</span><span class="p">]</span>
+            <span class="n">params_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">lambda1</span> <span class="ow">in</span> <span class="n">reg_space</span><span class="p">:</span>
+                <span class="n">Err_total</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+                    <span class="n">test_indices</span> <span class="o">=</span> <span class="n">folds</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="n">train_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">folds</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="n">k</span><span class="p">])</span>
+                    <span class="n">X_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train_indices</span><span class="p">]</span>
+                    <span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">test_indices</span><span class="p">]</span>
+                    <span class="c1"># fit model</span>
+                    <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">,</span> 
+                                            <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                            <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">lambda1</span><span class="p">,</span> <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span><span class="n">gamma</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_init</span><span class="p">})</span>
+                    <span class="c1"># evaluate model</span>
+                    <span class="n">Err</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W_est</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X_test</span><span class="p">)</span>
+                    <span class="c1">#Err = 0.5 * ((X_test - X_test@W_est)**2).sum()</span>
+                    <span class="n">Err_total</span> <span class="o">+=</span> <span class="n">Err</span>
+                <span class="n">Err_average</span> <span class="o">=</span> <span class="n">Err_total</span> <span class="o">/</span> <span class="n">K</span>
+                <span class="n">Err_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Err_average</span><span class="p">)</span>
+                <span class="n">params_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gamma</span><span class="p">,</span> <span class="n">lambda1</span><span class="p">])</span>
+            <span class="n">min_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">Err_list</span><span class="p">)</span>
+            <span class="n">opt_gamma</span><span class="p">,</span> <span class="n">opt_lambda</span> <span class="o">=</span> <span class="n">opt_gamma</span><span class="p">,</span> <span class="n">opt_lambda1</span> <span class="o">=</span> <span class="n">params_list</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimal gamma: </span><span class="si">{</span><span class="n">opt_gamma</span><span class="si">}</span><span class="s2">, Optimal lambda1: </span><span class="si">{</span><span class="n">opt_lambda1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrain the model with optimal gamma and lambda1&quot;</span><span class="p">)</span>
+            <span class="c1"># retrain the model</span>
+            <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                            <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                            <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                            <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">opt_lambda</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span><span class="n">opt_gamma</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_init</span><span class="p">})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model retrained with optimal gamma and lambda1&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">):</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">threshold_till_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">W_est</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Parameter tuning is not implemented for user defined regularizer.&quot;</span><span class="p">)</span>
+        
+        
+    <span class="k">def</span> <span class="nf">decay</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">,</span> <span class="n">W_init</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">_loss</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">loss_functions</span><span class="p">)</span>
+        <span class="n">Err_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l1&#39;</span> <span class="ow">or</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">[</span><span class="mi">0</span><span class="p">],(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span> <span class="s2">&quot;For l1 or l2 regularization, only one parameter is needed.&quot;</span>
+            <span class="n">lambda1s</span> <span class="o">=</span> <span class="n">reg_paras</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="c1"># we need to sort the lambda1s in descending order, we start with the largest lambda1</span>
+            <span class="n">lambda1s</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">W_init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">W_init</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="n">optimal_lambda1</span> <span class="o">=</span> <span class="n">lambda1s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Working with decay on </span><span class="si">{</span><span class="n">reg</span><span class="si">}</span><span class="s2"> with lambda1s: </span><span class="si">{</span><span class="n">lambda1s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lambda1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lambda1s</span><span class="p">):</span>
+                <span class="c1"># fit the model</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                        <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                        <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                        <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">lambda1</span><span class="p">,</span> <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_est</span><span class="p">})</span>
+
+                <span class="c1"># evaluate model</span>
+                <span class="n">Err</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W_est</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">)</span>
+                <span class="c1"># Err = 0.5/ X.shape[0] * ((X - X@W_est)**2).sum()</span>
+                <span class="n">Err_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Err</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">Err_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span> <span class="n">Err_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]:</span> <span class="c1"># current loss is greater than previous loss</span>
+                    <span class="n">optimal_lambda1</span> <span class="o">=</span> <span class="n">lambda1s</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">break</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimal lambda1: </span><span class="si">{</span><span class="n">optimal_lambda1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrain the model with optimal lambda1&quot;</span><span class="p">)</span>
+            <span class="c1"># retrain the model</span>
+            <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                    <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                    <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                    <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">optimal_lambda1</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_init</span><span class="p">})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model retrained with optimal lambda1&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">):</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">threshold_till_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">W_est</span>
+        <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span><span class="s1">&#39;mcp&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span> <span class="s2">&quot;For mcp regularization, two parameters are needed. First parameter is lambda1 and second parameter is gamma.&quot;</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;The number of lambda1s and gammas must be the same.&quot;</span>
+            <span class="n">reg_paras_</span><span class="o">=</span> <span class="n">reg_paras</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">lambda1s</span><span class="p">,</span> <span class="n">gammas</span> <span class="o">=</span> <span class="n">reg_paras_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">reg_paras_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">lambda1s</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">gammas</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">W_init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">W_init</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            
+            <span class="n">optimal_gamma</span><span class="p">,</span> <span class="n">optimal_lambda1</span> <span class="o">=</span> <span class="n">gammas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lambda1s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Working with decay on </span><span class="si">{</span><span class="n">reg</span><span class="si">}</span><span class="s2"> with gammas: </span><span class="si">{</span><span class="n">gammas</span><span class="si">}</span><span class="s2"> and lambda1s: </span><span class="si">{</span><span class="n">lambda1s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">lambda1</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">gammas</span><span class="p">,</span> <span class="n">lambda1s</span><span class="p">)):</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                        <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                        <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                        <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">lambda1</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span><span class="n">gamma</span><span class="p">,</span> <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_est</span><span class="p">})</span>
+                <span class="n">Err</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W_est</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">)</span>
+                <span class="n">Err_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Err</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">Err_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span> <span class="n">Err_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]:</span>
+                    <span class="n">optimal_gamma</span><span class="p">,</span> <span class="n">optimal_lambda1</span> <span class="o">=</span> <span class="n">gammas</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lambda1s</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">break</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimal gamma: </span><span class="si">{</span><span class="n">optimal_gamma</span><span class="si">}</span><span class="s2">, Optimal lambda1: </span><span class="si">{</span><span class="n">optimal_lambda1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrain the model with optimal gamma and lambda1&quot;</span><span class="p">)</span>
+
+            <span class="c1"># retrain the model</span>
+            <span class="n">W_est</span> <span class="o">=</span> <span class="n">dag_learning_func</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> 
+                                    <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">,</span> 
+                                    <span class="n">h_fn</span> <span class="o">=</span> <span class="n">h_fn</span><span class="p">,</span> 
+                                    <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> 
+                                    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;lambda1&#39;</span><span class="p">:</span><span class="n">optimal_lambda1</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span><span class="n">optimal_gamma</span><span class="p">,</span> <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">W_init</span><span class="p">})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model retrained with optimal gamma and lambda1&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">):</span>
+                <span class="n">W_est</span> <span class="o">=</span> <span class="n">threshold_till_dag</span><span class="p">(</span><span class="n">W_est</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">W_est</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Parameter tuning is not implemented for user defined regularizer.&quot;</span><span class="p">)</span>
+
+
+
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span><span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tuning_method</span> <span class="o">==</span> <span class="s1">&#39;cv&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cross_validation</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">reg_paras</span><span class="p">,</span> <span class="n">W_init</span> <span class="o">=</span> <span class="n">initialization</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tuning_method</span> <span class="o">==</span> <span class="s1">&#39;decay&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">decay</span><span class="p">(</span><span class="n">reg_paras</span><span class="p">,</span> <span class="n">W_init</span> <span class="o">=</span> <span class="n">initialization</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Parameter tuning is not implemented for user defined regularizer.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Parameter tuning is not implemented for nonlinear model.&quot;</span><span class="p">)</span>
+
+
+
+
+<div class="viewcode-block" id="notears"><a class="viewcode-back" href="../../main_function.html#dagrad.daglearner.notears">[docs]</a><span class="k">def</span> <span class="nf">notears</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This is a wrapper function for dagrad with method notears, it calls the original notears implementation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : numpy.array of shape :math:`(n, p)`</span>
+<span class="sd">        The data matrix.</span>
+<span class="sd">    model : str, default=&#39;linear&#39;</span>
+<span class="sd">        The model of data generating process . </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    W_est : numpy.array of shape :math:`(p, p)`</span>
+<span class="sd">        The estimated adjacency matrix of the DAG.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;notears&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W_est</span></div>
+
+<div class="viewcode-block" id="dagma"><a class="viewcode-back" href="../../main_function.html#dagrad.daglearner.dagma">[docs]</a><span class="k">def</span> <span class="nf">dagma</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This is a wrapper function for dagrad with method dagma, it calls the original dagma implementation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : numpy.array of shape :math:`(n, p)`</span>
+<span class="sd">        The data matrix.</span>
+<span class="sd">    model : str, default=&#39;linear&#39;</span>
+<span class="sd">        The model of data generating process .</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    W_est : numpy.array of shape :math:`(p, p)`</span>
+<span class="sd">        The estimated adjacency matrix of the DAG.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;dagma&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W_est</span></div>
+
+<div class="viewcode-block" id="topo"><a class="viewcode-back" href="../../main_function.html#dagrad.daglearner.topo">[docs]</a><span class="k">def</span> <span class="nf">topo</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This is a wrapper function for dagrad with method topo</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : numpy.array of shape :math:`(n, p)`</span>
+<span class="sd">        The data matrix.</span>
+<span class="sd">    model : str, default=&#39;linear&#39;</span>
+<span class="sd">        The model of data generating process .</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    W_est : numpy.array of shape :math:`(p, p)`</span>
+<span class="sd">        The estimated adjacency matrix of the DAG.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;topo&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W_est</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">set_random_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">graph_type</span><span class="p">,</span> <span class="n">sem_type</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ER&#39;</span><span class="p">,</span> <span class="s1">&#39;gauss&#39;</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">W_true</span><span class="p">,</span> <span class="n">B_true</span> <span class="o">=</span> <span class="n">generate_linear_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">s0</span><span class="p">,</span><span class="n">graph_type</span><span class="p">,</span><span class="n">sem_type</span><span class="p">)</span> <span class="c1"># Generate the data</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span> <span class="c1"># Define the model</span>
+    <span class="n">W_notears</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;notears&#39;</span><span class="p">)</span> <span class="c1"># Learn the structure of the DAG using Notears</span>
+    <span class="n">W_dagma</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;dagma&#39;</span><span class="p">)</span> <span class="c1"># Learn the structure of the DAG using Dagma</span>
+    <span class="n">W_topo</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;topo&#39;</span><span class="p">)</span> <span class="c1"># Learn the structure of the DAG using Topo</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Linear Model&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data size: </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, graph type: </span><span class="si">{</span><span class="n">graph_type</span><span class="si">}</span><span class="s2">, sem type: </span><span class="si">{</span><span class="n">sem_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">acc_notears</span> <span class="o">=</span> <span class="n">count_accuracy</span><span class="p">(</span><span class="n">B_true</span><span class="p">,</span> <span class="n">W_notears</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># Measure the accuracy of the learned structure using Notears</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accuracy of Notears:&#39;</span><span class="p">,</span> <span class="n">acc_notears</span><span class="p">)</span>
+
+    <span class="n">acc_dagma</span> <span class="o">=</span> <span class="n">count_accuracy</span><span class="p">(</span><span class="n">B_true</span><span class="p">,</span> <span class="n">W_dagma</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># Measure the accuracy of the learned structure using Dagma</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accuracy of Dagma:&#39;</span><span class="p">,</span> <span class="n">acc_dagma</span><span class="p">)</span>
+
+    <span class="n">acc_topo</span> <span class="o">=</span> <span class="n">count_accuracy</span><span class="p">(</span><span class="n">B_true</span><span class="p">,</span> <span class="n">W_topo</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># Measure the accuracy of the learned structure using Topo</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accuracy of Topo:&#39;</span><span class="p">,</span> <span class="n">acc_topo</span><span class="p">)</span>
+
+    <span class="c1"># test cross validation for linear model with method notears</span>
+    <span class="c1"># W_est = dagrad(X = X, method = &#39;notears&#39;, reg = &#39;l1&#39;, general_options = {&#39;tuning_method&#39;:&#39;cv&#39;})</span>
+    <span class="c1"># acc = count_accuracy(B_true, W_est != 0)</span>
+    <span class="c1"># print(acc)</span>
+
+
+    
+
+    <span class="c1"># Uncomment the following code to test for nonlinear model</span>
+    <span class="c1"># # test for nonlinear </span>
+    <span class="c1"># from utils import utils</span>
+    <span class="c1"># utils.set_random_seed(1234)</span>
+    <span class="c1"># n, d, s0 = 1000, 5, 10</span>
+    <span class="c1"># graph_type, sem_type = &#39;ER&#39;, &#39;mlp&#39;</span>
+    <span class="c1"># B_true = utils.simulate_dag(d, s0, graph_type)</span>
+    <span class="c1"># W_true = utils.simulate_parameter(B_true)</span>
+    <span class="c1"># X = utils.simulate_nonlinear_sem(B_true, n, sem_type)</span>
+    
+    <span class="c1"># # test for nonlinear model with method notears with default options</span>
+    <span class="c1"># W_est = dagrad(X = X, method = &#39;notears&#39;, model = &#39;nonlinear&#39;)</span>
+
+    <span class="c1"># # test for nonlinear model with method dagma with default options</span>
+    <span class="c1"># W_est = dagrad(X = X, method = &#39;dagma&#39;, model = &#39;nonlinear&#39;)</span>
+
+    <span class="c1"># # test for nonlinear model with method topo with default options</span>
+    <span class="c1"># W_est = dagrad(X = X, method = &#39;topo&#39;, model = &#39;nonlinear&#39;)</span>
+
+    <span class="c1"># acc = utils.count_accuracy(B_true, W_est != 0)</span>
+    <span class="c1"># print(acc)</span>
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Chang Deng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

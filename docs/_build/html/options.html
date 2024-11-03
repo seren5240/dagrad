@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Options &mdash; Dagrad v1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Customization" href="customization.html" />
+    <link rel="prev" title="Working function" href="working_function.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Dagrad
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#install-via-pypi">Install via PyPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#install-from-source">Install from source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#running-examples">Running examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-notears">Running the NOTEARS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-dagma">Running the DAGMA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-topo">Running the TOPO</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="main_function.html">Main API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_function.html">Working function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="working_function.html#notears">Notears</a></li>
+<li class="toctree-l3"><a class="reference internal" href="working_function.html#dagma">Dagma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="working_function.html#topo">Topo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-options">General Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#method-options">Method Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optimizer-options">Optimizer Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#loss-function-loss-fn">Loss function(<code class="docutils literal notranslate"><span class="pre">'loss_fn'</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#linear-model">Linear model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#nonlinear-model">Nonlinear model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#regularization-reg">Regularization(<code class="docutils literal notranslate"><span class="pre">'reg'</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#acyclicity-function-h">Acyclicity function (<code class="docutils literal notranslate"><span class="pre">'h'</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dagrad</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Options</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/options.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="options">
+<span id="id1"></span><h1>Options<a class="headerlink" href="#options" title="Permalink to this heading"></a></h1>
+<p>In this section, we will discuss the all the options that can be specified for the method and the optimizer.</p>
+<section id="general-options">
+<h2>General Options<a class="headerlink" href="#general-options" title="Permalink to this heading"></a></h2>
+<p>The following options are available for all methods. Its specification can be done through the <code class="docutils literal notranslate"><span class="pre">general_options</span> <span class="pre">=</span> <span class="pre">{}</span></code>. The examples are given below.</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Allowed General Options</span><a class="headerlink" href="#id4" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'lambda1'</span></code></p></td>
+<td><p>float, int</p></td>
+<td><p>Weight for <span class="math notranslate nohighlight">\(\ell_1\)</span> penalty</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'lambda2'</span></code></p></td>
+<td><p>float, int</p></td>
+<td><p>Weight for <span class="math notranslate nohighlight">\(\ell_2\)</span> penalty</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'gamma'</span></code></p></td>
+<td><p>float, int</p></td>
+<td><p>Hyperparameter for quasi-MCP</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'w_threshold'</span></code></p></td>
+<td><p>float, int</p></td>
+<td><p>Threshold for the output adjacency matrix</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'initialization'</span></code></p></td>
+<td><p>None</p>
+<p>np.ndarray</p>
+<p>torch.Tensor</p>
+<p>nn.Module</p>
+</td>
+<td><p>Initialization for model parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'turning_method'</span></code></p></td>
+<td><p>str, None</p></td>
+<td><p>Turning method for regularization parameters.</p>
+<p>The options are [<code class="docutils literal notranslate"><span class="pre">'cv'</span></code>, <code class="docutils literal notranslate"><span class="pre">'decay'</span></code>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code>: no tuning is applied.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'cv'</span></code>: Cross-validation</p>
+<p><code class="docutils literal notranslate"><span class="pre">'decay'</span></code>: Decay search defined in <a class="brackets" href="#id3" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'K'</span></code></p></td>
+<td><p>int</p></td>
+<td><p>Number of folds for cross-validation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'reg_paras'</span></code></p></td>
+<td><p>List</p></td>
+<td><p>Regularization parameters for the turning method.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'user_params'</span></code></p></td>
+<td><p>Any</p></td>
+<td><p>User-defined parameters, which will be passed to the</p>
+<p>following functions: <code class="docutils literal notranslate"><span class="pre">user_h</span></code>, <code class="docutils literal notranslate"><span class="pre">user_reg</span></code>, and <code class="docutils literal notranslate"><span class="pre">user_loss</span></code>.</p>
+<p>These parameters allow users to customize the behavior of their</p>
+<p>loss, regularization, and acyclicity constraint functions.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dagrad.core</span> <span class="kn">import</span> <span class="n">dagrad</span>
+<span class="kn">from</span> <span class="nn">dagrad.utils</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># Define the parameters of the data</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">graph_type</span><span class="p">,</span> <span class="n">sem_type</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ER&#39;</span><span class="p">,</span> <span class="s1">&#39;gauss&#39;</span>
+
+<span class="c1"># Generate the data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">W_true</span><span class="p">,</span> <span class="n">B_true</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_linear_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">graph_type</span><span class="p">,</span> <span class="n">sem_type</span><span class="p">)</span>
+
+<span class="c1"># Define the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+
+<span class="c1"># Define the initializations</span>
+<span class="n">initialization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">initialization</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Define the general options</span>
+<span class="n">general_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;lambda1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;lambda2&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">initialization</span>
+    <span class="s1">&#39;user_params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;param1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;param2&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Learn the DAG</span>
+<span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span> <span class="n">general_options</span><span class="o">=</span><span class="n">general_options</span><span class="p">)</span>
+
+<span class="c1"># Use cross-validation to tune the default regularization parameters with l1 penalty</span>
+<span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;l1&#39;</span>
+<span class="n">general_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">initialization</span>
+    <span class="s1">&#39;turning_method&#39;</span><span class="p">:</span> <span class="s1">&#39;cv&#39;</span><span class="p">,</span> <span class="c1"># or &#39;decay&#39;</span>
+<span class="p">}</span>
+<span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">general_options</span><span class="o">=</span><span class="n">general_options</span><span class="p">)</span>
+
+<span class="c1"># Or specify the regularization parameters with l1 penalty and number of folds by yourself</span>
+<span class="n">general_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">initialization</span>
+    <span class="s1">&#39;turning_method&#39;</span><span class="p">:</span> <span class="s1">&#39;cv&#39;</span><span class="p">,</span> <span class="c1"># or &#39;decay&#39;</span>
+    <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s1">&#39;reg_paras&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="c1">#</span>
+<span class="p">}</span>
+<span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span><span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">general_options</span><span class="o">=</span><span class="n">general_options</span><span class="p">)</span>
+
+<span class="c1"># Or MCP penalty with hyperparameters lambda1, gamma and use decay search for faster computation</span>
+<span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;mcp&#39;</span>
+<span class="n">general_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;w_threshold&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;initialization&#39;</span><span class="p">:</span> <span class="n">initialization</span>
+    <span class="s1">&#39;turning_method&#39;</span><span class="p">:</span> <span class="s1">&#39;cv&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;reg_paras&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span> <span class="c1"># first is lambda1s, and second is gammas</span>
+<span class="p">}</span>
+
+<span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">,</span> <span class="n">general_options</span><span class="o">=</span><span class="n">general_options</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="method-options">
+<h2>Method Options<a class="headerlink" href="#method-options" title="Permalink to this heading"></a></h2>
+<p>The following options are available for different methods under <code class="code docutils literal notranslate"><span class="pre">'linear'</span></code> and <code class="code docutils literal notranslate"><span class="pre">''nonlinear'</span></code> categories. Its specification can be done through the <code class="docutils literal notranslate"><span class="pre">method_options</span> <span class="pre">=</span> <span class="pre">{}</span></code>. The examples are given below.</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Method Options</span><a class="headerlink" href="#id5" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">model</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">method</span></code></p></th>
+<th class="head"><p>Parameter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'notears'</span></code></p></td>
+<td><ul class="simple">
+<li><p>rho_max: int</p></li>
+<li><p>main_iter: int</p></li>
+<li><p>rho: float</p></li>
+<li><p>h_tol: float</p></li>
+<li><p>dtype: type</p></li>
+<li><p>verbose: bool</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'dagma'</span></code></p></td>
+<td><ul>
+<li><p>T: int</p></li>
+<li><p>mu_init: float</p></li>
+<li><p>mu_factor: float</p></li>
+<li><p>s: typing.Union[typing.List[float], float]</p></li>
+<li><p>warm_iter: int</p></li>
+<li><p>main_iter: int</p></li>
+<li><p>dtype: type</p></li>
+<li><p>exclude_edges: typing.Optional[typing.List[typing.Tuple[int, int]]]</p>
+<p>or  None</p>
+</li>
+<li><p>include_edges: typing.Optional[typing.List[typing.Tuple[int, int]]]</p>
+<p>or None</p>
+</li>
+<li><p>verbose: bool</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'topo'</span></code></p></td>
+<td><ul class="simple">
+<li><p>no_large_search: int</p></li>
+<li><p>size_small: int</p></li>
+<li><p>size_large: int</p></li>
+<li><p>topo: (list, type(None))</p></li>
+<li><p>dtype: type</p></li>
+<li><p>verbose: bool</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nonlinear</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'notears'</span></code></p></td>
+<td><ul class="simple">
+<li><p>bias: bool</p></li>
+<li><p>activation: str</p></li>
+<li><p>rho_max: int</p></li>
+<li><p>main_iter: int</p></li>
+<li><p>h_tol: float</p></li>
+<li><p>dims: typing.List</p></li>
+<li><p>dtype: type</p></li>
+<li><p>verbose: bool</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'dagma'</span></code></p></td>
+<td><ul class="simple">
+<li><p>T: int</p></li>
+<li><p>mu_init: float</p></li>
+<li><p>mu_factor: float</p></li>
+<li><p>s: typing.Union[typing.List[float], float]</p></li>
+<li><p>warm_iter: int</p></li>
+<li><p>main_iter: int</p></li>
+<li><p>dtype: type</p></li>
+<li><p>dims: typing.List</p></li>
+<li><p>bias: bool</p></li>
+<li><p>verbose: bool</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'topo'</span></code></p></td>
+<td><ul class="simple">
+<li><p>no_large_search: int</p></li>
+<li><p>size_small: int</p></li>
+<li><p>size_large: int</p></li>
+<li><p>topo: (list, type(None))</p></li>
+<li><p>dims: typing.List</p></li>
+<li><p>bias: bool</p></li>
+<li><p>activation: str</p></li>
+<li><p>dtype: type</p></li>
+<li><p>verbose: bool</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dagrad.core</span> <span class="kn">import</span> <span class="n">dagrad</span>
+<span class="kn">from</span> <span class="nn">dagrad.utils</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># Define the parameters of the data</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">graph_type</span><span class="p">,</span> <span class="n">sem_type</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ER&#39;</span><span class="p">,</span> <span class="s1">&#39;gauss&#39;</span>
+
+<span class="c1"># Generate the data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">W_true</span><span class="p">,</span> <span class="n">B_true</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_linear_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">graph_type</span><span class="p">,</span> <span class="n">sem_type</span><span class="p">)</span>
+
+<span class="c1"># Define the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+
+<span class="c1"># Define the method options</span>
+<span class="n">method_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;h_tol&#39;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="s1">&#39;rho&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="s1">&#39;}</span>
+
+<span class="c1"># Learn the DAG using Notears, linear model, numpy, and adam optimizer</span>
+<span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">method_options</span><span class="o">=</span><span class="n">method_options</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="optimizer-options">
+<h2>Optimizer Options<a class="headerlink" href="#optimizer-options" title="Permalink to this heading"></a></h2>
+<p>The following options are available for different optimizers. Note that <strong>opt_config</strong> is the parameters for the optimizer and <strong>opt_settings</strong> are the hyperparameter for the whole optimization framework. Its specification can be done through the <code class="docutils literal notranslate"><span class="pre">optimizer_options</span> <span class="pre">=</span> <span class="pre">{}</span></code>.
+The examples are given below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Put all the options for <code class="docutils literal notranslate"><span class="pre">opt_config</span></code> and <code class="docutils literal notranslate"><span class="pre">opt_settings</span></code> together in the dictionary <code class="docutils literal notranslate"><span class="pre">optimizer_options</span></code>. Please remember options for <code class="docutils literal notranslate"><span class="pre">optimizer_options</span></code> need be consistent with <code class="docutils literal notranslate"><span class="pre">computed_lib</span></code> and <code class="docutils literal notranslate"><span class="pre">optimizer</span></code>.</p>
+</div>
+<table class="docutils align-default" id="id6">
+<caption><span class="caption-text">Allowed Optimizer Options</span><a class="headerlink" href="#id6" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">computed_lib</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">optimizer</span></code></p></th>
+<th class="head"><p>Configuration Options and Settings</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'numpy'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'adam'</span></code></p></td>
+<td><dl class="simple">
+<dt><strong>opt_config</strong>:</dt><dd><ul class="simple">
+<li><p>‘lr’: float</p></li>
+<li><p>‘betas’: typing.Tuple[float, float]</p></li>
+<li><p>‘eps’: float</p></li>
+</ul>
+</dd>
+<dt><strong>opt_settings</strong>:</dt><dd><ul class="simple">
+<li><p>‘check_iterate’: int</p></li>
+<li><p>‘tol’: float</p></li>
+<li><p>‘num_steps’: int</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'lbfgs'</span></code></p></td>
+<td><dl class="simple">
+<dt><strong>opt_config</strong>:</dt><dd><ul class="simple">
+<li><p>‘disp’: (int, None)</p></li>
+<li><p>‘maxcor’: int</p></li>
+<li><p>‘ftol’: float</p></li>
+<li><p>‘gtol’: float</p></li>
+<li><p>‘eps’: float</p></li>
+<li><p>‘maxfun’: int</p></li>
+<li><p>‘maxiter’: int</p></li>
+<li><p>‘iprint’: int</p></li>
+<li><p>‘maxls’: int</p></li>
+</ul>
+</dd>
+<dt><strong>opt_settings</strong>:</dt><dd><ul class="simple">
+<li><p>{}</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'sklearn'</span></code></p></td>
+<td><dl class="simple">
+<dt><strong>opt_config</strong>:</dt><dd><ul class="simple">
+<li><p>{}</p></li>
+</ul>
+</dd>
+<dt><strong>opt_settings</strong>:</dt><dd><ul class="simple">
+<li><p>{}</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'torch'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'adam'</span></code></p></td>
+<td><dl class="simple">
+<dt><strong>opt_config</strong>:</dt><dd><ul class="simple">
+<li><p>‘lr’: float</p></li>
+<li><p>‘betas’: typing.Tuple[float, float]</p></li>
+<li><p>‘eps’: float</p></li>
+</ul>
+</dd>
+<dt><strong>opt_settings</strong>:</dt><dd><ul class="simple">
+<li><p>‘tol’: float</p></li>
+<li><p>‘num_steps’: int</p></li>
+<li><p>‘check_iterate’: int</p></li>
+<li><p>‘lr_decay’: bool</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'lbfgs'</span></code></p></td>
+<td><dl class="simple">
+<dt><strong>opt_config</strong>:</dt><dd><ul class="simple">
+<li><p>‘lr’: float</p></li>
+<li><p>‘max_iter’: int</p></li>
+<li><p>‘max_eval’: int or None</p></li>
+<li><p>‘tolerance_grad’: float</p></li>
+<li><p>‘tolerance_change’: float</p></li>
+<li><p>‘history_size’: int</p></li>
+<li><p>‘line_search_fn’: str or None</p></li>
+</ul>
+</dd>
+<dt><strong>opt_settings</strong>:</dt><dd><ul class="simple">
+<li><p>‘num_steps’: int</p></li>
+<li><p>‘tol’: float</p></li>
+<li><p>‘check_iterate’: int</p></li>
+<li><p>‘lr_decay’: bool</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dagrad.core</span> <span class="kn">import</span> <span class="n">dagrad</span>
+<span class="kn">from</span> <span class="nn">dagrad.utils</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># Define the parameters of the data</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">graph_type</span><span class="p">,</span> <span class="n">sem_type</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ER&#39;</span><span class="p">,</span> <span class="s1">&#39;gauss&#39;</span>
+
+<span class="c1"># Generate the data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">W_true</span><span class="p">,</span> <span class="n">B_true</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_linear_data</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">graph_type</span><span class="p">,</span> <span class="n">sem_type</span><span class="p">)</span>
+
+<span class="c1"># Define the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+
+<span class="c1"># Define the method options</span>
+<span class="n">optimizer_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">betas</span><span class="p">:(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span> <span class="s1">&#39;eps&#39;</span><span class="p">:</span><span class="mf">1e-8</span><span class="p">,</span> <span class="s1">&#39;check_iterate&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;tol&#39;</span><span class="p">:</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="s1">&#39;num_steps&#39;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">}</span>
+
+<span class="c1"># Learn the DAG using Notears, linear model, numpy, and adam optimizer</span>
+<span class="n">W_est</span> <span class="o">=</span> <span class="n">dagrad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;notears&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">computed_lib</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">optimizer_options</span><span class="o">=</span><span class="n">optimizer_options</span><span class="p">)</span>
+</pre></div>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>Deng, Chang, Kevin Bello, Pradeep Kumar Ravikumar, and Bryon Aragam. “Likelihood-based differentiable structure learning” Advances in Neural Information Processing Systems 37 (2024)</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="working_function.html" class="btn btn-neutral float-left" title="Working function" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="customization.html" class="btn btn-neutral float-right" title="Customization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Chang Deng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

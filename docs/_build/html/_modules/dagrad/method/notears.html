@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dagrad.method.notears &mdash; Dagrad v1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Dagrad
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../getting_started.html#install-via-pypi">Install via PyPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../getting_started.html#install-from-source">Install from source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started.html#running-examples">Running examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../main_function.html">Main API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../working_function.html">Working function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../working_function.html#notears">Notears</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../working_function.html#dagma">Dagma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../working_function.html#topo">Topo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../options.html">Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#general-options">General Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#method-options">Method Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#optimizer-options">Optimizer Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../customization.html#loss-function-loss-fn">Loss function(<code class="docutils literal notranslate"><span class="pre">'loss_fn'</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../customization.html#linear-model">Linear model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../customization.html#nonlinear-model">Nonlinear model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../customization.html#regularization-reg">Regularization(<code class="docutils literal notranslate"><span class="pre">'reg'</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../customization.html#acyclicity-function-h">Acyclicity function (<code class="docutils literal notranslate"><span class="pre">'h'</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Dagrad</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dagrad.method.notears</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dagrad.method.notears</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">sopt</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">..utils.configure</span> <span class="kn">import</span> <span class="n">h_functions</span><span class="p">,</span> <span class="n">loss_functions</span><span class="p">,</span> <span class="n">reg_functions</span><span class="p">,</span> <span class="n">nl_loss_functions</span><span class="p">,</span> <span class="n">optimizer_functions</span><span class="p">,</span> <span class="n">allowed_method_options</span>
+<span class="kn">from</span> <span class="nn">..optimizer.optimizer</span> <span class="kn">import</span> <span class="n">adam</span>
+<span class="kn">from</span> <span class="nn">..utils.NNstructure</span> <span class="kn">import</span> <span class="n">NotearsMLP</span>
+<span class="kn">from</span> <span class="nn">..utils.general_utils</span> <span class="kn">import</span> <span class="n">set_functions</span><span class="p">,</span><span class="n">print_options</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">get_variables_from_general_options</span><span class="p">,</span><span class="n">get_variables_from_optimizer_settings</span><span class="p">,</span> <span class="n">check_device</span><span class="p">,</span> <span class="n">demean</span><span class="p">,</span> <span class="n">process_data</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;notears_linear_numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;notears_linear_torch&#39;</span><span class="p">,</span> <span class="s1">&#39;notears_nonlinear&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="notears_linear_numpy"><a class="viewcode-back" href="../../../working_function.html#dagrad.method.notears.notears_linear_numpy">[docs]</a><span class="k">def</span> <span class="nf">notears_linear_numpy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> 
+                         <span class="n">loss_fn</span> <span class="o">=</span> <span class="s1">&#39;l2&#39;</span><span class="p">,</span> 
+                         <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_exp_sq&#39;</span><span class="p">,</span>
+                         <span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;l1&#39;</span><span class="p">,</span> 
+                         <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;lbfgs&#39;</span><span class="p">,</span>
+                         <span class="n">main_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> 
+                         <span class="n">h_tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> 
+                         <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                         <span class="n">rho_max</span><span class="o">=</span><span class="mf">1e+16</span><span class="p">,</span>
+                         <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+                         <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                         <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Learn DAG structure using NOTEARS algorithm with **linear** structural equation and **numpy**</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : np.ndarray</span>
+<span class="sd">        Data matrix with shape :math:`(n,p)`.</span>
+<span class="sd">    loss_fn : str, optional</span>
+<span class="sd">        Loss function, by default ``&#39;l2&#39;``.</span>
+<span class="sd">    h_fn : str, optional</span>
+<span class="sd">        h function, by default ``&#39;h_exp_sq&#39;``.</span>
+<span class="sd">    reg : str, optional</span>
+<span class="sd">        Regularization function, by default ``&#39;l1&#39;``.</span>
+<span class="sd">    optimizer : str, optional</span>
+<span class="sd">        Optimizer, by default ``&#39;lbfgs&#39;``.</span>
+<span class="sd">    main_iter : int, optional</span>
+<span class="sd">        Number of main iterations, by default ``100``.</span>
+<span class="sd">    h_tol : float, optional</span>
+<span class="sd">        Tolerance for h, by default ``1e-8``.</span>
+<span class="sd">    rho : float, optional</span>
+<span class="sd">        hyperparameter for lbfgs, by default ``1.0``.</span>
+<span class="sd">    rho_max : float, optional</span>
+<span class="sd">        maximum value for rho, by default ``1e+16``.</span>
+<span class="sd">    dtype : np.float64, optional</span>
+<span class="sd">        data type, by default ``np.float64``.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        print out the information, by default ``False``.</span>
+<span class="sd">    options : dict, optional</span>
+<span class="sd">        Additional general/optimizer options, by default {}.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Estimated DAG matrix with shape :math:`(p,p)`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vprint</span> <span class="o">=</span> <span class="nb">print</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="c1"># get options</span>
+    <span class="n">general_options</span><span class="p">,</span> <span class="n">optimizer_options_config</span><span class="p">,</span> <span class="n">optimizer_options_settings</span> <span class="o">=</span> <span class="n">set_options</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> 
+                                                                                        <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;notears&#39;</span><span class="p">,</span> 
+                                                                                        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">)</span>
+    
+    <span class="n">method_options</span> <span class="o">=</span> <span class="n">allowed_method_options</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">][</span><span class="s1">&#39;notears&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">method_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">method_options</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="n">optimizer_options</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">optimizer_options_config</span><span class="p">,</span> <span class="o">**</span><span class="n">optimizer_options_settings</span><span class="p">}</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">w_threshold</span><span class="p">,</span> <span class="n">initialization</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_variables_from_general_options</span><span class="p">(</span><span class="n">general_options</span><span class="p">)</span>
+    <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span>
+    <span class="n">print_options</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">method_options</span><span class="p">,</span>
+        <span class="n">general_options</span><span class="p">,</span><span class="n">optimizer_options_config</span><span class="p">,</span><span class="n">optimizer_options_settings</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">demean</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">if</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span> <span class="k">else</span> <span class="n">X</span>
+
+    <span class="n">_loss</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span><span class="n">loss_functions</span><span class="p">)</span>
+    <span class="n">_h</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">h_fn</span><span class="p">,</span> <span class="n">h_functions</span><span class="p">)</span>
+    <span class="n">_reg</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span><span class="n">reg_functions</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_adj</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert doubled variables ([2 d^2] array) back to original variables ([d, d] matrix).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate value and gradient of augmented Lagrangian for doubled variables ([2 d^2] array).&quot;&quot;&quot;</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">_adj</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">loss</span><span class="p">,</span> <span class="n">G_loss</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W</span><span class="p">,</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+        <span class="n">reg</span><span class="p">,</span> <span class="n">G_reg</span> <span class="o">=</span> <span class="n">_reg</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span>  <span class="n">reg</span>
+        <span class="n">G_smooth</span> <span class="o">=</span> <span class="n">G_loss</span> <span class="o">+</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">G_h</span>
+        <span class="n">g_obj</span> <span class="o">=</span> <span class="p">(</span><span class="n">G_smooth</span> <span class="o">+</span> <span class="n">G_reg</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="p">,</span> <span class="n">g_obj</span>
+
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">initialization</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># default lbfgs only takes 1d array</span>
+        <span class="n">w_est</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span> <span class="o">*</span> <span class="n">d</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>  
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">initialization</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> <span class="ow">or</span> <span class="n">initialization</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="o">*</span><span class="n">d</span><span class="p">,),</span> <span class="s2">&quot;initialization must be a square matrix or a vector&quot;</span>
+        <span class="k">if</span> <span class="n">initialization</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
+            <span class="n">w_est</span> <span class="o">=</span> <span class="n">initialization</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">w_est</span> <span class="o">=</span> <span class="n">initialization</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    
+    <span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">main_iter</span><span class="p">):</span>
+        <span class="n">w_new</span><span class="p">,</span> <span class="n">h_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="n">rho_max</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;lbfgs&#39;</span><span class="p">:</span> <span class="c1"># use scipy implementation</span>
+                <span class="n">bnds</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="n">sopt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">_func</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span>  <span class="n">w_est</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="n">jac</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">bnds</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">optimizer_options</span><span class="p">)</span>
+                <span class="n">w_new</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">x</span>
+            <span class="k">elif</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;adam&#39;</span><span class="p">:</span> 
+                <span class="c1"># self implemented adam</span>
+                <span class="n">bnds</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">d</span><span class="o">+</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="c1"># diagonal elements</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="n">adam</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">_func</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">w_est</span><span class="p">,</span> <span class="n">bnds</span> <span class="o">=</span> <span class="n">bnds</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">optimizer_options</span><span class="p">)</span>
+                <span class="c1"># sol = sopt.minimize(fun = _func, x0 = w_est, method = adam, jac = True, options = optimizer_options)</span>
+                <span class="n">w_new</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">h_new</span><span class="p">,</span> <span class="n">__</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">_adj</span><span class="p">(</span><span class="n">w_new</span><span class="p">),</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+            <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;current iteration: </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2">, current rho: </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2">, current h: </span><span class="si">{</span><span class="n">h_new</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">h_new</span> <span class="o">&gt;</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">h</span><span class="p">:</span>
+                <span class="n">rho</span> <span class="o">*=</span> <span class="mi">10</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">w_est</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">w_new</span><span class="p">,</span> <span class="n">h_new</span>
+        <span class="n">alpha</span> <span class="o">+=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h</span>
+        <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="n">h_tol</span> <span class="ow">or</span> <span class="n">rho</span> <span class="o">&gt;=</span> <span class="n">rho_max</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="n">W_est</span> <span class="o">=</span> <span class="n">_adj</span><span class="p">(</span><span class="n">w_est</span><span class="p">)</span>
+    <span class="n">W_est</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">W_est</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">w_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total Time: </span><span class="si">{</span><span class="n">time_end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">time_start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W_est</span></div>
+
+
+<div class="viewcode-block" id="notears_linear_torch"><a class="viewcode-back" href="../../../working_function.html#dagrad.method.notears.notears_linear_torch">[docs]</a><span class="k">def</span> <span class="nf">notears_linear_torch</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> 
+                        <span class="n">loss_fn</span> <span class="o">=</span> <span class="s1">&#39;l2&#39;</span><span class="p">,</span> 
+                        <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_exp_sq&#39;</span><span class="p">,</span>
+                        <span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;l1&#39;</span><span class="p">,</span> 
+                        <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;lbfgs&#39;</span><span class="p">,</span>
+                        <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">main_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> 
+                        <span class="n">h_tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> 
+                        <span class="n">rho_max</span><span class="o">=</span><span class="mf">1e+16</span><span class="p">,</span>
+                        <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+                        <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Learn DAG structure using NOTEARS algorithm with **linear** structural equation and **torch**</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : np.ndarray</span>
+<span class="sd">        Data matrix with shape :math:`(n,p)`.</span>
+<span class="sd">    loss_fn : str, optional</span>
+<span class="sd">        Loss function, by default ``&#39;l2&#39;``.</span>
+<span class="sd">    h_fn : str, optional</span>
+<span class="sd">        h function, by default ``&#39;h_exp_sq&#39;``.</span>
+<span class="sd">    reg : str, optional</span>
+<span class="sd">        Regularization function, by default ``&#39;l1&#39;``.</span>
+<span class="sd">    optimizer : str, optional</span>
+<span class="sd">        Optimizer, by default ``&#39;lbfgs&#39;``.</span>
+<span class="sd">    main_iter : int, optional</span>
+<span class="sd">        Number of main iterations, by default ``100``.</span>
+<span class="sd">    h_tol : float, optional</span>
+<span class="sd">        Tolerance for h, by default ``1e-8``.</span>
+<span class="sd">    rho : float, optional</span>
+<span class="sd">        hyperparameter for lbfgs, by default ``1.0``.</span>
+<span class="sd">    rho_max : float, optional</span>
+<span class="sd">        maximum value for rho, by default ``1e+16``.</span>
+<span class="sd">    dtype : torch.float64, optional</span>
+<span class="sd">        data type, by default ``torch.float64``.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        print out the information, by default ``False``.</span>
+<span class="sd">    options : dict, optional</span>
+<span class="sd">        Additional general/optimizer options, by default {}.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Estimated DAG matrix with shape :math:`(p,p)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">torch</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">vprint</span> <span class="o">=</span> <span class="nb">print</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">check_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using device: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">demean</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">if</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span> <span class="k">else</span> <span class="n">X</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">process_data</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">device</span><span class="p">)</span>
+    
+
+    <span class="n">general_options</span><span class="p">,</span> <span class="n">optimizer_options_config</span><span class="p">,</span> <span class="n">optimizer_options_settings</span> <span class="o">=</span> <span class="n">set_options</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> 
+                                                                                        <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;notears&#39;</span><span class="p">,</span> 
+                                                                                        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span><span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">)</span>
+    <span class="n">method_options</span> <span class="o">=</span> <span class="n">allowed_method_options</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">][</span><span class="s1">&#39;notears&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">method_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">method_options</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">w_threshold</span><span class="p">,</span> <span class="n">initialization</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">get_variables_from_general_options</span><span class="p">(</span><span class="n">general_options</span><span class="p">)</span>
+
+    <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span>
+    <span class="n">print_options</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">method_options</span><span class="p">,</span>
+        <span class="n">general_options</span><span class="p">,</span><span class="n">optimizer_options_config</span><span class="p">,</span><span class="n">optimizer_options_settings</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+    <span class="n">_loss</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span><span class="n">loss_functions</span><span class="p">)</span>
+    <span class="n">_h</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">h_fn</span><span class="p">,</span> <span class="n">h_functions</span><span class="p">)</span>
+    <span class="n">_reg</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span><span class="n">reg_functions</span><span class="p">)</span>
+    <span class="n">_opt</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">optimizer_functions</span><span class="p">)</span>
+
+
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">initialization</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">W_est</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">initialization</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">)</span> <span class="ow">or</span> <span class="n">initialization</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="o">*</span><span class="n">d</span><span class="p">,),</span> <span class="s2">&quot;initialization must be a square matrix or a vector&quot;</span>
+        <span class="k">if</span> <span class="n">initialization</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">):</span>
+            <span class="n">W_est</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">initialization</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">W_est</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">initialization</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="n">W_est</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="n">num_steps</span><span class="p">,</span> <span class="n">check_iterate</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">lr_decay</span> <span class="o">=</span> <span class="n">get_variables_from_optimizer_settings</span><span class="p">(</span><span class="n">optimizer_options_settings</span><span class="p">)</span>
+        
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">_opt</span><span class="p">([</span><span class="n">W_est</span><span class="p">],</span><span class="o">**</span><span class="n">optimizer_options_config</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">closure</span><span class="p">():</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W_est</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W_est</span><span class="p">,</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+            <span class="n">penalty</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span>
+            <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">penalty</span> <span class="o">+</span> <span class="n">_reg</span><span class="p">(</span><span class="n">W_est</span><span class="p">,</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+            <span class="n">total_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">total_loss</span>
+        <span class="n">obj_prev</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">num_steps</span><span class="p">):</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+            <span class="n">obj_new</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;iter: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, loss: </span><span class="si">{</span><span class="n">obj_new</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">check_iterate</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">==</span> <span class="n">num_steps</span><span class="p">):</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">obj_prev</span> <span class="o">-</span> <span class="n">obj_new</span><span class="p">)</span>
+                <span class="n">denom</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">obj_prev</span><span class="p">),</span><span class="nb">abs</span><span class="p">(</span><span class="n">obj_new</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">diff</span> <span class="o">/</span> <span class="n">denom</span> <span class="o">&lt;=</span> <span class="n">tol</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">obj_prev</span> <span class="o">=</span> <span class="n">obj_new</span>
+        
+            
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">main_iter</span><span class="p">):</span>
+        <span class="n">vprint</span><span class="p">(</span><span class="s2">&quot;working on iteration: &quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span>
+        
+        <span class="k">while</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="n">rho_max</span><span class="p">:</span>
+            <span class="c1">######### </span>
+            <span class="c1"># create a new W_est_backup to store the new W_est,</span>
+            <span class="c1"># to avoid the failure of minimize_ function such that h is not significantly reduced</span>
+            <span class="n">W_est_backup</span> <span class="o">=</span> <span class="n">W_est</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+            <span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">minimize</span><span class="p">(</span><span class="n">W_est</span> <span class="o">=</span> <span class="n">W_est</span><span class="p">,</span>
+                      <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">)</span>
+            <span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">h_new</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W_est</span><span class="p">,</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;current iteration: </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2">, current rho: </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2">, current h: </span><span class="si">{</span><span class="n">h_new</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">h_new</span> <span class="o">&gt;</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">h</span><span class="p">:</span>
+                <span class="n">rho</span> <span class="o">*=</span> <span class="mi">10</span>
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="n">W_est</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">W_est_backup</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">h_new</span>
+        <span class="n">alpha</span> <span class="o">+=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h</span>
+        <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="n">h_tol</span> <span class="ow">or</span> <span class="n">rho</span> <span class="o">&gt;=</span> <span class="n">rho_max</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">W_est_np</span> <span class="o">=</span> <span class="n">W_est</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">W_est_np</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">W_est_np</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">w_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total Time: </span><span class="si">{</span><span class="n">time_end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">time_start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W_est_np</span></div>
+
+<div class="viewcode-block" id="notears_nonlinear"><a class="viewcode-back" href="../../../working_function.html#dagrad.method.notears.notears_nonlinear">[docs]</a><span class="k">def</span> <span class="nf">notears_nonlinear</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> 
+                    <span class="n">loss_fn</span> <span class="o">=</span> <span class="s1">&#39;l2&#39;</span><span class="p">,</span> 
+                    <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_exp_sq&#39;</span><span class="p">,</span>
+                    <span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;l1&#39;</span><span class="p">,</span> 
+                    <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;lbfgs&#39;</span><span class="p">,</span> 
+                    <span class="n">bias</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                    <span class="n">activation</span> <span class="o">=</span> <span class="s1">&#39;sigmoid&#39;</span><span class="p">,</span>
+                    <span class="n">main_iter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="n">rho_max</span> <span class="o">=</span> <span class="mf">1e+16</span><span class="p">,</span> 
+                    <span class="n">h_tol</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
+                    <span class="n">dims</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+                    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Learn DAG structure using NOTEARS algorithm with **nonlinear** structural equation and **torch**</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : np.ndarray</span>
+<span class="sd">        Data matrix with shape :math:`(n,p)`.</span>
+<span class="sd">    loss_fn : str, optional</span>
+<span class="sd">        Loss function, by default ``&#39;l2&#39;``.</span>
+<span class="sd">    h_fn : str, optional</span>
+<span class="sd">        h function, by default ``&#39;h_exp_sq&#39;``.</span>
+<span class="sd">    reg : str, optional</span>
+<span class="sd">        Regularization function, by default ``&#39;l1&#39;``.</span>
+<span class="sd">    optimizer : str, optional</span>
+<span class="sd">        Optimizer, by default ``&#39;lbfgs&#39;``.</span>
+<span class="sd">    bias : bool, optional</span>
+<span class="sd">        whether to include bias, by default ``True``.</span>
+<span class="sd">    activation : str, optional</span>
+<span class="sd">        activation function, by default ``&#39;sigmoid&#39;``.</span>
+<span class="sd">    main_iter : int, optional</span>
+<span class="sd">        Number of main iterations, by default ``100``.</span>
+<span class="sd">    rho_max : float, optional</span>
+<span class="sd">        maximum value for rho, by default ``1e+16``.</span>
+<span class="sd">    h_tol : float, optional</span>
+<span class="sd">        Tolerance for h, by default ``1e-8``.</span>
+<span class="sd">    dims : list, optional</span>
+<span class="sd">        dimensions for the neural network, by default ``None``.</span>
+<span class="sd">    dtype : torch.float64, optional</span>
+<span class="sd">        data type, by default ``torch.float64``.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        print out the information, by default ``False``.</span>
+<span class="sd">    options : dict, optional</span>
+<span class="sd">        Additional general/optimizer options, by default {}.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Estimated DAG matrix with shape :math:`(p,p)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">torch</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">vprint</span> <span class="o">=</span> <span class="nb">print</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;device&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">check_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using device: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">process_data</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">device</span><span class="p">)</span>
+    <span class="n">n</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">general_options</span><span class="p">,</span> <span class="n">optimizer_options_config</span><span class="p">,</span> <span class="n">optimizer_options_settings</span> <span class="o">=</span> <span class="n">set_options</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> 
+                                                                                        <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span> <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;notears&#39;</span><span class="p">,</span> 
+                                                                                        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">)</span>
+    <span class="n">method_options</span> <span class="o">=</span> <span class="n">allowed_method_options</span><span class="p">[</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">][</span><span class="s1">&#39;notears&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">method_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">method_options</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span>
+    <span class="n">print_options</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">method_options</span><span class="p">,</span>
+        <span class="n">general_options</span><span class="p">,</span><span class="n">optimizer_options_config</span><span class="p">,</span><span class="n">optimizer_options_settings</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">lambda1</span><span class="p">,</span> <span class="n">lambda2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">w_threshold</span><span class="p">,</span> <span class="n">initialization</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_variables_from_general_options</span><span class="p">(</span><span class="n">general_options</span><span class="p">)</span>
+
+    <span class="n">_loss</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span><span class="n">nl_loss_functions</span><span class="p">)</span>
+    <span class="n">_h</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">h_fn</span><span class="p">,</span> <span class="n">h_functions</span><span class="p">)</span>
+    <span class="n">_reg</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span><span class="n">reg_functions</span><span class="p">)</span>
+    <span class="n">_opt</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">optimizer_functions</span><span class="p">)</span>
+
+    
+    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+            <span class="n">num_steps</span><span class="p">,</span> <span class="n">check_iterate</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">lr_decay</span> <span class="o">=</span> <span class="n">get_variables_from_optimizer_settings</span><span class="p">(</span><span class="n">optimizer_options_settings</span><span class="p">)</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">_opt</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span><span class="o">**</span><span class="n">optimizer_options_config</span><span class="p">)</span>
+            <span class="c1"># scheduler = optim.lr_scheduler.ExponentialLR(opt, gamma=0.8)</span>
+            <span class="k">def</span> <span class="nf">closure</span><span class="p">():</span>
+                <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">X_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">X_hat</span><span class="p">,</span><span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+                <span class="n">h_val</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">adj</span><span class="p">(),</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+                <span class="n">penalty</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h_val</span> <span class="o">*</span> <span class="n">h_val</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h_val</span>
+                <span class="n">l2_reg</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">lambda2</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">l2_reg</span><span class="p">()</span>
+
+                <span class="n">reg</span> <span class="o">=</span> <span class="n">lambda1</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">fc1_l1_reg</span><span class="p">()</span>
+                <span class="c1"># reg =  _reg(model.adj(),**general_options)</span>
+
+                <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">penalty</span> <span class="o">+</span> <span class="n">l2_reg</span> <span class="o">+</span> <span class="n">reg</span>
+                <span class="n">total_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">total_loss</span>
+
+            <span class="n">prev_loss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">num_steps</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+                <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="c1"># scheduler.step()</span>
+                <span class="c1"># print(f&quot;iter: {i}, loss: {current_loss}&quot;)</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">check_iterate</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">==</span> <span class="n">num_steps</span><span class="p">):</span>
+                    <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prev_loss</span> <span class="o">-</span> <span class="n">current_loss</span><span class="p">)</span>
+                    <span class="n">denom</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">prev_loss</span><span class="p">),</span><span class="nb">abs</span><span class="p">(</span><span class="n">current_loss</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">diff</span> <span class="o">/</span> <span class="n">denom</span> <span class="o">&lt;=</span> <span class="n">tol</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="n">prev_loss</span> <span class="o">=</span> <span class="n">current_loss</span>
+    
+    
+    <span class="k">def</span> <span class="nf">dual_ascent_step</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="c1"># model_copy = deepcopy(model).to(device)</span>
+        <span class="k">while</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="n">rho_max</span><span class="p">:</span>
+            <span class="n">minimize</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">h_new</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">adj</span><span class="p">(),</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> 
+            <span class="k">if</span> <span class="n">h_new</span> <span class="o">&gt;</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">h</span><span class="p">:</span>
+                <span class="n">rho</span> <span class="o">*=</span> <span class="mi">10</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">alpha</span> <span class="o">+=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h_new</span>
+        <span class="k">return</span> <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h_new</span>
+
+
+    <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">if</span> <span class="n">initialization</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">NotearsMLP</span><span class="p">(</span><span class="n">dims</span> <span class="o">=</span> <span class="n">dims</span><span class="p">,</span> <span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># check initialization and model are consistent </span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">NotearsMLP</span><span class="p">(</span><span class="n">dims</span> <span class="o">=</span> <span class="n">dims</span><span class="p">,</span> <span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">initialization</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;initialization must be a state_dict of the mode, and the model must be consistent with the initialization&quot;</span><span class="p">)</span>
+    <span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">main_iter</span><span class="p">):</span>
+        <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">dual_ascent_step</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span>
+                                         <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="p">)</span>       
+        <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;current </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2">, current rho: </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2">, h: </span><span class="si">{</span><span class="n">h</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="n">h_tol</span> <span class="ow">or</span> <span class="n">rho</span> <span class="o">&gt;=</span> <span class="n">rho_max</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">W_est</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fc1_to_adj</span><span class="p">()</span>
+    <span class="n">W_est</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">W_est</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">w_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total Time: </span><span class="si">{</span><span class="n">time_end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">time_start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W_est</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Chang Deng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

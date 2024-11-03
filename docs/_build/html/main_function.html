@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main API &mdash; Dagrad v1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Working function" href="working_function.html" />
+    <link rel="prev" title="API Reference" href="api_reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Dagrad
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#install-via-pypi">Install via PyPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#install-from-source">Install from source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#running-examples">Running examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-notears">Running the NOTEARS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-dagma">Running the DAGMA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-topo">Running the TOPO</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Main API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_function.html">Working function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="working_function.html#notears">Notears</a></li>
+<li class="toctree-l3"><a class="reference internal" href="working_function.html#dagma">Dagma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="working_function.html#topo">Topo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="options.html#general-options">General Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#method-options">Method Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#optimizer-options">Optimizer Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#loss-function-loss-fn">Loss function(<code class="docutils literal notranslate"><span class="pre">'loss_fn'</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#linear-model">Linear model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#nonlinear-model">Nonlinear model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#regularization-reg">Regularization(<code class="docutils literal notranslate"><span class="pre">'reg'</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#acyclicity-function-h">Acyclicity function (<code class="docutils literal notranslate"><span class="pre">'h'</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dagrad</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api_reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Main API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/main_function.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="main-api">
+<h1>Main API<a class="headerlink" href="#main-api" title="Permalink to this heading"></a></h1>
+<p>The following are the main function of the <strong>dagrad</strong> library. This is main function that calls the <a class="reference internal" href="working_function.html#working-function"><span class="std std-ref">Working function</span></a> of the library.
+User can explore different options to customize the learning process, by specifiying the method, the model, the loss function, the acyclicity constraint, the regularizer and the optimizer.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.core.dagrad">
+<span class="sig-prename descclassname"><span class="pre">dagrad.core.</span></span><span class="sig-name descname"><span class="pre">dagrad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'notears'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_lib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/core.html#dagrad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.core.dagrad" title="Permalink to this definition"></a></dt>
+<dd><p>This function learns the structure of a DAG from observational data using different methods.
+<span class="math notranslate nohighlight">\(n\)</span>  number of samples,
+<span class="math notranslate nohighlight">\(p\)</span>  number of features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (numpy.array of shape <span class="math notranslate nohighlight">\((n, p)\)</span>) – The data matrix.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>default='notears'</em>) – The method to learn the DAG. One of [<code class="code docutils literal notranslate"><span class="pre">'notears'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'dagma'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'topo'</span></code>].</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>, </em><em>default=None</em>) – The model of data generating process . One of [<code class="code docutils literal notranslate"><span class="pre">'linear'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'nonlinear'</span></code>]. If None, it is set to <code class="code docutils literal notranslate"><span class="pre">'linear'</span></code>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>default=None</em>) – <p>The loss function to use. One of [<code class="code docutils literal notranslate"><span class="pre">'l2'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'logistic'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'logll'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'user_loss'</span></code>]. If None, it is set to <code class="code docutils literal notranslate"><span class="pre">'l2'</span></code>.</p>
+<ul>
+<li><p>For <code class="code docutils literal notranslate"><span class="pre">'user_loss'</span></code>, is not implemented yet, and it can be customized by the user.</p></li>
+</ul>
+</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>default=None</em>) – <p>The function to compute the acyclicity constraint. One of [<code class="code docutils literal notranslate"><span class="pre">'h_exp_sq'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'h_exp_abs'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'h_poly_sq'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'h_poly_abs'</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">'h_logdet_sq'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'h_logdet_abs'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'h_logdet_topo'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'h_logdet_abs'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'user_h'</span></code>]. If None, it is set to <code class="code docutils literal notranslate"><span class="pre">'h_exp_sq'</span></code>.</p>
+<ul>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'abs'</span></code> stands for absolute value.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'sq'</span></code> stands for square.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'poly'</span></code> stands for polynomial.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'logdet'</span></code> stands for log determinant.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'topo'</span></code> is only specific to method <code class="code docutils literal notranslate"><span class="pre">'topo'</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'user_h'</span></code> is not implemented yet, and it can be customized by the user.</p></li>
+</ul>
+</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>default=None</em>) – <p>The regularizer to use. One of [<code class="code docutils literal notranslate"><span class="pre">'l1'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'l2'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'mcp'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'user_reg'</span></code>].
+If None, it is set to <code class="code docutils literal notranslate"><span class="pre">'l1'</span></code>.</p>
+<ul>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'user_reg'</span></code> is not implemented yet, and it can be customized by the user.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'mcp'</span></code> stands for minimax concave penalty.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'none'</span></code> stands for no regularization.</p></li>
+</ul>
+</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>default=None</em>) – <p>The optimizer to use. One of [<code class="code docutils literal notranslate"><span class="pre">'lbfgs'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'adam'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'sklearn'</span></code>]. If None, it is set to <code class="code docutils literal notranslate"><span class="pre">'lbfgs'</span></code>.</p>
+<ul>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'sklearn'</span></code> is only used for method <code class="code docutils literal notranslate"><span class="pre">'topo'</span></code>.</p></li>
+<li><p>Method <code class="code docutils literal notranslate"><span class="pre">'dagma'</span></code> is only compatible with the <code class="code docutils literal notranslate"><span class="pre">'adam'</span></code> optimizer.</p></li>
+</ul>
+</p></li>
+<li><p><strong>compute_lib</strong> (<em>str</em><em>, </em><em>default=None</em>) – <p>The library to use for computation. One of [<code class="code docutils literal notranslate"><span class="pre">'numpy'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'torch'</span></code>]. If None, it is set to <code class="code docutils literal notranslate"><span class="pre">'numpy'</span></code>.</p>
+<p>All nonlinear models use <code class="code docutils literal notranslate"><span class="pre">torch</span></code> for computation.
+Method <code class="code docutils literal notranslate"><span class="pre">'topo'</span></code> is only compatible with the <code class="code docutils literal notranslate"><span class="pre">'numpy'</span></code> compute_lib.</p>
+</p></li>
+<li><p><strong>device</strong> (<em>str</em><em>, </em><em>default=None</em>) – The device to use for computation. One of [<code class="code docutils literal notranslate"><span class="pre">'cpu'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'cuda'</span></code>]. If None, it is set to <code class="code docutils literal notranslate"><span class="pre">'cpu'</span></code>.</p></li>
+<li><p><strong>general_options</strong> (<em>dict</em><em>, </em><em>default=None</em>) – <p>General options for the method. If None, it is set to default values. Please refer to <a class="reference internal" href="options.html#options"><span class="std std-ref">Options</span></a> for more details.</p>
+<p>Allowed options are:</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'lambda1'</span></code>: float, default=0.1</dt><dd><p>Weight for l1 penalty.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'lambda2'</span></code>: float, default=0.01</dt><dd><p>Weight for l2 penalty.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'gamma'</span></code>: float, default=1.0</dt><dd><p>Hyperparameter for (quasi-)MCP.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'w_threshold'</span></code>: float, default=0.3</dt><dd><p>Threshold for the output adjacency matrix.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'initialization'</span></code>: None or np.ndarray or torch.Tensor or nn.Module, default=None</dt><dd><p>Initialization for the parameters of the model.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'tuning_method'</span></code>: str or None, default=None</dt><dd><p>Method for tuning hyperparameters. One of <code class="code docutils literal notranslate"><span class="pre">'cv'</span></code>, <code class="code docutils literal notranslate"><span class="pre">'decay'</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'K'</span></code>: int, default=5</dt><dd><p>Number of folds for cross-validation.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'reg_paras'</span></code>: list, default=None</dt><dd><p>List of regularization parameters.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="code docutils literal notranslate"><span class="pre">'user_params'</span></code>: Any, default=None</dt><dd><p>User-defined parameters.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>method_options</strong> (<em>dict</em><em>, </em><em>default=None</em>) – <p>Method-specific options for the method. If None, it is set to default values.</p>
+<p>More options are available for each method. Please refer to <a class="reference internal" href="options.html#options"><span class="std std-ref">Options</span></a> for more details,
+or check <code class="code docutils literal notranslate"><span class="pre">allowed_method_options</span></code> in <code class="code docutils literal notranslate"><span class="pre">dagrad/utils/configure.py</span></code>.</p>
+</p></li>
+<li><p><strong>optimizer_options</strong> (<em>dict</em><em>, </em><em>default=None</em>) – <p>Optimizer-specific options for the optimizer. If None, it is set to default values.</p>
+<p>More options are available for each optimizer. Please refer to <a class="reference internal" href="options.html#options"><span class="std std-ref">Options</span></a> for more details,
+or check <code class="code docutils literal notranslate"><span class="pre">allowed_optimizer_options</span></code> in <code class="code docutils literal notranslate"><span class="pre">dagrad/utils/configure.py</span></code>.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>W_est</strong> – The estimated adjacency matrix of the DAG.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like of shape <span class="math notranslate nohighlight">\((p, p)\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="code docutils literal notranslate"><span class="pre">method_options</span></code> and <code class="code docutils literal notranslate"><span class="pre">optimizer_options</span></code> are dictionaries that can be used to specify the options for the method and the optimizer.
+If the method or the optimizer is not specified, the default value are used. If you want to learn how to customize the method or the optimizer, please refer to <a class="reference internal" href="options.html"><span class="doc">Options</span></a>.</p>
+</div>
+<p>The following functions are wrappers for the NOTEARS <a class="brackets" href="#id6" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="brackets" href="#id7" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="brackets" href="#id10" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>, DAGMA <a class="brackets" href="#id8" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, and TOPO <a class="brackets" href="#id9" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>. When the following function are used, they will call the <strong>original</strong> implementation of the methods except for the <strong>TOPO</strong> method. The <strong>TOPO</strong> method implemented in the <strong>dagrad</strong> library works better than original implementation, so it is recommended to use the <strong>TOPO</strong> method from the <strong>dagrad</strong> library.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.core.notears">
+<span class="sig-prename descclassname"><span class="pre">dagrad.core.</span></span><span class="sig-name descname"><span class="pre">notears</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/core.html#notears"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.core.notears" title="Permalink to this definition"></a></dt>
+<dd><p>This is a wrapper function for dagrad with method notears, it calls the original notears implementation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (numpy.array of shape <span class="math notranslate nohighlight">\((n, p)\)</span>) – The data matrix.</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>, </em><em>default='linear'</em>) – The model of data generating process .</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>W_est</strong> – The estimated adjacency matrix of the DAG.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of shape <span class="math notranslate nohighlight">\((p, p)\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.core.dagma">
+<span class="sig-prename descclassname"><span class="pre">dagrad.core.</span></span><span class="sig-name descname"><span class="pre">dagma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/core.html#dagma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.core.dagma" title="Permalink to this definition"></a></dt>
+<dd><p>This is a wrapper function for dagrad with method dagma, it calls the original dagma implementation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (numpy.array of shape <span class="math notranslate nohighlight">\((n, p)\)</span>) – The data matrix.</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>, </em><em>default='linear'</em>) – The model of data generating process .</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>W_est</strong> – The estimated adjacency matrix of the DAG.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of shape <span class="math notranslate nohighlight">\((p, p)\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.core.topo">
+<span class="sig-prename descclassname"><span class="pre">dagrad.core.</span></span><span class="sig-name descname"><span class="pre">topo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/core.html#topo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.core.topo" title="Permalink to this definition"></a></dt>
+<dd><p>This is a wrapper function for dagrad with method topo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (numpy.array of shape <span class="math notranslate nohighlight">\((n, p)\)</span>) – The data matrix.</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>, </em><em>default='linear'</em>) – The model of data generating process .</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>W_est</strong> – The estimated adjacency matrix of the DAG.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of shape <span class="math notranslate nohighlight">\((p, p)\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id6" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Zheng, Xun, Bryon Aragam, Pradeep K. Ravikumar, and Eric P. Xing. “Dags with no tears: Continuous optimization for structure learning.” Advances in neural information processing systems 31 (2018).</p>
+</aside>
+<aside class="footnote brackets" id="id7" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Zheng, Xun, Chen Dan, Bryon Aragam, Pradeep Ravikumar, and Eric Xing. “Learning sparse nonparametric dags.” In International Conference on Artificial Intelligence and Statistics, pp. 3414-3425. Pmlr, 2020.</p>
+</aside>
+<aside class="footnote brackets" id="id8" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>Bello, Kevin, Bryon Aragam, and Pradeep Ravikumar. “Dagma: Learning dags via m-matrices and a log-determinant acyclicity characterization.” Advances in Neural Information Processing Systems 35 (2022): 8226-8239.</p>
+</aside>
+<aside class="footnote brackets" id="id9" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">4</a><span class="fn-bracket">]</span></span>
+<p>Deng, Chang, Kevin Bello, Bryon Aragam, and Pradeep Kumar Ravikumar. “Optimizing NOTEARS objectives via topological swaps.” In International Conference on Machine Learning, pp. 7563-7595. PMLR, 2023.</p>
+</aside>
+<aside class="footnote brackets" id="id10" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">5</a><span class="fn-bracket">]</span></span>
+<p>Deng, Chang, Kevin Bello, Pradeep Kumar Ravikumar, and Bryon Aragam. “Likelihood-based differentiable structure learning” Advances in Neural Information Processing Systems 37 (2024)</p>
+</aside>
+</aside>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_reference.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="working_function.html" class="btn btn-neutral float-right" title="Working function" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Chang Deng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

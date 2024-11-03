@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Working function &mdash; Dagrad v1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Options" href="options.html" />
+    <link rel="prev" title="Main API" href="main_function.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Dagrad
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#install-via-pypi">Install via PyPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#install-from-source">Install from source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#running-examples">Running examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-notears">Running the NOTEARS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-dagma">Running the DAGMA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#running-the-topo">Running the TOPO</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main_function.html">Main API</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Working function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#notears">Notears</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dagma">Dagma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#topo">Topo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="options.html#general-options">General Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#method-options">Method Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html#optimizer-options">Optimizer Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#loss-function-loss-fn">Loss function(<code class="docutils literal notranslate"><span class="pre">'loss_fn'</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#linear-model">Linear model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#nonlinear-model">Nonlinear model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#regularization-reg">Regularization(<code class="docutils literal notranslate"><span class="pre">'reg'</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#acyclicity-function-h">Acyclicity function (<code class="docutils literal notranslate"><span class="pre">'h'</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dagrad</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api_reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Working function</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/working_function.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="working-function">
+<span id="id1"></span><h1>Working function<a class="headerlink" href="#working-function" title="Permalink to this heading"></a></h1>
+<p>This section contains the working functions of the <strong>dagrad</strong> library. These functions are used to learn the structure of the DAG model.
+It includes the implementation of the NOTEARS, DAGMA, and TOPO methods for linear and nonlinear model using numpy and torch. It includes the details of the options that can be specified for the methods.</p>
+<section id="notears">
+<h2>Notears<a class="headerlink" href="#notears" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.notears.notears_linear_numpy">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.notears.</span></span><span class="sig-name descname"><span class="pre">notears_linear_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn='l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn='h_exp_sq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg='l1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer='lbfgs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_iter=100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol=1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_max=1e+16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/notears.html#notears_linear_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.notears.notears_linear_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>Learn DAG structure using NOTEARS algorithm with <strong>linear</strong> structural equation and <strong>numpy</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function, by default <code class="docutils literal notranslate"><span class="pre">'l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – h function, by default <code class="docutils literal notranslate"><span class="pre">'h_exp_sq'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularization function, by default <code class="docutils literal notranslate"><span class="pre">'l1'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer, by default <code class="docutils literal notranslate"><span class="pre">'lbfgs'</span></code>.</p></li>
+<li><p><strong>main_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of main iterations, by default <code class="docutils literal notranslate"><span class="pre">100</span></code>.</p></li>
+<li><p><strong>h_tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for h, by default <code class="docutils literal notranslate"><span class="pre">1e-8</span></code>.</p></li>
+<li><p><strong>rho</strong> (<em>float</em><em>, </em><em>optional</em>) – hyperparameter for lbfgs, by default <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>rho_max</strong> (<em>float</em><em>, </em><em>optional</em>) – maximum value for rho, by default <code class="docutils literal notranslate"><span class="pre">1e+16</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>np.float64</em><em>, </em><em>optional</em>) – data type, by default <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – print out the information, by default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional general/optimizer options, by default {}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated DAG matrix with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.notears.notears_linear_torch">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.notears.</span></span><span class="sig-name descname"><span class="pre">notears_linear_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'h_exp_sq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lbfgs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/notears.html#notears_linear_torch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.notears.notears_linear_torch" title="Permalink to this definition"></a></dt>
+<dd><p>Learn DAG structure using NOTEARS algorithm with <strong>linear</strong> structural equation and <strong>torch</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function, by default <code class="docutils literal notranslate"><span class="pre">'l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – h function, by default <code class="docutils literal notranslate"><span class="pre">'h_exp_sq'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularization function, by default <code class="docutils literal notranslate"><span class="pre">'l1'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer, by default <code class="docutils literal notranslate"><span class="pre">'lbfgs'</span></code>.</p></li>
+<li><p><strong>main_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of main iterations, by default <code class="docutils literal notranslate"><span class="pre">100</span></code>.</p></li>
+<li><p><strong>h_tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for h, by default <code class="docutils literal notranslate"><span class="pre">1e-8</span></code>.</p></li>
+<li><p><strong>rho</strong> (<em>float</em><em>, </em><em>optional</em>) – hyperparameter for lbfgs, by default <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>rho_max</strong> (<em>float</em><em>, </em><em>optional</em>) – maximum value for rho, by default <code class="docutils literal notranslate"><span class="pre">1e+16</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>torch.float64</em><em>, </em><em>optional</em>) – data type, by default <code class="docutils literal notranslate"><span class="pre">torch.float64</span></code>.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – print out the information, by default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional general/optimizer options, by default {}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated DAG matrix with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.notears.notears_nonlinear">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.notears.</span></span><span class="sig-name descname"><span class="pre">notears_nonlinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'h_exp_sq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lbfgs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sigmoid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/notears.html#notears_nonlinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.notears.notears_nonlinear" title="Permalink to this definition"></a></dt>
+<dd><p>Learn DAG structure using NOTEARS algorithm with <strong>nonlinear</strong> structural equation and <strong>torch</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function, by default <code class="docutils literal notranslate"><span class="pre">'l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – h function, by default <code class="docutils literal notranslate"><span class="pre">'h_exp_sq'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularization function, by default <code class="docutils literal notranslate"><span class="pre">'l1'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer, by default <code class="docutils literal notranslate"><span class="pre">'lbfgs'</span></code>.</p></li>
+<li><p><strong>bias</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to include bias, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>activation</strong> (<em>str</em><em>, </em><em>optional</em>) – activation function, by default <code class="docutils literal notranslate"><span class="pre">'sigmoid'</span></code>.</p></li>
+<li><p><strong>main_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of main iterations, by default <code class="docutils literal notranslate"><span class="pre">100</span></code>.</p></li>
+<li><p><strong>rho_max</strong> (<em>float</em><em>, </em><em>optional</em>) – maximum value for rho, by default <code class="docutils literal notranslate"><span class="pre">1e+16</span></code>.</p></li>
+<li><p><strong>h_tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for h, by default <code class="docutils literal notranslate"><span class="pre">1e-8</span></code>.</p></li>
+<li><p><strong>dims</strong> (<em>list</em><em>, </em><em>optional</em>) – dimensions for the neural network, by default <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>torch.float64</em><em>, </em><em>optional</em>) – data type, by default <code class="docutils literal notranslate"><span class="pre">torch.float64</span></code>.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – print out the information, by default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional general/optimizer options, by default {}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated DAG matrix with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="dagma">
+<h2>Dagma<a class="headerlink" href="#dagma" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.dagma.dagma_linear_numpy">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.dagma.</span></span><span class="sig-name descname"><span class="pre">dagma_linear_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">X:</span> <span class="pre">~numpy.ndarray,</span> <span class="pre">loss_fn='l2',</span> <span class="pre">h_fn='h_logdet_sq',</span> <span class="pre">reg='l1',</span> <span class="pre">optimizer='adam',</span> <span class="pre">T:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">5,</span> <span class="pre">mu_init:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">1.0,</span> <span class="pre">mu_factor:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1,</span> <span class="pre">s:</span> <span class="pre">~typing.Union[~typing.List[float],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">[1.0,</span> <span class="pre">0.9,</span> <span class="pre">0.8,</span> <span class="pre">0.7,</span> <span class="pre">0.6],</span> <span class="pre">warm_iter:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">30000.0,</span> <span class="pre">main_iter:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">60000.0,</span> <span class="pre">dtype:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float64'&gt;,</span> <span class="pre">exclude_edges:</span> <span class="pre">~typing.Optional[~typing.List[~typing.Tuple[int,</span> <span class="pre">int]]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">include_edges:</span> <span class="pre">~typing.Optional[~typing.List[~typing.Tuple[int,</span> <span class="pre">int]]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">verbose:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">**options</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/dagma.html#dagma_linear_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.dagma.dagma_linear_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>Learn DAG structure using DAGMA algorithm with <strong>linear</strong> structural equation and <strong>numpy</strong>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function, by default <code class="docutils literal notranslate"><span class="pre">'l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – H function, by default <code class="docutils literal notranslate"><span class="pre">'h_logdet_sq'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularization function, by default <code class="docutils literal notranslate"><span class="pre">'l1'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer, by default <code class="docutils literal notranslate"><span class="pre">'adam'</span></code>.</p></li>
+<li><p><strong>T</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations, by default <code class="docutils literal notranslate"><span class="pre">5</span></code>.</p></li>
+<li><p><strong>mu_init</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial value of <span class="math notranslate nohighlight">\(\mu\)</span>, by default <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>mu_factor</strong> (<em>float</em><em>, </em><em>optional</em>) – Factor to increase <span class="math notranslate nohighlight">\(\mu\)</span>, by default <code class="docutils literal notranslate"><span class="pre">0.1</span></code>.</p></li>
+<li><p><strong>s</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Controls the domain of M-matrices. Defaults to <code class="docutils literal notranslate"><span class="pre">[1.0,</span> <span class="pre">.9,</span> <span class="pre">.8,</span> <span class="pre">.7,</span> <span class="pre">.6]</span></code>.</p></li>
+<li><p><strong>warm_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations for <span class="math notranslate nohighlight">\(t &lt; T\)</span>. Defaults to <code class="docutils literal notranslate"><span class="pre">3e4</span></code>.</p></li>
+<li><p><strong>main_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations for <span class="math notranslate nohighlight">\(t = T\)</span>. Defaults to <code class="docutils literal notranslate"><span class="pre">6e4</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>type</em><em>, </em><em>optional</em>) – Data type, by default <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>.</p></li>
+<li><p><strong>exclude_edges</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Tuple of edges that should be excluded from the DAG solution, e.g., <code class="docutils literal notranslate"><span class="pre">((1,3),</span> <span class="pre">(2,4),</span> <span class="pre">(5,1))</span></code>. Defaults to None.</p></li>
+<li><p><strong>include_edges</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Tuple of edges that should be included from the DAG solution, e.g., <code class="docutils literal notranslate"><span class="pre">((1,3),</span> <span class="pre">(2,4),</span> <span class="pre">(5,1))</span></code>. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print information, by default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional general/optimizer options, by default {}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated adjacency matrix with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.dagma.dagma_linear_torch">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.dagma.</span></span><span class="sig-name descname"><span class="pre">dagma_linear_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'h_logdet_sq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'adam'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[1.0,</span> <span class="pre">0.9,</span> <span class="pre">0.8,</span> <span class="pre">0.7,</span> <span class="pre">0.6]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">torch.float64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/dagma.html#dagma_linear_torch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.dagma.dagma_linear_torch" title="Permalink to this definition"></a></dt>
+<dd><p>Learn DAG structure using DAGMA algorithm with <strong>linear</strong> structural equation with <strong>torch</strong>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function, by default <code class="docutils literal notranslate"><span class="pre">'l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – H function, by default <code class="docutils literal notranslate"><span class="pre">'h_logdet_sq'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularization function, by default <code class="docutils literal notranslate"><span class="pre">'l1'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer, by default <code class="docutils literal notranslate"><span class="pre">'adam'</span></code>.</p></li>
+<li><p><strong>T</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations, by default <code class="docutils literal notranslate"><span class="pre">5</span></code>.</p></li>
+<li><p><strong>mu_init</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial value of <span class="math notranslate nohighlight">\(\mu\)</span>, by default <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>mu_factor</strong> (<em>float</em><em>, </em><em>optional</em>) – Factor to increase <span class="math notranslate nohighlight">\(\mu\)</span>, by default <code class="docutils literal notranslate"><span class="pre">0.1</span></code>.</p></li>
+<li><p><strong>s</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Controls the domain of M-matrices. Defaults to <code class="docutils literal notranslate"><span class="pre">[1.0,</span> <span class="pre">.9,</span> <span class="pre">.8,</span> <span class="pre">.7,</span> <span class="pre">.6]</span></code>.</p></li>
+<li><p><strong>warm_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations for <span class="math notranslate nohighlight">\(t &lt; T\)</span>. Defaults to <code class="docutils literal notranslate"><span class="pre">3e4</span></code>.</p></li>
+<li><p><strong>main_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations for <span class="math notranslate nohighlight">\(t = T\)</span>. Defaults to <code class="docutils literal notranslate"><span class="pre">6e4</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>type</em><em>, </em><em>optional</em>) – Data type, by default <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>.</p></li>
+<li><p><strong>exclude_edges</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Tuple of edges that should be excluded from the DAG solution, e.g., <code class="docutils literal notranslate"><span class="pre">((1,3),</span> <span class="pre">(2,4),</span> <span class="pre">(5,1))</span></code>. Defaults to None.</p></li>
+<li><p><strong>include_edges</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Tuple of edges that should be included from the DAG solution, e.g., <code class="docutils literal notranslate"><span class="pre">((1,3),</span> <span class="pre">(2,4),</span> <span class="pre">(5,1))</span></code>. Defaults to None.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print information, by default``False``.</p></li>
+<li><p><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional general/optimizer options, by default {}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated adjacency matrix with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.dagma.dagma_nonlinear">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.dagma.</span></span><span class="sig-name descname"><span class="pre">dagma_nonlinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log_l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'h_logdet_sq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'adam'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sigmoid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warm_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">80000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dtype</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">torch.float64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/dagma.html#dagma_nonlinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.dagma.dagma_nonlinear" title="Permalink to this definition"></a></dt>
+<dd><p>Learn DAG structure using DAGMA algorithm with <strong>nonlinear</strong> structural equation with <strong>torch</strong>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function, by default <code class="docutils literal notranslate"><span class="pre">'log_l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – H function, by default <code class="docutils literal notranslate"><span class="pre">'h_logdet_sq'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularization function, by default <code class="docutils literal notranslate"><span class="pre">'l1'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer, by default <code class="docutils literal notranslate"><span class="pre">'adam'</span></code></p></li>
+<li><p><strong>activation</strong> (<em>str</em><em>, </em><em>optional</em>) – Activation function, by default <code class="docutils literal notranslate"><span class="pre">'sigmoid'</span></code>.</p></li>
+<li><p><strong>dims</strong> (<em>list</em><em>, </em><em>optional</em>) – Number of neurons in hidden layers of each MLP representing each structural equation. Defaults to <span class="math notranslate nohighlight">\([d, 40, 1]\)</span>.</p></li>
+<li><p><strong>T</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations, by default <code class="docutils literal notranslate"><span class="pre">4</span></code>.</p></li>
+<li><p><strong>mu_init</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial value of <span class="math notranslate nohighlight">\(\mu\)</span>, by default <code class="docutils literal notranslate"><span class="pre">0.1</span></code>.</p></li>
+<li><p><strong>mu_factor</strong> (<em>float</em><em>, </em><em>optional</em>) – Factor to increase <span class="math notranslate nohighlight">\(\mu\)</span>, by default <code class="docutils literal notranslate"><span class="pre">0.1</span></code>.</p></li>
+<li><p><strong>s</strong> (<em>float</em><em>, </em><em>optional</em>) – Controls the domain of M-matrices. Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>warm_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations for <span class="math notranslate nohighlight">\(t &lt; T\)</span>. Defaults to <code class="docutils literal notranslate"><span class="pre">5e4</span></code>.</p></li>
+<li><p><strong>main_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations for <span class="math notranslate nohighlight">\(t = T\)</span>. Defaults to <code class="docutils literal notranslate"><span class="pre">8e4</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Data type, by default <code class="docutils literal notranslate"><span class="pre">torch.double</span></code>.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print information, by default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>bias</strong> (<em>bool</em><em>, </em><em>optional</em>) – Include bias in the model, by default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional general/optimizer options, by default {}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated adjacency matrix with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="topo">
+<h2>Topo<a class="headerlink" href="#topo" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.topo.topo_linear">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.topo.</span></span><span class="sig-name descname"><span class="pre">topo_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn='l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn='h_logdet_topo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg='none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer='sklearn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_large_search=-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_small=-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_large=-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/topo.html#topo_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.topo.topo_linear" title="Permalink to this definition"></a></dt>
+<dd><p>LearnLearn DAG structure using TOPO algorithm with <strong>linear</strong> structural equation and <strong>numpy</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>topo</strong> (<em>list</em><em>, </em><em>optional</em>) – Initial topological order. e.g. <code class="docutils literal notranslate"><span class="pre">[0,1,...,p-1]</span></code> If not provided, a random order is used.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function. Default is <code class="docutils literal notranslate"><span class="pre">'l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – H function. Default is <code class="docutils literal notranslate"><span class="pre">'h_logdet_topo'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularizer. Default is <code class="docutils literal notranslate"><span class="pre">'none'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer. Default is <code class="docutils literal notranslate"><span class="pre">'sklearn'</span></code>.</p></li>
+<li><p><strong>no_large_search</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of times to search in large space. Default is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, it will be automatically set up.</p></li>
+<li><p><strong>size_small</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of small search space. Default is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, it will be automatically set up.</p></li>
+<li><p><strong>size_large</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of large search space. Default is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, it will be automatically set up.</p></li>
+<li><p><strong>dtype</strong> (<em>np.dtype</em><em>, </em><em>optional</em>) – Data type. Default is <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Verbose mode. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated adjacency with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dagrad.method.topo.topo_nonlinear">
+<span class="sig-prename descclassname"><span class="pre">dagrad.method.topo.</span></span><span class="sig-name descname"><span class="pre">topo_nonlinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'h_logdet_topo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lbfgs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sigmoid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_large_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_large</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dagrad/method/topo.html#topo_nonlinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dagrad.method.topo.topo_nonlinear" title="Permalink to this definition"></a></dt>
+<dd><p>Learn DAG structure using TOPO algorithm with <strong>nonlinear</strong> structural equation and <strong>torch</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>np.ndarray</em>) – Data matrix with shape <span class="math notranslate nohighlight">\((n,p)\)</span>.</p></li>
+<li><p><strong>topo</strong> (<em>list</em><em>, </em><em>optional</em>) – Initial topological order. e.g. <code class="docutils literal notranslate"><span class="pre">[0,1,...,p-1]</span></code> If not provided, a random order is used.</p></li>
+<li><p><strong>loss_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – Loss function. Default is <code class="docutils literal notranslate"><span class="pre">'l2'</span></code>.</p></li>
+<li><p><strong>h_fn</strong> (<em>str</em><em>, </em><em>optional</em>) – H function. Default is <code class="docutils literal notranslate"><span class="pre">'h_logdet_topo'</span></code>.</p></li>
+<li><p><strong>reg</strong> (<em>str</em><em>, </em><em>optional</em>) – Regularizer. Default is <code class="docutils literal notranslate"><span class="pre">'none'</span></code>.</p></li>
+<li><p><strong>optimizer</strong> (<em>str</em><em>, </em><em>optional</em>) – Optimizer. Default is <code class="docutils literal notranslate"><span class="pre">'lbfgs'</span></code>.</p></li>
+<li><p><strong>dims</strong> (<em>list</em><em>, </em><em>optional</em>) – Dimension of neural network. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>bias</strong> (<em>bool</em><em>, </em><em>optional</em>) – Bias in neural network. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>activation</strong> (<em>str</em><em>, </em><em>optional</em>) – Activation function in neural network. Default is <code class="docutils literal notranslate"><span class="pre">'sigmoid'</span></code>.</p></li>
+<li><p><strong>no_large_search</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of times to search in large space. Default is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, it will be automatically set up.</p></li>
+<li><p><strong>size_small</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of small search space. Default is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, it will be automatically set up.</p></li>
+<li><p><strong>size_large</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of large search space. Default is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, it will be automatically set up.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Verbose mode. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – Data type. Default is <code class="docutils literal notranslate"><span class="pre">torch.float</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated adjacency with shape <span class="math notranslate nohighlight">\((p,p)\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="main_function.html" class="btn btn-neutral float-left" title="Main API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="options.html" class="btn btn-neutral float-right" title="Options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Chang Deng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

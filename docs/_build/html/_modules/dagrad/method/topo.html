@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dagrad.method.topo &mdash; Dagrad v1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Dagrad
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../getting_started.html#install-via-pypi">Install via PyPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../getting_started.html#install-from-source">Install from source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started.html#running-examples">Running examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../main_function.html">Main API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../working_function.html">Working function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../working_function.html#notears">Notears</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../working_function.html#dagma">Dagma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../working_function.html#topo">Topo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../options.html">Options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#general-options">General Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#method-options">Method Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../options.html#optimizer-options">Optimizer Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../customization.html#loss-function-loss-fn">Loss function(<code class="docutils literal notranslate"><span class="pre">'loss_fn'</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../customization.html#linear-model">Linear model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../customization.html#nonlinear-model">Nonlinear model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../customization.html#regularization-reg">Regularization(<code class="docutils literal notranslate"><span class="pre">'reg'</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../customization.html#acyclicity-function-h">Acyclicity function (<code class="docutils literal notranslate"><span class="pre">'h'</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Dagrad</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dagrad.method.topo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dagrad.method.topo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">sopt</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">,</span> <span class="n">Lasso</span><span class="p">,</span> <span class="n">Ridge</span>
+<span class="kn">from</span> <span class="nn">..utils.topo_utils</span> <span class="kn">import</span> <span class="n">threshold_W</span><span class="p">,</span> <span class="n">create_Z</span><span class="p">,</span> <span class="n">create_new_topo</span><span class="p">,</span> <span class="n">create_new_topo_greedy</span><span class="p">,</span><span class="n">find_idx_set_updated</span><span class="p">,</span> <span class="n">set_sizes_linear</span><span class="p">,</span><span class="n">set_sizes_nonlinear</span>
+<span class="kn">from</span> <span class="nn">..utils.configure</span> <span class="kn">import</span> <span class="n">h_functions</span><span class="p">,</span> <span class="n">loss_functions</span><span class="p">,</span><span class="n">reg_functions</span><span class="p">,</span> <span class="n">nl_loss_functions</span><span class="p">,</span><span class="n">optimizer_functions</span><span class="p">,</span><span class="n">allowed_method_options</span>
+<span class="kn">from</span> <span class="nn">..utils.NNstructure</span> <span class="kn">import</span> <span class="n">TopoMLP</span>
+<span class="kn">from</span> <span class="nn">..utils.general_utils</span> <span class="kn">import</span> <span class="n">set_functions</span><span class="p">,</span> <span class="n">set_options</span><span class="p">,</span> <span class="n">get_variables_from_general_options</span><span class="p">,</span> <span class="n">get_variables_from_optimizer_settings</span><span class="p">,</span><span class="n">demean</span><span class="p">,</span><span class="n">process_data</span><span class="p">,</span><span class="n">print_options</span>
+<span class="kn">from</span> <span class="nn">..optimizer.optimizer</span> <span class="kn">import</span> <span class="n">adam</span>
+<span class="kn">from</span> <span class="nn">..utils.utils</span> <span class="kn">import</span> <span class="n">is_dag</span><span class="p">,</span> <span class="n">threshold_till_dag</span><span class="p">,</span> <span class="n">find_topo</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;topo_linear&#39;</span><span class="p">,</span> <span class="s1">&#39;topo_nonlinear&#39;</span><span class="p">]</span> 
+<div class="viewcode-block" id="topo_linear"><a class="viewcode-back" href="../../../working_function.html#dagrad.method.topo.topo_linear">[docs]</a><span class="k">def</span> <span class="nf">topo_linear</span><span class="p">(</span><span class="n">X</span><span class="p">,</span>
+                <span class="n">topo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">loss_fn</span> <span class="o">=</span> <span class="s1">&#39;l2&#39;</span><span class="p">,</span>
+                <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_logdet_topo&#39;</span><span class="p">,</span> 
+                <span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>  
+                <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;sklearn&#39;</span><span class="p">,</span>
+                <span class="n">no_large_search</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> 
+                <span class="n">size_small</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> 
+                <span class="n">size_large</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> 
+                <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+                <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; LearnLearn DAG structure using TOPO algorithm with **linear** structural equation and **numpy**</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : np.ndarray</span>
+<span class="sd">        Data matrix with shape :math:`(n,p)`.</span>
+<span class="sd">    topo : list, optional</span>
+<span class="sd">        Initial topological order. e.g. ``[0,1,...,p-1]`` If not provided, a random order is used.</span>
+<span class="sd">    loss_fn : str, optional</span>
+<span class="sd">        Loss function. Default is ``&#39;l2&#39;``.</span>
+<span class="sd">    h_fn : str, optional</span>
+<span class="sd">        H function. Default is ``&#39;h_logdet_topo&#39;``.</span>
+<span class="sd">    reg : str, optional</span>
+<span class="sd">        Regularizer. Default is ``&#39;none&#39;``.</span>
+<span class="sd">    optimizer : str, optional</span>
+<span class="sd">        Optimizer. Default is ``&#39;sklearn&#39;``.</span>
+<span class="sd">    no_large_search : int, optional</span>
+<span class="sd">        Number of times to search in large space. Default is ``-1``, it will be automatically set up.</span>
+<span class="sd">    size_small : int, optional</span>
+<span class="sd">        Size of small search space. Default is ``-1``, it will be automatically set up.</span>
+<span class="sd">    size_large : int, optional</span>
+<span class="sd">        Size of large search space. Default is ``-1``, it will be automatically set up.</span>
+<span class="sd">    dtype : np.dtype, optional</span>
+<span class="sd">        Data type. Default is ``np.float64``.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Verbose mode. Default is ``False``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Estimated adjacency with shape :math:`(p,p)`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">demean</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="k">if</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span> <span class="k">else</span> <span class="n">X</span>
+    <span class="n">vprint</span> <span class="o">=</span> <span class="nb">print</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="c1"># set size_small and size_large and no_large_search</span>
+    <span class="n">size_small</span><span class="p">,</span> <span class="n">size_large</span><span class="p">,</span> <span class="n">no_large_search</span> <span class="o">=</span> <span class="n">set_sizes_linear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">size_small</span><span class="p">,</span> <span class="n">size_large</span><span class="p">,</span> <span class="n">no_large_search</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter is automatically set up.</span><span class="se">\n</span><span class="s2"> size_small: </span><span class="si">{</span><span class="n">size_small</span><span class="si">}</span><span class="s2">, size_large: </span><span class="si">{</span><span class="n">size_large</span><span class="si">}</span><span class="s2">, no_large_search: </span><span class="si">{</span><span class="n">no_large_search</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+    <span class="n">general_options</span><span class="p">,</span> <span class="n">optimizer_options_config</span><span class="p">,</span> <span class="n">optimizer_options_settings</span> <span class="o">=</span> <span class="n">set_options</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> 
+                                                                                        <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;topo&#39;</span><span class="p">,</span> 
+                                                                                        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">)</span>
+    
+    <span class="n">method_options</span> <span class="o">=</span> <span class="n">allowed_method_options</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">][</span><span class="s1">&#39;topo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">method_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">method_options</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="n">optimizer_options</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">optimizer_options_config</span><span class="p">,</span> <span class="o">**</span><span class="n">optimizer_options_settings</span><span class="p">}</span>
+    <span class="n">lambda1</span><span class="p">,</span> <span class="n">lambda2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">w_threshold</span><span class="p">,</span> <span class="n">initialization</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_variables_from_general_options</span><span class="p">(</span><span class="n">general_options</span><span class="p">)</span>
+    <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span>
+    <span class="n">print_options</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span><span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">method_options</span><span class="p">,</span>
+        <span class="n">general_options</span><span class="p">,</span><span class="n">optimizer_options_config</span><span class="p">,</span><span class="n">optimizer_options_settings</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+    <span class="k">if</span> <span class="n">topo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">initialization</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_dag</span><span class="p">(</span><span class="n">initialization</span><span class="p">):</span>
+                <span class="n">initialization</span> <span class="o">=</span> <span class="n">threshold_till_dag</span><span class="p">(</span><span class="n">initialization</span><span class="p">)</span>
+            <span class="n">topo</span> <span class="o">=</span> <span class="n">find_topo</span><span class="p">(</span><span class="n">initialization</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">topo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)))</span>
+
+    <span class="n">_loss</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span><span class="n">loss_functions</span><span class="p">)</span>
+    <span class="n">_h</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">h_fn</span><span class="p">,</span> <span class="n">h_functions</span><span class="p">)</span>
+    <span class="n">_reg</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span><span class="n">reg_functions</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">W</span><span class="p">):</span>
+        <span class="n">val1</span><span class="p">,</span> <span class="n">grad1</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+        <span class="n">val2</span><span class="p">,</span> <span class="n">grad2</span> <span class="o">=</span> <span class="n">_reg</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+        <span class="k">return</span>  <span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">,</span> <span class="n">grad1</span> <span class="o">+</span> <span class="n">grad2</span> 
+
+    <span class="c1"># set optimizer for regression</span>
+    <span class="c1"># basically, this part is set _regress function</span>
+    <span class="k">if</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;sklearn&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+            <span class="k">if</span>  <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                <span class="k">def</span> <span class="nf">_regress</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+                    <span class="n">regression</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">regression</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">regression</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l1&#39;</span><span class="p">:</span>
+                <span class="k">def</span> <span class="nf">_regress</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+                    <span class="n">regression</span> <span class="o">=</span> <span class="n">Lasso</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">lambda1</span><span class="p">)</span>
+                    <span class="n">regression</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">regression</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+                <span class="k">def</span> <span class="nf">_regress</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+                    <span class="n">regression</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">lambda2</span><span class="p">)</span>
+                    <span class="n">regression</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">regression</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;mcp&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sklearn does not support MCP regularizer. Please use other optimizers.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown regularizer: </span><span class="si">{</span><span class="n">reg</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">loss_fn</span> <span class="o">==</span> <span class="s1">&#39;logistic&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                <span class="k">def</span> <span class="nf">_regress</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+                    <span class="n">regression</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">regression</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">regression</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l1&#39;</span><span class="p">:</span>
+                <span class="k">def</span> <span class="nf">_regress</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+                    <span class="n">regression</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">penalty</span> <span class="o">=</span> <span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">lambda1</span><span class="p">)</span>
+                    <span class="n">regression</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">regression</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+                <span class="k">def</span> <span class="nf">_regress</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+                    <span class="n">regression</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">penalty</span> <span class="o">=</span> <span class="s1">&#39;l2&#39;</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">lambda2</span><span class="p">)</span>
+                    <span class="n">regression</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">regression</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="k">elif</span> <span class="n">reg</span> <span class="o">==</span> <span class="s1">&#39;mcp&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sklearn does not support MCP regularizer. Please use other optimizers.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown regularizer: </span><span class="si">{</span><span class="n">reg</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown combination of loss_fn and reg: </span><span class="si">{</span><span class="n">loss_fn</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">reg</span><span class="si">}</span><span class="s1">. This combination is not supported. You can use other optimizers.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">_regress</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">d1</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">X_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">-</span> <span class="n">d1</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">X_bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X_0</span><span class="p">),</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">))</span>
+                <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">:(</span><span class="n">d1</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+                <span class="n">loss</span><span class="p">,</span> <span class="n">G_loss</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W</span><span class="p">,</span><span class="n">X</span> <span class="o">=</span> <span class="n">X_bar</span><span class="p">,</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+                <span class="n">reg</span><span class="p">,</span> <span class="n">G_reg</span> <span class="o">=</span> <span class="n">_reg</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">reg</span>
+                <span class="n">g_obj</span> <span class="o">=</span> <span class="n">G_loss</span> <span class="o">+</span> <span class="n">G_reg</span>
+                <span class="n">g_obj</span> <span class="o">=</span> <span class="n">g_obj</span><span class="p">[</span><span class="mi">1</span><span class="p">:(</span><span class="n">d1</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">obj</span><span class="p">,</span> <span class="n">g_obj</span>
+            <span class="n">w_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;lbfgs&#39;</span><span class="p">:</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="n">sopt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">_func</span><span class="p">,</span> <span class="n">w_est</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">optimizer_options</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;adam&#39;</span><span class="p">:</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="n">sopt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">_func</span><span class="p">,</span> <span class="n">w_est</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">adam</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">options</span> <span class="o">=</span> <span class="n">optimizer_options</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">sol</span><span class="o">.</span><span class="n">x</span>
+
+    
+    <span class="k">def</span> <span class="nf">_init_W_slice</span><span class="p">(</span><span class="n">idx_y</span><span class="p">,</span> <span class="n">idx_x</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">idx_y</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">idx_x</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">_regress</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">w</span>
+    
+    <span class="k">def</span> <span class="nf">_init_W</span><span class="p">(</span><span class="n">Z</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">~</span><span class="n">Z</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">W</span><span class="p">[</span><span class="o">~</span><span class="n">Z</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">_regress</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">[:,</span> <span class="o">~</span><span class="n">Z</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]],</span> <span class="n">y</span><span class="o">=</span><span class="n">X</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">W</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">W</span>
+    
+    <span class="k">def</span> <span class="nf">_update_topo_linear</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">topo</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="n">topo0</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">W0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">i_pos</span><span class="p">,</span> <span class="n">j_pos</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">topo</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+        <span class="n">W0</span><span class="p">[:,</span> <span class="n">topo</span><span class="p">[:</span><span class="n">j_pos</span><span class="p">]]</span> <span class="o">=</span> <span class="n">W</span><span class="p">[:,</span> <span class="n">topo</span><span class="p">[:</span><span class="n">j_pos</span><span class="p">]]</span>
+        <span class="n">W0</span><span class="p">[:,</span> <span class="n">topo</span><span class="p">[(</span><span class="n">i_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):]]</span> <span class="o">=</span> <span class="n">W</span><span class="p">[:,</span> <span class="n">topo</span><span class="p">[(</span><span class="n">i_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):]]</span>
+        <span class="n">topo0</span> <span class="o">=</span> <span class="n">create_new_topo</span><span class="p">(</span><span class="n">topo</span><span class="o">=</span><span class="n">topo0</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="n">opt</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j_pos</span><span class="p">,</span> <span class="n">i_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">topo0</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">W0</span><span class="p">[</span><span class="n">topo0</span><span class="p">[:</span><span class="n">k</span><span class="p">],</span> <span class="n">topo0</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_init_W_slice</span><span class="p">(</span><span class="n">idx_y</span><span class="o">=</span><span class="n">topo0</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">idx_x</span><span class="o">=</span><span class="n">topo0</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">W0</span><span class="p">[:,</span> <span class="n">topo0</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">W0</span><span class="p">,</span> <span class="n">topo0</span>
+    
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="n">topo</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">iter_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">large_space_used</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">create_Z</span><span class="p">(</span><span class="n">topo</span><span class="p">)</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">_init_W</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="n">loss</span><span class="p">,</span> <span class="n">G_loss</span> <span class="o">=</span> <span class="n">_score</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="n">W</span><span class="p">)</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W</span><span class="o">=</span><span class="n">W</span><span class="p">,</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+        <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial loss: </span><span class="si">{</span><span class="n">loss</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">idx_set_small</span><span class="p">,</span> <span class="n">idx_set_large</span> <span class="o">=</span> <span class="n">find_idx_set_updated</span><span class="p">(</span><span class="n">G_h</span><span class="o">=</span><span class="n">G_h</span><span class="p">,</span> <span class="n">G_loss</span><span class="o">=</span><span class="n">G_loss</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">size_small</span><span class="o">=</span><span class="n">size_small</span><span class="p">,</span>
+                                                    <span class="n">size_large</span><span class="o">=</span><span class="n">size_large</span><span class="p">)</span>
+        <span class="n">idx_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">idx_set_small</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">bool</span><span class="p">(</span><span class="n">idx_set</span><span class="p">):</span>
+            <span class="n">idx_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_set</span><span class="p">)</span>
+            <span class="n">loss_collections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">idx_len</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx_len</span><span class="p">):</span>
+                <span class="n">W_c</span><span class="p">,</span> <span class="n">topo_c</span> <span class="o">=</span> <span class="n">_update_topo_linear</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">W</span><span class="p">,</span><span class="n">topo</span> <span class="o">=</span> <span class="n">topo</span><span class="p">,</span>
+                                                  <span class="n">idx</span> <span class="o">=</span> <span class="n">idx_set</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">loss_c</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">_score</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">W_c</span><span class="p">)</span>
+                <span class="n">loss_collections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_c</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">loss</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">loss_collections</span><span class="p">)):</span>
+                <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;current loss : </span><span class="si">{</span><span class="n">loss</span><span class="si">}</span><span class="s2"> and find better loss in small space&quot;</span><span class="p">)</span>
+                <span class="n">topo</span> <span class="o">=</span> <span class="n">create_new_topo_greedy</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span><span class="n">loss_collections</span><span class="p">,</span><span class="n">idx_set</span><span class="p">,</span><span class="n">loss</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">large_space_used</span> <span class="o">&lt;</span> <span class="n">no_large_search</span><span class="p">:</span>
+                    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;current loss : </span><span class="si">{</span><span class="n">loss</span><span class="si">}</span><span class="s2"> and cannot find better loss in small space&quot;</span><span class="p">)</span>
+                    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using larger search space for </span><span class="si">{</span><span class="n">large_space_used</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> times&quot;</span><span class="p">)</span>
+                    <span class="n">idx_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">idx_set_large</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">idx_set_small</span><span class="p">))</span>
+                    <span class="n">idx_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_set</span><span class="p">)</span>
+                    <span class="n">loss_collections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">idx_len</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx_len</span><span class="p">):</span>
+                        <span class="n">W_c</span><span class="p">,</span> <span class="n">topo_c</span> <span class="o">=</span> <span class="n">_update_topo_linear</span><span class="p">(</span><span class="n">W</span><span class="o">=</span><span class="n">W</span><span class="p">,</span> <span class="n">topo</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx_set</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="n">loss_c</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_score</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="n">W_c</span><span class="p">)</span>
+                        <span class="n">loss_collections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_c</span>
+
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">loss</span> <span class="o">&gt;</span> <span class="n">loss_collections</span><span class="p">):</span>
+                        <span class="n">large_space_used</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">topo</span> <span class="o">=</span> <span class="n">create_new_topo_greedy</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span> <span class="n">loss_collections</span><span class="p">,</span> <span class="n">idx_set</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span>
+                        <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;current loss : </span><span class="si">{</span><span class="n">loss</span><span class="si">}</span><span class="s2"> and find better loss in large space&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vprint</span><span class="p">(</span><span class="s2">&quot;Using larger search space, but we cannot find better loss&quot;</span><span class="p">)</span>
+                        <span class="k">break</span>
+
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vprint</span><span class="p">(</span><span class="s2">&quot;We reach the number of chances to search large space, it is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">no_large_search</span><span class="p">))</span>
+                    <span class="k">break</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">create_Z</span><span class="p">(</span><span class="n">topo</span><span class="p">)</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">_init_W</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+            <span class="n">loss</span><span class="p">,</span> <span class="n">G_loss</span> <span class="o">=</span> <span class="n">_score</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="n">W</span><span class="p">)</span>
+            <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W</span><span class="o">=</span><span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+            <span class="n">idx_set_small</span><span class="p">,</span> <span class="n">idx_set_large</span> <span class="o">=</span> <span class="n">find_idx_set_updated</span><span class="p">(</span><span class="n">G_h</span><span class="o">=</span><span class="n">G_h</span><span class="p">,</span> <span class="n">G_loss</span><span class="o">=</span><span class="n">G_loss</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">size_small</span><span class="o">=</span><span class="n">size_small</span><span class="p">,</span>
+                                                        <span class="n">size_large</span><span class="o">=</span><span class="n">size_large</span><span class="p">)</span>
+            <span class="n">idx_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">idx_set_small</span><span class="p">)</span>
+
+            <span class="n">iter_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">W</span><span class="p">,</span> <span class="n">topo</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">loss</span>
+    <span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">W</span><span class="p">,</span> <span class="n">topo</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">_fit</span><span class="p">(</span><span class="n">topo</span> <span class="o">=</span> <span class="n">topo</span><span class="p">)</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">threshold_W</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">w_threshold</span><span class="p">)</span>
+    <span class="n">time_end</span> <span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total Time: </span><span class="si">{</span><span class="n">time_end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">time_start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W</span></div>
+
+
+<div class="viewcode-block" id="topo_nonlinear"><a class="viewcode-back" href="../../../working_function.html#dagrad.method.topo.topo_nonlinear">[docs]</a><span class="k">def</span> <span class="nf">topo_nonlinear</span><span class="p">(</span><span class="n">X</span><span class="p">,</span>
+                   <span class="n">topo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">loss_fn</span> <span class="o">=</span> <span class="s1">&#39;l2&#39;</span><span class="p">,</span>
+                   <span class="n">h_fn</span> <span class="o">=</span> <span class="s1">&#39;h_logdet_topo&#39;</span><span class="p">,</span>
+                   <span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                   <span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;lbfgs&#39;</span><span class="p">,</span>
+                    <span class="n">dims</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">bias</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="n">activation</span> <span class="o">=</span> <span class="s1">&#39;sigmoid&#39;</span><span class="p">,</span>
+                   <span class="n">no_large_search</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                   <span class="n">size_small</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                   <span class="n">size_large</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                   <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                   <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+                   <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Learn DAG structure using TOPO algorithm with **nonlinear** structural equation and **torch**</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : np.ndarray</span>
+<span class="sd">        Data matrix with shape :math:`(n,p)`.</span>
+<span class="sd">    topo : list, optional</span>
+<span class="sd">        Initial topological order. e.g. ``[0,1,...,p-1]`` If not provided, a random order is used.</span>
+<span class="sd">    loss_fn : str, optional</span>
+<span class="sd">        Loss function. Default is ``&#39;l2&#39;``.</span>
+<span class="sd">    h_fn : str, optional</span>
+<span class="sd">        H function. Default is ``&#39;h_logdet_topo&#39;``.</span>
+<span class="sd">    reg : str, optional</span>
+<span class="sd">        Regularizer. Default is ``&#39;none&#39;``.</span>
+<span class="sd">    optimizer : str, optional</span>
+<span class="sd">        Optimizer. Default is ``&#39;lbfgs&#39;``.</span>
+<span class="sd">    dims : list, optional</span>
+<span class="sd">        Dimension of neural network. Default is ``None``.</span>
+<span class="sd">    bias : bool, optional</span>
+<span class="sd">        Bias in neural network. Default is ``True``.</span>
+<span class="sd">    activation : str, optional</span>
+<span class="sd">        Activation function in neural network. Default is ``&#39;sigmoid&#39;``.</span>
+<span class="sd">    no_large_search : int, optional</span>
+<span class="sd">        Number of times to search in large space. Default is ``-1``, it will be automatically set up.</span>
+<span class="sd">    size_small : int, optional</span>
+<span class="sd">        Size of small search space. Default is ``-1``, it will be automatically set up.</span>
+<span class="sd">    size_large : int, optional</span>
+<span class="sd">        Size of large search space. Default is ``-1``, it will be automatically set up.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Verbose mode. Default is ``False``.</span>
+<span class="sd">    dtype : torch.dtype, optional</span>
+<span class="sd">        Data type. Default is ``torch.float``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Estimated adjacency with shape :math:`(p,p)`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">torch</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">vprint</span> <span class="o">=</span> <span class="nb">print</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">process_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+    <span class="n">n</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">topo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">topo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># set size_small and size_large and no_large_search</span>
+    <span class="n">size_small</span><span class="p">,</span> <span class="n">size_large</span><span class="p">,</span> <span class="n">no_large_search</span> <span class="o">=</span> <span class="n">set_sizes_nonlinear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">size_small</span><span class="p">,</span> <span class="n">size_large</span><span class="p">,</span> <span class="n">no_large_search</span><span class="p">)</span>
+    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter is automatically set up.</span><span class="se">\n</span><span class="s2"> size_small: </span><span class="si">{</span><span class="n">size_small</span><span class="si">}</span><span class="s2">, size_large: </span><span class="si">{</span><span class="n">size_large</span><span class="si">}</span><span class="s2">, no_large_search: </span><span class="si">{</span><span class="n">no_large_search</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+    <span class="n">general_options</span><span class="p">,</span> <span class="n">optimizer_options_config</span><span class="p">,</span> <span class="n">optimizer_options_settings</span> <span class="o">=</span> <span class="n">set_options</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> 
+                                                                                        <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span> <span class="n">compute_lib</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span> <span class="s1">&#39;topo&#39;</span><span class="p">,</span> 
+                                                                                        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span><span class="p">)</span>
+    <span class="n">method_options</span> <span class="o">=</span> <span class="n">allowed_method_options</span><span class="p">[</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">][</span><span class="s1">&#39;topo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">method_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">method_options</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">lambda1</span><span class="p">,</span> <span class="n">lambda2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">w_threshold</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_variables_from_general_options</span><span class="p">(</span><span class="n">general_options</span><span class="p">)</span>
+    <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span>
+    <span class="n">print_options</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">h_fn</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">compute_lib</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">method_options</span><span class="p">,</span>
+        <span class="n">general_options</span><span class="p">,</span><span class="n">optimizer_options_config</span><span class="p">,</span><span class="n">optimizer_options_settings</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+    <span class="n">_loss</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span><span class="n">nl_loss_functions</span><span class="p">)</span>
+    <span class="n">_h</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">h_fn</span><span class="p">,</span> <span class="n">h_functions</span><span class="p">)</span>
+    <span class="n">_reg</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span><span class="n">reg_functions</span><span class="p">)</span>
+    <span class="n">_opt</span> <span class="o">=</span> <span class="n">set_functions</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">optimizer_functions</span><span class="p">)</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">TopoMLP</span><span class="p">(</span><span class="n">dims</span> <span class="o">=</span> <span class="n">dims</span><span class="p">,</span> <span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_train</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+        <span class="n">num_steps</span><span class="p">,</span> <span class="n">check_iterate</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">lr_decay</span> <span class="o">=</span> <span class="n">get_variables_from_optimizer_settings</span><span class="p">(</span><span class="n">optimizer_options_settings</span><span class="p">)</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">_opt</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span><span class="o">**</span><span class="n">optimizer_options_config</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">lr_decay</span><span class="p">:</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">StepLR</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">closure</span><span class="p">():</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">X_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">X_hat</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+            <span class="n">l2_reg</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">lambda2</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">l2_reg</span><span class="p">()</span>
+            <span class="n">reg</span> <span class="o">=</span> <span class="n">lambda1</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">layer0_l1_reg</span><span class="p">()</span>
+            <span class="c1"># reg =  _reg(model.adj(),**general_options)</span>
+            <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">l2_reg</span> <span class="o">+</span> <span class="n">reg</span>
+            <span class="n">total_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">total_loss</span>
+        
+        <span class="n">prev_loss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">num_steps</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+            <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">check_iterate</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">lr_decay</span><span class="p">:</span>
+                <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">((</span><span class="n">prev_loss</span> <span class="o">-</span> <span class="n">current_loss</span><span class="p">)</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">prev_loss</span><span class="p">,</span><span class="n">current_loss</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">prev_loss</span> <span class="o">=</span> <span class="n">current_loss</span>
+
+        <span class="k">return</span> <span class="n">current_loss</span>
+
+    <span class="k">def</span> <span class="nf">_copy_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_clone</span><span class="p">):</span>
+        <span class="n">model_clone</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">param_target</span><span class="p">,</span> <span class="p">(</span><span class="n">name_source</span><span class="p">,</span> <span class="n">param_source</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model_clone</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">()):</span>
+            
+            <span class="n">param_target</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">param_source</span><span class="o">.</span><span class="n">requires_grad</span>
+
+        <span class="k">return</span> <span class="n">model_clone</span>
+
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
+        <span class="n">iter_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">large_space_used</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+        
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">create_Z</span><span class="p">(</span><span class="n">topo</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">reset_by_topo</span><span class="p">(</span><span class="n">topo</span> <span class="o">=</span> <span class="n">topo</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">_train</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The initial model, current loss </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">W_adj</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">layer0_to_adj</span><span class="p">()</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W</span><span class="o">=</span><span class="n">W_adj</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+        <span class="n">G_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">))</span>
+        <span class="n">idx_set_small</span><span class="p">,</span> <span class="n">idx_set_large</span> <span class="o">=</span> <span class="n">find_idx_set_updated</span><span class="p">(</span><span class="n">G_h</span><span class="o">=</span><span class="n">G_h</span><span class="p">,</span> <span class="n">G_loss</span><span class="o">=</span><span class="n">G_loss</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">size_small</span><span class="o">=</span><span class="n">size_small</span><span class="p">,</span>
+                                        <span class="n">size_large</span><span class="o">=</span><span class="n">size_large</span><span class="p">)</span>
+        <span class="n">idx_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">idx_set_small</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="nb">bool</span><span class="p">(</span><span class="n">idx_set</span><span class="p">):</span>
+            <span class="n">idx_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_set</span><span class="p">)</span>
+            <span class="n">indicator_improve</span> <span class="o">=</span> <span class="kc">False</span>
+           
+            <span class="n">model_clone</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)(</span><span class="n">dims</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span> <span class="n">bias</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span>
+                                      <span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">,</span>
+                                      <span class="n">dtype</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx_len</span><span class="p">):</span>
+                <span class="n">model_clone</span> <span class="o">=</span> <span class="n">_copy_model</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_clone</span> <span class="o">=</span> <span class="n">model_clone</span><span class="p">)</span>
+                <span class="n">topo_clone</span> <span class="o">=</span> <span class="n">create_new_topo</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span> <span class="n">idx_set</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">opt</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">model_clone</span><span class="o">.</span><span class="n">update_nn_by_topo</span><span class="p">(</span><span class="n">topo</span> <span class="o">=</span> <span class="n">topo</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">idx_set</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            
+                <span class="n">loss_clone</span> <span class="o">=</span> <span class="n">_train</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_clone</span><span class="p">)</span>
+
+                <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;working with topological sort:</span><span class="si">{</span><span class="n">topo_clone</span><span class="si">}</span><span class="s2">, current loss </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">loss_clone</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">model_clone</span><span class="o">.</span><span class="n">reset_by_topo</span><span class="p">(</span><span class="n">topo</span> <span class="o">=</span> <span class="n">topo_clone</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">loss_clone</span><span class="o">&lt;</span> <span class="n">loss</span><span class="p">:</span>
+                    <span class="n">indicator_improve</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="c1"># model_clone is successful, and we get copy of it</span>
+                    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;better loss found, topological sort: </span><span class="si">{</span><span class="n">topo_clone</span><span class="si">}</span><span class="s2">, and loss: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">loss_clone</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">_copy_model</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_clone</span><span class="p">,</span> <span class="n">model_clone</span> <span class="o">=</span> <span class="n">model</span><span class="p">)</span>
+                    <span class="n">topo</span> <span class="o">=</span> <span class="n">topo_clone</span>
+                    <span class="n">Z</span> <span class="o">=</span> <span class="n">create_Z</span><span class="p">(</span><span class="n">topo_clone</span><span class="p">)</span>
+                    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_clone</span>
+                    <span class="n">W_adj</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">layer0_to_adj</span><span class="p">()</span>
+                    <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W</span><span class="o">=</span><span class="n">W_adj</span><span class="p">,</span> <span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">indicator_improve</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">large_space_used</span> <span class="o">&lt;</span> <span class="n">no_large_search</span><span class="p">:</span>
+                    <span class="n">indicator_improve_large</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="c1"># print(&#39;++++++++++++++++++++++++++++++++++++++++++++&#39;)</span>
+                    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;start to use large search space for </span><span class="si">{</span><span class="n">large_space_used</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> times&quot;</span><span class="p">)</span>
+                    <span class="c1"># print(&#39;++++++++++++++++++++++++++++++++++++++++++++&#39;)</span>
+                    <span class="n">idx_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">idx_set_large</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">idx_set_small</span><span class="p">))</span>
+                    <span class="n">idx_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx_set</span><span class="p">)</span>
+                    
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx_len</span><span class="p">):</span>
+                        <span class="n">model_clone</span> <span class="o">=</span> <span class="n">_copy_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">model_clone</span><span class="o">=</span><span class="n">model_clone</span><span class="p">)</span>
+                        <span class="n">topo_clone</span> <span class="o">=</span> <span class="n">create_new_topo</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span> <span class="n">idx_set</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">opt</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">model_clone</span><span class="o">.</span><span class="n">update_nn_by_topo</span><span class="p">(</span><span class="n">topo</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">idx_set</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        
+                        <span class="n">loss_clone</span> <span class="o">=</span> <span class="n">_train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model_clone</span><span class="p">)</span>
+                        <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;working with topological sort:</span><span class="si">{</span><span class="n">topo_clone</span><span class="si">}</span><span class="s2">, current loss </span><span class="si">{</span><span class="n">loss_clone</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">model_clone</span><span class="o">.</span><span class="n">reset_by_topo</span><span class="p">(</span><span class="n">topo</span><span class="o">=</span><span class="n">topo_clone</span><span class="p">)</span>
+
+
+                        <span class="k">if</span> <span class="n">loss_clone</span><span class="o">&lt;</span><span class="n">loss</span><span class="p">:</span>
+                            <span class="n">indicator_improve_large</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">model</span> <span class="o">=</span> <span class="n">_copy_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model_clone</span><span class="p">,</span> <span class="n">model_clone</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+                            <span class="n">topo</span> <span class="o">=</span> <span class="n">topo_clone</span>
+                            <span class="n">Z</span> <span class="o">=</span> <span class="n">create_Z</span><span class="p">(</span><span class="n">topo_clone</span><span class="p">)</span>
+                            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_clone</span>
+                            <span class="n">W_adj</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">layer0_to_adj</span><span class="p">()</span>
+                            <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W</span><span class="o">=</span><span class="n">W_adj</span><span class="p">,</span><span class="o">**</span><span class="n">general_options</span><span class="p">)</span>
+                            <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;better loss found, topological sort: </span><span class="si">{</span><span class="n">topo_clone</span><span class="si">}</span><span class="s2">, and loss: </span><span class="si">{</span><span class="n">loss_clone</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                             
+                            <span class="k">break</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">indicator_improve_large</span><span class="p">:</span>
+                        <span class="n">vprint</span><span class="p">(</span><span class="s2">&quot;Using larger search space, but we cannot find better loss&quot;</span><span class="p">)</span>
+                        <span class="k">break</span>
+                    <span class="n">large_space_used</span> <span class="o">=</span><span class="n">large_space_used</span><span class="o">+</span> <span class="mi">1</span> 
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vprint</span><span class="p">(</span><span class="s2">&quot;We reach the number of chances to search large space, it is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">no_large_search</span><span class="p">))</span>
+                    <span class="k">break</span>
+
+             
+            <span class="n">idx_set_small</span><span class="p">,</span> <span class="n">idx_set_large</span> <span class="o">=</span> <span class="n">find_idx_set_updated</span><span class="p">(</span><span class="n">G_h</span><span class="o">=</span><span class="n">G_h</span><span class="p">,</span> <span class="n">G_loss</span><span class="o">=</span><span class="n">G_loss</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+                                                        <span class="n">size_small</span><span class="o">=</span><span class="n">size_small</span><span class="p">,</span>
+                                                        <span class="n">size_large</span><span class="o">=</span><span class="n">size_large</span><span class="p">)</span>
+            <span class="n">idx_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">idx_set_small</span><span class="p">)</span>
+
+            <span class="n">iter_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="k">return</span> <span class="n">W_adj</span><span class="p">,</span> <span class="n">topo</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span>
+    <span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">W</span><span class="p">,</span> <span class="n">topo</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">_fit</span><span class="p">(</span><span class="n">topo</span> <span class="o">=</span> <span class="n">topo</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">)</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">threshold_W</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">w_threshold</span><span class="p">)</span>
+    <span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">vprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total Time: </span><span class="si">{</span><span class="n">time_end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">time_start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">W</span></div>
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Chang Deng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

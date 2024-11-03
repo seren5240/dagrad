@@ -1,0 +1,17 @@
+**/__pycache__/
+**/.DS_Store
+.DS_Store
+dagrad.egg-info/
+tests/*
+!tests/test.py
+!tests/test_fast.py
+dagrad/utils/profiler.py
+output.prof
+dagma
+topo
+notears
+pyproject.toml
+requirements.txt
+examples/example.py
+dist/
+build/
