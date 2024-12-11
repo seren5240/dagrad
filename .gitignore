@@ -15,4 +15,4 @@ requirements.txt
 examples/example.py
 dist/
 build/
-flex/backup/*
+dagrad/flex/backup/
