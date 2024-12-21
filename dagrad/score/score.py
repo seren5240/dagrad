@@ -116,14 +116,7 @@ class loss_fn:
 
         """
         
-        if isinstance(W, np.ndarray):
-            pass
-        elif isinstance(W, torch.Tensor):
-            pass
-        else:
-            raise ValueError("W must be either numpy array or torch tensor")
-        raise NotImplementedError("User-defined loss is not implemented yet. User are free to define their own loss function")
-
+        return (0.0, np.zeros_like(W))
 
 
     @staticmethod
