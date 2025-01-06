@@ -1,3 +1,4 @@
+from typing import Literal
 from ..utils.configure import allowed_general_options,allowed_method_options,allowed_optimizer_options
 import torch
 import numpy as np
@@ -51,7 +52,14 @@ def set_tuning_method_from_options(options, reg):
     
 
 
-def set_options(options, model, compute_lib, method, optimizer, reg):
+def set_options(
+    options: dict,
+    model: Literal["linear", "nonlinear"],
+    compute_lib: Literal["numpy", "torch"],
+    method: Literal["notears", "dagma", "topo"],
+    optimizer: Literal["adam", "lbfgs"],
+    reg: Literal["l1" "l2", "mcp", "none", "user_reg"],
+):
     
     general_options = {k:options[k] for k in allowed_general_options if k in options}
     optimizer_options_config = {k:options[k] for k in allowed_optimizer_options[compute_lib][optimizer]['opt_config'] if k in options}
