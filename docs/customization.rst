@@ -12,10 +12,10 @@ This section contains the customization options of the **dagrad** library. These
      - Description
      - Location
    * - ``'loss_fn'``
-     - Loss function(linear)
+     - Loss function (linear)
      - :func:`dagrad.score.score.loss_fn.user_loss`
    * - ``'nl_loss_fn'``
-     - Loss function(nonlinear)
+     - Loss function (nonlinear)
      - :func:`dagrad.score.score.nl_loss_fn.user_nl_loss`
    * - ``'reg'``
      - Regularization
