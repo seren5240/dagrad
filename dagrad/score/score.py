@@ -119,7 +119,8 @@ class loss_fn:
         if isinstance(W, np.ndarray):
             pass
         elif isinstance(W, torch.Tensor):
-            equal_variances = kwargs.get('equal_variances', False)
+            user_params = kwargs.get('user_params', None)
+            equal_variances = user_params.get('equal_variances', False)
             if equal_variances:
                 return 0.5 * W.shape[0] * torch.log(
                     torch.square(
