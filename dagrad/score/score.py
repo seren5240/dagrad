@@ -121,7 +121,7 @@ class loss_fn:
             pass
         elif isinstance(W, torch.Tensor):
             user_params = kwargs.get('user_params', None)
-            equal_variances = user_params.get('equal_variances', False)
+            equal_variances = False if user_params is None else user_params.get('equal_variances', False)
             if equal_variances:
                 return 0.5 * W.shape[0] * torch.log(
                     torch.square(
