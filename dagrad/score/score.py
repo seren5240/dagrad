@@ -31,7 +31,8 @@ class reg_fn:
         if isinstance(W, np.ndarray):
             pass
         elif isinstance(W, torch.Tensor):
-            return W.abs().sum()
+            L1_penalty = 2e-3
+            return W.abs().sum() * L1_penalty
         else:
             raise ValueError("W must be either numpy array or torch tensor")
         raise NotImplementedError("User-defined regularization is not implemented yet. User are free to define their own regularization function")
