@@ -2,8 +2,8 @@
 Main API
 ==========
 
-The following are the main function of the **dagrad** library. This is main function that calls the :ref:`working_function` of the library.
-User can explore different options to customize the learning process, by specifiying the method, the model, the loss function, the acyclicity constraint, the regularizer and the optimizer.
+The following is the main function of the **dagrad** library. This main function calls the relevant :ref:`working_function` from the library.
+Users can explore different options to customize the learning process, by specifiying the method, the model, the loss function, the acyclicity constraint, the regularizer and the optimizer.
 
 .. autofunction:: dagrad.learn
 
