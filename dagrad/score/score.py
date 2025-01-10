@@ -31,7 +31,8 @@ class reg_fn:
         if isinstance(W, np.ndarray):
             pass
         elif isinstance(W, torch.Tensor):
-            pass
+            L1_penalty = 2e-3
+            return W.abs().sum() * L1_penalty
         else:
             raise ValueError("W must be either numpy array or torch tensor")
         raise NotImplementedError("User-defined regularization is not implemented yet. User are free to define their own regularization function")
@@ -119,7 +120,22 @@ class loss_fn:
         if isinstance(W, np.ndarray):
             pass
         elif isinstance(W, torch.Tensor):
-            pass
+            user_params = kwargs.get('user_params', None)
+            equal_variances = False if user_params is None else user_params.get('equal_variances', False)
+            if equal_variances:
+                return 0.5 * W.shape[0] * torch.log(
+                    torch.square(
+                        torch.linalg.matrix_norm(X - X @ W)
+                    )
+                ) - torch.linalg.slogdet(torch.eye(W.shape[1]) - W)[1]
+            else:
+                return 0.5 * torch.sum(
+                    torch.log(
+                        torch.sum(
+                            torch.square(X - X @ W), axis=0
+                        )
+                    )
+                ) - torch.linalg.slogdet(torch.eye(W.shape[1]) - W)[1]
         else:
             raise ValueError("W must be either numpy array or torch tensor")
         raise NotImplementedError("User-defined loss is not implemented yet. User are free to define their own loss function")

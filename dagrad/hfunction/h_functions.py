@@ -30,7 +30,8 @@ class h_fn:
         if isinstance(W,np.ndarray):
             pass
         elif isinstance(W,torch.Tensor):
-            pass
+            L2_penalty = 5.0
+            return (torch.trace(torch.matrix_exp(W * W)) - W.shape[0]) * L2_penalty
         else:
             raise ValueError("W must be either numpy array or torch tensor")
 
