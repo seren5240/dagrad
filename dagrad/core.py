@@ -150,7 +150,7 @@ def dagrad(X,
         validate_options(optimizer_options, merge_dicts_if_needed(allowed_optimizer_options[compute_lib][optimizer])) 
 
     # check if the options are compatible with the method
-    if method == 'dagma' and not (h_fn in ['h_logdet_sq','h_logdet_abs']):
+    if method == 'dagma' and not (h_fn in ['h_logdet_sq','h_logdet_abs', 'user_h']):
         warn("DAGMA is framework using logdet acyclicity constraint. Changing h_fn to h_logdet_sq")
         h_fn = 'h_logdet_sq'
     if method == 'dagma' and optimizer == 'lbfgs':
