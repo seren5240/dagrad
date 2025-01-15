@@ -15,6 +15,8 @@
 
 set -e
 
+module load python/booth/3.12
+
 cd ..
 pip3 install -e .
 cd examples
