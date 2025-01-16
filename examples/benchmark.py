@@ -21,7 +21,7 @@ def golem_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
         }}
     ) # Learn the structure of the DAG using Golem
     print(f"Linear Model")
-    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, sem type: {noise_type}")
+    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
 
     acc_golem = count_accuracy(B_true, W_golem != 0) # Measure the accuracy of the learned structure using Golem
     print('Accuracy of Golem:', acc_golem)
@@ -45,7 +45,7 @@ def golem_nv(n, d, s0, graph_type, sem_type, error_var, seed=None, intermediate_
         }}
     ) # Learn the structure of the DAG using Golem
     print(f"Linear Model")
-    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, sem type: {sem_type}")
+    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {sem_type}")
 
     if intermediate_accuracy:
         acc_ev = count_accuracy(B_true, W_ev != 0) # Measure the accuracy of the learned structure using Golem
