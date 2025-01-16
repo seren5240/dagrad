@@ -81,10 +81,10 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for _ in range(trials):
             try:
                 ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
-                results["GOLEM-EV"][noise_type][d].append(ev_result["shd"] / s0)
+                results["GOLEM-EV"][d].append(ev_result["shd"] / s0)
 
                 nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
-                results["GOLEM-NV"][noise_type][d].append(nv_result["shd"] / s0)
+                results["GOLEM-NV"][d].append(nv_result["shd"] / s0)
             except Exception as e:
                 print(e)
                 print(f'trial with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error')
@@ -134,7 +134,7 @@ def run_experiment(trials, error_var):
     noise_types = ["gauss", "exp", "gumbel"]
     methods = ["GOLEM-EV", "GOLEM-NV"]
 
-    results = {method: {sem: {d: [] for d in num_nodes} for sem in noise_types} for method in methods}
+    results = {method: {sem: {s0: {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
 
     for d in num_nodes:
         for sem_type in noise_types:
@@ -144,10 +144,10 @@ def run_experiment(trials, error_var):
                 for _ in range(trials):
                     try:
                         ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
-                        results["GOLEM-EV"][sem_type][d].append(ev_result["shd"] / s0)
+                        results["GOLEM-EV"][sem_type][s0_ratio][d].append(ev_result["shd"] / s0)
 
                         nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
-                        results["GOLEM-NV"][sem_type][d].append(nv_result["shd"] / s0)
+                        results["GOLEM-NV"][sem_type][s0_ratio][d].append(nv_result["shd"] / s0)
                     except Exception as e:
                         print(e)
                         print(f'trial with {d} nodes and {sem_type} noise and s0_ratio {s0_ratio} skipped due to error')
@@ -163,7 +163,7 @@ def run_experiment(trials, error_var):
             
             for method in methods:
                 means = [
-                    np.mean(results[method][noise][d])
+                    np.mean(results[method][noise][s0_ratio][d])
                     for d in num_nodes
                 ]
                 ax.plot(num_nodes, means, marker="o", label=method)
