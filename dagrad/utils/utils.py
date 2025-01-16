@@ -9,24 +9,88 @@ def find_topo(W):
     topo = G.topological_sorting()
     return topo
 
-def generate_linear_data(n,d,s0,graph_type,sem_type,seed=None):
-        if seed is not None:
-            set_random_seed(seed=seed)
-        else:
-            set_random_seed(seed = random.randint(0, 100000))
-        B_true = simulate_dag(d, s0, graph_type)
-        W_true = simulate_parameter(B_true)
-        X = simulate_linear_sem(W_true, n, sem_type)
-        return X, W_true, B_true
+def generate_sem_data(n,d,s0,graph_type = 'ER', sem_type = 'linear', noise_type = 'gauss', error_var = 'eq', seed = None):
+    '''
+    Generate data from a SEM model
 
-def generate_nonlinear_data(n,d,s0,graph_type,sem_type,seed=None):
-        if seed is not None:
-            set_random_seed(seed = seed)
+    n: number of samples
+    d: number of variables
+    s0: expected number of edges
+    graph_type: type of graph, one of ['ER', 'SF']
+    sem_type: type of sem, one of ['linear', 'mlp', 'mim', 'gp', 'gp-add']
+    noise_type: type of noise, one of ['gauss', 'exp', 'gumbel', 'uniform', 'logistic', 'poisson']
+    error_var: variance of the noise, one of ['eq','random']
+    '''
+    if seed is not None:
+            set_random_seed(seed=seed)
+    else:
+        set_random_seed(seed = random.randint(0, 100000))
+    
+    B_true = simulate_dag(d, s0, graph_type)
+    if sem_type == 'linear':
+        W_true = simulate_parameter(B_true)
+        if error_var == 'eq':
+            X = simulate_linear_sem(W_true, n, noise_type)
+        elif error_var == 'random':
+            X = simulate_linear_sem(W_true, n, noise_type, noise_scale = np.random.uniform(0.5,1.0,d))
         else:
-            set_random_seed(seed = random.randint(0, 100000))
-        B_true = simulate_dag(d, s0, graph_type)
-        X = simulate_nonlinear_sem(B_true, n, sem_type)
-        return X, B_true
+            raise ValueError('error_var must be one of eq or random')
+    else:
+        W_true = None
+        if error_var == 'eq':
+            X = simulate_nonlinear_sem(B_true, n, sem_type, noise_type)
+        elif error_var == 'random':
+            X = simulate_nonlinear_sem(B_true, n, sem_type, noise_type, noise_scale = np.random.uniform(0.5,1.0,d))
+        else:
+            raise ValueError('error_var must be one of eq or random')
+    return X, W_true, B_true
+
+def generate_linear_data(n,d,s0,graph_type = 'ER', noise_type = 'gauss', error_var = 'eq', seed = None):
+    '''
+    Wrapper for generate_sem_data
+    Generate data from a linear SEM model
+
+    n: number of samples
+    d: number of variables
+    s0: expected number of edges
+    graph_type: type of graph, one of ['ER', 'SF']
+    noise_type: type of noise, one of ['gauss', 'exp', 'gumbel', 'uniform', 'logistic', 'poisson']
+    error_var: variance of the noise, one of ['eq','random']
+    seed: random seed
+
+    Returns:
+
+    X: data matrix
+    W_true: true parameter matrix
+    B_true: true adjacency matrix, 0 for no edge, 1 for edge
+    '''
+        
+    X, W_true, B_true = generate_sem_data(n,d,s0,graph_type, 'linear', noise_type, error_var, seed)
+    return X, W_true, B_true
+
+def generate_nonlinear_data(n,d,s0,graph_type = 'ER', sem_type = 'mlp', noise_type = 'gauss', error_var = 'eq', seed = None):
+    '''
+    Wrapper for generate_sem_data
+    Generate data from a nonlinear SEM model
+
+    n: number of samples
+    d: number of variables
+    s0: expected number of edges
+    graph_type: type of graph, one of ['ER', 'SF']
+    sem_type: type of sem, one of ['mlp', 'mim', 'gp', 'gp-add']
+    noise_type: type of noise, one of ['gauss', 'exp', 'gumbel', 'uniform', 'logistic', 'poisson']
+    error_var: variance of the noise, one of ['eq','random']
+    seed: random seed
+
+    Returns:
+
+    X: data matrix
+    W_true: None, as the true parameter matrix is not available for nonlinear SEM
+    B_true: true adjacency matrix, 0 for no edge, 1 for edge
+    '''
+    X, W_true, B_true = generate_sem_data(n,d,s0,graph_type, sem_type, noise_type, error_var, seed)
+    return X, W_true, B_true
+
 def threshold_W(W, threshold=0.3):
     """
     :param W: adjacent matrix
@@ -243,7 +307,8 @@ def simulate_linear_sem(W: np.ndarray,
 
 def simulate_nonlinear_sem(B:np.ndarray, 
                            n: int, 
-                           sem_type: str, 
+                           sem_type: str = 'mlp', 
+                           noise_type: str = 'gauss',
                            noise_scale: typing.Optional[typing.Union[float,typing.List[float]]] = None,
                            ) -> np.ndarray:
     r"""
@@ -257,6 +322,8 @@ def simulate_nonlinear_sem(B:np.ndarray,
         num of samples
     sem_type : str
         ``mlp``, ``mim``, ``gp``, ``gp-add``
+    noise_type: str
+        ``gauss``, ``exp``, ``gumbel``, ``uniform``, ``logistic``, ``poisson``
     noise_scale : typing.Optional[typing.Union[float,typing.List[float]]], optional
         scale parameter of the additive noises. If ``None``, all noises have scale 1. Default: ``None``.
 
@@ -265,42 +332,165 @@ def simulate_nonlinear_sem(B:np.ndarray,
     np.ndarray
         :math:`[n, d]` sample matrix.
     """
-    def _simulate_single_equation(X, scale):
-        """X: [n, num of parents], x: [n]"""
-        z = np.random.normal(scale=scale, size=n)
+    def generate_noise(n, scale, noise_type):
+        if noise_type == 'gauss':
+            return np.random.normal(scale=scale, size=n)
+        elif noise_type == 'exp':
+            return np.random.exponential(scale=scale, size=n)
+        elif noise_type == 'gumbel':
+            return np.random.gumbel(scale=scale, size=n)
+        elif noise_type == 'uniform':
+            return np.random.uniform(low=-scale, high=scale, size=n)
+        else:
+            raise ValueError('Unknown noise type')
+
+    def compute_x(X, z, sem_type):
         pa_size = X.shape[1]
-        if pa_size == 0:
-            return z
         if sem_type == 'mlp':
             hidden = 100
-            W1 = np.random.uniform(low=0.5, high=2.0, size=[pa_size, hidden])
+            W1 = np.random.uniform(0.5, 2.0, size=(pa_size, hidden))
             W1[np.random.rand(*W1.shape) < 0.5] *= -1
-            W2 = np.random.uniform(low=0.5, high=2.0, size=hidden)
+            W2 = np.random.uniform(0.5, 2.0, size=hidden)
             W2[np.random.rand(hidden) < 0.5] *= -1
-            x = sigmoid(X @ W1) @ W2 + z
+            return sigmoid(X @ W1) @ W2 + z
         elif sem_type == 'mim':
-            w1 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
-            w1[np.random.rand(pa_size) < 0.5] *= -1
-            w2 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
-            w2[np.random.rand(pa_size) < 0.5] *= -1
-            w3 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
-            w3[np.random.rand(pa_size) < 0.5] *= -1
-            x = np.tanh(X @ w1) + np.cos(X @ w2) + np.sin(X @ w3) + z
+            weights = [np.random.uniform(0.5, 2.0, size=pa_size) for _ in range(3)]
+            for w in weights:
+                w[np.random.rand(pa_size) < 0.5] *= -1
+            return (np.tanh(X @ weights[0]) + np.cos(X @ weights[1]) +
+                    np.sin(X @ weights[2]) + z)
         elif sem_type == 'gp':
             from sklearn.gaussian_process import GaussianProcessRegressor
             gp = GaussianProcessRegressor()
-            x = gp.sample_y(X, random_state=None).flatten() + z
+            return gp.sample_y(X, random_state=None).flatten() + z
         elif sem_type == 'gp-add':
             from sklearn.gaussian_process import GaussianProcessRegressor
             gp = GaussianProcessRegressor()
-            x = sum([gp.sample_y(X[:, i, None], random_state=None).flatten()
-                     for i in range(X.shape[1])]) + z
+            return sum(gp.sample_y(X[:, i:i+1], random_state=None).flatten()
+                    for i in range(pa_size)) + z
         else:
-            raise ValueError('unknown sem type')
-        return x
+            raise ValueError('Unknown SEM type')
+
+
+    def _simulate_single_equation(X, scale):
+        n, pa_size = X.shape
+        if pa_size == 0:
+            # No parents
+            if noise_type == 'logistic':
+                return np.random.binomial(1, 0.5, size=n).astype(float)
+            elif noise_type == 'poisson':
+                return np.random.poisson(scale, size=n).astype(float)
+            else:
+                return generate_noise(n, scale, noise_type)
+        else:
+            if noise_type in ['logistic', 'poisson']:
+                z = 0
+                x = compute_x(X, z, sem_type)
+                if noise_type == 'logistic':
+                    return np.random.binomial(1, sigmoid(x)).astype(float)
+                else:  # noise_type == 'poisson'
+                    return np.random.poisson(np.exp(x)).astype(float)
+            else:
+                z = generate_noise(n, scale, noise_type)
+                return compute_x(X, z, sem_type)
+
+    # def _simulate_single_equation(X, scale):
+
+    #     """X: [n, num of parents], x: [n]"""
+    #     pa_size = X.shape[1]
+    #     if noise_type in ['logistic', 'poisson']:
+    #         if pa_size == 0:
+    #             if noise_type == 'logistic':
+    #                 return np.random.binomial(1, 0.5, size=n) * 1.0
+    #             elif noise_type == 'poisson':
+    #                 return np.random.poisson(scale, size=n) * 1.0
+    #             else:
+    #                 raise ValueError('unknown noise type')
+    #         else:
+    #             z = 0
+    #             if sem_type == 'mlp':
+    #                 hidden = 100
+    #                 W1 = np.random.uniform(low=0.5, high=2.0, size=[pa_size, hidden])
+    #                 W1[np.random.rand(*W1.shape) < 0.5] *= -1
+    #                 W2 = np.random.uniform(low=0.5, high=2.0, size=hidden)
+    #                 W2[np.random.rand(hidden) < 0.5] *= -1
+    #                 x = sigmoid(X @ W1) @ W2 + z
+    #             elif sem_type == 'mim':
+    #                 w1 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
+    #                 w1[np.random.rand(pa_size) < 0.5] *= -1
+    #                 w2 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
+    #                 w2[np.random.rand(pa_size) < 0.5] *= -1
+    #                 w3 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
+    #                 w3[np.random.rand(pa_size) < 0.5] *= -1
+    #                 x = np.tanh(X @ w1) + np.cos(X @ w2) + np.sin(X @ w3) + z
+    #             elif sem_type == 'gp':
+    #                 from sklearn.gaussian_process import GaussianProcessRegressor
+    #                 gp = GaussianProcessRegressor()
+    #                 x = gp.sample_y(X, random_state=None).flatten() + z
+    #             elif sem_type == 'gp-add':
+    #                 from sklearn.gaussian_process import GaussianProcessRegressor
+    #                 gp = GaussianProcessRegressor()
+    #                 x = sum([gp.sample_y(X[:, i, None], random_state=None).flatten()
+    #                         for i in range(X.shape[1])]) + z
+    #             else:
+    #                 raise ValueError('unknown sem type')
+
+    #             if noise_type == 'logistic':
+    #                 return np.random.binomial(1, sigmoid(x)) * 1.0
+    #             elif noise_type == 'poisson':
+    #                 return np.random.poisson(np.exp(x)) * 1.0
+    #             else:
+    #                 raise ValueError('unknown noise type')
+
+
+    #     else:
+    #         if noise_type == 'gauss':
+    #             z = np.random.normal(scale=scale, size=n)
+    #         elif noise_type == 'exp':
+    #             z = np.random.exponential(scale=scale, size=n)
+    #         elif noise_type == 'gumbel':
+    #             z = np.random.gumbel(scale=scale, size=n)
+    #         elif noise_type == 'uniform':
+    #             z = np.random.uniform(low=-scale, high=scale, size=n)
+    #         # elif noise_type == 'logistic':
+    #         #     z = np.random.binomial(1, 0.5, size=n) * 1.0
+    #         # elif noise_type == 'poisson':
+    #         #     z = np.random.poisson(scale, size=n) * 1.0
+    #         else:
+    #             raise ValueError('unknown noise type')
+
+    #         if pa_size == 0:
+    #             return z
+    #         if sem_type == 'mlp':
+    #             hidden = 100
+    #             W1 = np.random.uniform(low=0.5, high=2.0, size=[pa_size, hidden])
+    #             W1[np.random.rand(*W1.shape) < 0.5] *= -1
+    #             W2 = np.random.uniform(low=0.5, high=2.0, size=hidden)
+    #             W2[np.random.rand(hidden) < 0.5] *= -1
+    #             x = sigmoid(X @ W1) @ W2 + z
+    #         elif sem_type == 'mim':
+    #             w1 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
+    #             w1[np.random.rand(pa_size) < 0.5] *= -1
+    #             w2 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
+    #             w2[np.random.rand(pa_size) < 0.5] *= -1
+    #             w3 = np.random.uniform(low=0.5, high=2.0, size=pa_size)
+    #             w3[np.random.rand(pa_size) < 0.5] *= -1
+    #             x = np.tanh(X @ w1) + np.cos(X @ w2) + np.sin(X @ w3) + z
+    #         elif sem_type == 'gp':
+    #             from sklearn.gaussian_process import GaussianProcessRegressor
+    #             gp = GaussianProcessRegressor()
+    #             x = gp.sample_y(X, random_state=None).flatten() + z
+    #         elif sem_type == 'gp-add':
+    #             from sklearn.gaussian_process import GaussianProcessRegressor
+    #             gp = GaussianProcessRegressor()
+    #             x = sum([gp.sample_y(X[:, i, None], random_state=None).flatten()
+    #                     for i in range(X.shape[1])]) + z
+    #         else:
+    #             raise ValueError('unknown sem type')
+    #         return x
 
     d = B.shape[0]
-    scale_vec = noise_scale if noise_scale else np.ones(d)
+    scale_vec = noise_scale if noise_scale is not None else np.ones(d)
     X = np.zeros([n, d])
     G = ig.Graph.Adjacency(B.tolist())
     ordered_vertices = G.topological_sorting()
