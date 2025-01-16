@@ -134,6 +134,6 @@ def run_experiment(trials, error_var):
     handles, labels = ax.get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper center", ncol=len(methods))
     plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.savefig(f"normalized_shd_n={n}.png")
+    plt.savefig(f"normalized_shd_n={n}_var={error_var}.png")
 
 run_experiment(1, 'eq')
