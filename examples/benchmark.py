@@ -2,7 +2,8 @@ from dagrad import dagrad
 from dagrad import generate_linear_data, count_accuracy
 import torch
 import numpy as np
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+import sys
 
 def golem_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
@@ -190,5 +191,14 @@ def run_experiment(trials, error_var):
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.savefig(f"normalized_shd_n={n}_var={error_var}.png")
 
-# run_experiment(1, 'eq')
-run_one_experiment(1, 1000, 0.5, 'gauss', 'random')
+if len(sys.argv) < 3:
+    run_experiment(10, 'eq')
+    run_experiment(10, 'random')
+    sys.exit(1)
+else:
+    nTrials = int(sys.argv[1])
+    nSamples = int(sys.argv[2])
+    s0_ratio = float(sys.argv[3])
+    noise_type = sys.argv[4]
+    error_var = sys.argv[5]
+    run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var)
