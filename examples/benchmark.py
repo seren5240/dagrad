@@ -92,11 +92,15 @@ def run_experiment(trials, error_var):
                 s0 = int(s0_ratio * d)
 
                 for _ in range(trials):
-                    ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
-                    results["GOLEM-EV"][sem_type][d].append(ev_result["shd"] / s0)
+                    try:
+                        ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
+                        results["GOLEM-EV"][sem_type][d].append(ev_result["shd"] / s0)
 
-                    nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, sem_type=sem_type)
-                    results["GOLEM-NV"][sem_type][d].append(nv_result["shd"] / s0)
+                        nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, sem_type=sem_type)
+                        results["GOLEM-NV"][sem_type][d].append(nv_result["shd"] / s0)
+                    except Exception as e:
+                        print(e)
+                        print(f'trial with {d} nodes and {sem_type} noise and s0_ratio {s0_ratio} skipped due to error')
 
     num_rows = len(s0_ratios)
     num_cols = len(noise_types)
