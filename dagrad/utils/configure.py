@@ -26,7 +26,7 @@ allowed_general_options = {
     'tuning_method': (str, type(None)),
     'K': int, # the number of folds for cross-validation
     'reg_paras': list,
-    'user_params': Any,
+    'user_params': dict,
 }
 
 allowed_method_options = {
