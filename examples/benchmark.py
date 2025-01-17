@@ -79,7 +79,8 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     for d in num_nodes:
         s0 = int(s0_ratio * d)
 
-        for _ in range(trials):
+        for i in range(trials):
+            print(f"Running trial {i} for {d} nodes")
             try:
                 ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
                 results["GOLEM-EV"][d].append(ev_result["shd"] / s0)
