@@ -188,6 +188,7 @@ def run_experiment(trials, error_var):
             ax.grid(True)
 
     handles, labels = ax.get_legend_handles_labels()
+    plt.title(f"Trials={trials}, error_var={error_var}")
     fig.legend(handles, labels, loc="upper center", ncol=len(methods))
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.savefig(f"normalized_shd_n={n}_var={error_var}.png")
