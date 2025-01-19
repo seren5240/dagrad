@@ -22,15 +22,15 @@ cd examples
 
 echo "Running benchmark"
 
-# python3 -u "./benchmark.py" 100 1000 0.5 gauss eq
-# python3 -u "./benchmark.py" 100 1000 0.5 exp eq
-# python3 -u "./benchmark.py" 100 1000 0.5 gumbel eq
-# python3 -u "./benchmark.py" 100 1000 1 gauss eq
-# python3 -u "./benchmark.py" 100 1000 1 exp eq
-# python3 -u "./benchmark.py" 100 1000 1 gumbel eq
-# python3 -u "./benchmark.py" 100 1000 2 gauss eq
-# python3 -u "./benchmark.py" 100 1000 2 exp eq
-# python3 -u "./benchmark.py" 100 1000 2 gumbel eq
-python3 -u "./benchmark.py"
+# python3 -u "./benchmark.py" 100 1000 0.5 gauss random
+# python3 -u "./benchmark.py" 100 1000 0.5 exp random
+# python3 -u "./benchmark.py" 100 1000 0.5 gumbel random
+# python3 -u "./benchmark.py" 100 1000 1 gauss random
+# python3 -u "./benchmark.py" 100 1000 1 exp random
+# python3 -u "./benchmark.py" 100 1000 1 gumbel random
+# python3 -u "./benchmark.py" 100 1000 2 gauss random
+# python3 -u "./benchmark.py" 100 1000 2 exp random
+python3 -u "./benchmark.py" 100 1000 2 gumbel random
+# python3 -u "./benchmark.py"
 
 wait
