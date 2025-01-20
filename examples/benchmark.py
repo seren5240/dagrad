@@ -1,9 +1,63 @@
 from dagrad import dagrad
-from dagrad import generate_linear_data, count_accuracy
+from dagrad import generate_linear_data, count_accuracy, is_dag
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+
+def threshold_till_dag(B):
+    """Remove the edges with smallest absolute weight until a DAG is obtained.
+
+    Args:
+        B (numpy.ndarray): [d, d] weighted matrix.
+
+    Returns:
+        numpy.ndarray: [d, d] weighted matrix of DAG.
+        float: Minimum threshold to obtain DAG.
+    """
+    if is_dag(B):
+        return B, 0
+
+    B = np.copy(B)
+    # Get the indices with non-zero weight
+    nonzero_indices = np.where(B != 0)
+    # Each element in the list is a tuple (weight, j, i)
+    weight_indices_ls = list(zip(B[nonzero_indices],
+                                 nonzero_indices[0],
+                                 nonzero_indices[1]))
+    # Sort based on absolute weight
+    sorted_weight_indices_ls = sorted(weight_indices_ls, key=lambda tup: abs(tup[0]))
+
+    for weight, j, i in sorted_weight_indices_ls:
+        if is_dag(B):
+            # A DAG is found
+            break
+
+        # Remove edge with smallest absolute weight
+        B[j, i] = 0
+        dag_thres = abs(weight)
+
+    return B, dag_thres
+
+
+def postprocess(B, graph_thres=0.3):
+    """Post-process estimated solution:
+        (1) Thresholding.
+        (2) Remove the edges with smallest absolute weight until a DAG
+            is obtained.
+
+    Args:
+        B (numpy.ndarray): [d, d] weighted matrix.
+        graph_thres (float): Threshold for weighted matrix. Default: 0.3.
+
+    Returns:
+        numpy.ndarray: [d, d] weighted matrix of DAG.
+    """
+    B = np.copy(B)
+    B[np.abs(B) <= graph_thres] = 0    # Thresholding
+    B, _ = threshold_till_dag(B)
+
+    return B
 
 def golem_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
@@ -66,7 +120,8 @@ def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None, intermediat
         'initialization': W_ev}
     ) 
 
-    acc_nv = count_accuracy(B_true, W_nv != 0) # Measure the accuracy of the learned structure using Golem
+    W_processed = postprocess(W_nv)
+    acc_nv = count_accuracy(B_true, W_processed != 0) # Measure the accuracy of the learned structure using Golem
     print('Accuracy of Golem after NV stage:', acc_nv)
 
     return acc_nv
@@ -191,7 +246,7 @@ def run_experiment(trials, error_var):
     plt.title(f"Trials={trials}, error_var={error_var}")
     fig.legend(handles, labels, loc="upper center", ncol=len(methods))
     plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.savefig(f"normalized_shd_n={n}_var={error_var}.png")
+    plt.savefig(f"normalized_shd_n={n}_var={error_var}_trials={trials}.png")
 
 if len(sys.argv) < 3:
     run_experiment(10, 'eq')
