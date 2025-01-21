@@ -176,6 +176,14 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     plt.tight_layout()
     plt.savefig(f"golem_ER{s0_ratio_to_ER[s0_ratio]}_noise={noise_type}_n={n}_var={error_var}.png")
 
+    output_filename = f"golem_ER{s0_ratio_to_ER[s0_ratio]}_noise={noise_type}_n={n}_var={error_var}.txt"
+    with open(output_filename, "w") as f:
+        f.write("method,d,mean_normalized_shd\n")
+        for method in methods:
+            for d in num_nodes:
+                mean_shd = np.mean(results[method][d]) if results[method][d] else None
+                if mean_shd is not None:
+                    f.write(f"{method},{d},{mean_shd}\n")
 
 
 def run_experiment(trials, error_var):
