@@ -140,7 +140,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
                 ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
                 results["GOLEM-EV"][d].append(ev_result["shd"] / s0)
 
-                nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
+                nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type, intermediate_accuracy=False)
                 results["GOLEM-NV"][d].append(nv_result["shd"] / s0)
             except Exception as e:
                 print(e)
