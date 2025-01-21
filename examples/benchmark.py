@@ -78,12 +78,13 @@ def golem_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
     print(f"Linear Model")
     print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
 
-    acc_golem = count_accuracy(B_true, W_golem != 0) # Measure the accuracy of the learned structure using Golem
+    W_processed = postprocess(W_golem)
+    acc_golem = count_accuracy(B_true, W_processed != 0) # Measure the accuracy of the learned structure using Golem
     print('Accuracy of Golem:', acc_golem)
 
     return acc_golem
 
-def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None, intermediate_accuracy=True):
+def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
     X = torch.from_numpy(X).float()
     model = 'linear' # Define the model
@@ -102,9 +103,9 @@ def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None, intermediat
     print(f"Linear Model")
     print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
 
-    if intermediate_accuracy:
-        acc_ev = count_accuracy(B_true, W_ev != 0) # Measure the accuracy of the learned structure using Golem
-        print('Accuracy of Golem after EV stage:', acc_ev)
+    W_ev_processed = postprocess(W_ev)
+    acc_ev = count_accuracy(B_true, W_ev_processed != 0) # Measure the accuracy of the learned structure using Golem
+    print('Accuracy of Golem after EV stage:', acc_ev)
 
     W_nv = dagrad(
         X,
@@ -140,7 +141,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
                 ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
                 results["GOLEM-EV"][d].append(ev_result["shd"] / s0)
 
-                nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type, intermediate_accuracy=False)
+                nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
                 results["GOLEM-NV"][d].append(nv_result["shd"] / s0)
             except Exception as e:
                 print(e)
