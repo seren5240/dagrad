@@ -30,7 +30,5 @@ echo "Running benchmark"
 # python3 -u "./benchmark.py" 100 1000 1 gumbel random
 # python3 -u "./benchmark.py" 100 1000 2 gauss random
 # python3 -u "./benchmark.py" 100 1000 2 exp random
-python3 -u "./benchmark.py" 100 1000 2 gumbel random
-# python3 -u "./benchmark.py"
-
-wait
+# python3 -u "./benchmark.py" 100 1000 2 gumbel random
+python3 -u "./benchmark.py"
