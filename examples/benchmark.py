@@ -126,22 +126,17 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         "exp": "Exponential",
         "gumbel": "Gumbel"
     }
-    s0_ratio_to_ER = {
-        0.5: '1',
-        1: '2',
-        2: '4'
-    }
 
-    plt.title(f"{noise_names[noise_type]} Noise, ER{s0_ratio_to_ER[s0_ratio]}\n(n={n}, trials={trials}, error_var={error_var})")
+    plt.title(f"{noise_names[noise_type]} Noise, ER{s0_ratio}\n(n={n}, trials={trials}, error_var={error_var})")
     plt.xlabel("d (Number of Nodes)")
     plt.ylabel("Normalized SHD")
     plt.grid(True)
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"golem_ER{s0_ratio_to_ER[s0_ratio]}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"golem_ER{s0_ratio}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"golem_ER{s0_ratio_to_ER[s0_ratio]}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"golem_ER{s0_ratio}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write("method,d,mean_normalized_shd\n")
         for method in methods:
@@ -161,7 +156,7 @@ def run_experiment(trials, error_var):
     """
     n = 1000
     num_nodes = [5, 10, 50, 100]
-    s0_ratios = [0.5, 1, 2]
+    s0_ratios = [1, 2, 4]
     noise_types = ["gauss", "exp", "gumbel"]
     methods = ["GOLEM-EV", "GOLEM-NV"]
 
@@ -204,13 +199,8 @@ def run_experiment(trials, error_var):
                 "exp": "Exponential",
                 "gumbel": "Gumbel"
             }
-            s0_ratio_to_ER = {
-                0.5: '1',
-                1: '2',
-                2: '4'
-            }
 
-            ax.set_title(f"{noise_names[noise]} noise, ER{s0_ratio_to_ER[s0_ratio]}")
+            ax.set_title(f"{noise_names[noise]} noise, ER{s0_ratio}")
             ax.set_xlabel("d (Number of Nodes)")
             if j == 0:
                 ax.set_ylabel("Normalized SHD")
