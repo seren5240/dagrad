@@ -134,9 +134,9 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"golem_ER{s0_ratio}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"golem_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"golem_ER{s0_ratio}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"golem_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write("method,d,mean_normalized_shd\n")
         for method in methods:
