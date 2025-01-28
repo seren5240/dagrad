@@ -2,6 +2,34 @@ import numpy as np
 import scipy.linalg as sla
 import numpy.linalg as la
 import torch
+
+class TrExpScipy(torch.autograd.Function):
+    """
+    autograd.Function to compute trace of an exponential of a matrix
+    """
+
+    @staticmethod
+    def forward(ctx, input):
+        with torch.no_grad():
+            # send tensor to cpu in numpy format and compute expm using scipy
+            expm_input = sla.expm(input.detach().cpu().numpy())
+            # transform back into a tensor
+            expm_input = torch.as_tensor(expm_input)
+            if input.is_cuda:
+                # expm_input = expm_input.cuda()
+                assert expm_input.is_cuda
+            # save expm_input to use in backward
+            ctx.save_for_backward(expm_input)
+
+            # return the trace
+            return torch.trace(expm_input)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        with torch.no_grad():
+            (expm_input,) = ctx.saved_tensors
+            return expm_input.t() * grad_output
+
 class h_fn:
     @staticmethod
     def user_h(W,**kwargs):
@@ -27,12 +55,15 @@ class h_fn:
         If users work with **torch** as the computation library, the output of the ``user_h`` function should be 
         the value of h in a torch tensor.
         """
+
         if isinstance(W,np.ndarray):
             pass
         elif isinstance(W,torch.Tensor):
-            user_params = kwargs.get('user_params', None)
-            L2_penalty = 5.0 if user_params is None else user_params.get('L2_penalty', 5.0)
-            return (torch.trace(torch.matrix_exp(W * W)) - W.shape[0]) * L2_penalty
+            # print(f'W is {W}')
+            # assert (W >= 0).detach().cpu().numpy().all()
+            num_vars = W.shape[0]
+            h = TrExpScipy.apply(W) - num_vars
+            return h
         else:
             raise ValueError("W must be either numpy array or torch tensor")
 
