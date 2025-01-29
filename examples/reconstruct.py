@@ -15,6 +15,12 @@ files.sort()
 row_labels = ["ER1", "ER2", "ER4"]
 col_labels = ["Gaussian noise", "Exponential noise", "Gumbel noise"]
 
+noise_names = {
+    'gauss': 'Gaussian',
+    'gumbel': 'Gumbel',
+    'exp': 'Exponential',
+}
+
 for file in files:
     base_name = os.path.basename(file)
     parts = base_name.replace("golem_", "").replace("_n=1000_var=random.txt", "").split("_")
@@ -23,7 +29,7 @@ for file in files:
     noise_type = parts[1].split("=")[1]
     
     row = row_labels.index(er_type)
-    col = col_labels.index(f"{noise_type} noise")
+    col = col_labels.index(f"{noise_names[noise_type]} noise")
     
     ax = axes[row, col]
     
