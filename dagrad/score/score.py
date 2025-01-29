@@ -215,11 +215,29 @@ class loss_fn:
             
         else:
             raise ValueError("W must be either numpy array or torch tensor")
-        
+    
+def forward_given_params(X, weights, biases, num_layers, adjacency, activation):
+    num_zero_weights = 0
+    for k in range(num_layers + 1):
+        # apply affine operator
+        if k == 0:
+            adj = adjacency.unsqueeze(0)
+            X = torch.einsum("tij,ljt,bj->bti", weights[k], adj, X) + biases[k]
+        else:
+            X = torch.einsum("tij,btj->bti", weights[k], X) + biases[k]
+
+        # count num of zeros
+        num_zero_weights += weights[k].numel() - weights[k].nonzero().size(0)
+
+        # apply non-linearity
+        if k != num_layers:
+            X = activation(X)
+
+    return torch.unbind(X, 1)
 
 class nl_loss_fn:
     @staticmethod
-    def user_nl_loss(output, target, **kwargs):
+    def user_nl_loss(X, weights, biases, num_layers, adjacency, activation, **kwargs):
         """
         This is a user-defined loss function for **nonlinear** model. Users can define their own loss function by customizing this function.
 
@@ -239,9 +257,17 @@ class nl_loss_fn:
         ---------
         The output of the ``user_nl_loss`` function should be the value of the loss in a torch tensor.
         """
+        num_vars = X.shape[1]
+        density_params = forward_given_params(X, weights, biases, num_layers, adjacency, activation)
+        log_probs = []
+        for i in range(num_vars):
+            density_param = list(torch.unbind(density_params[i], 1))
+            conditional = torch.distributions.normal.Normal(density_param[0], density_param[1])
+            x_d = X[:, i]
+            log_probs.append(conditional.log_prob(x_d).unsqueeze(1))
 
+        return torch.cat(log_probs, 1)
 
-        raise NotImplementedError("User defined loss is not implemented yet. User are free to define their own loss function.")
     
     @staticmethod
     def nl_l2_loss(output, target, **kwargs):

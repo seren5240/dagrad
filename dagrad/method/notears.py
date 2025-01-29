@@ -370,14 +370,16 @@ def notears_nonlinear(X,
     _opt = set_functions(optimizer, optimizer_functions)
 
     
-    def minimize(model, alpha, rho):
+    def minimize(model: NotearsMLP, alpha, rho):
             num_steps, check_iterate, tol, lr_decay = get_variables_from_optimizer_settings(optimizer_options_settings)
             opt = _opt(model.parameters(),**optimizer_options_config)
             # scheduler = optim.lr_scheduler.ExponentialLR(opt, gamma=0.8)
             def closure():
                 opt.zero_grad()
                 X_hat = model(X)
-                loss = _loss(X_hat,X, **general_options)
+                weights = [param for name, param in model.named_parameters() if "weight" in name]
+                biases = [param for name, param in model.named_parameters() if "bias" in name]
+                loss = _loss(X, weights, biases, len(model.layerlist), model.adj(), activation, **general_options)
                 h_val = _h(model.adj(), **general_options)
                 penalty = 0.5 * rho * h_val * h_val + alpha * h_val
                 l2_reg = 0.5 * lambda2 * model.l2_reg()
@@ -387,6 +389,13 @@ def notears_nonlinear(X,
 
                 total_loss = loss + penalty + l2_reg + reg
                 total_loss.backward()
+                # for name, param in model.named_parameters():
+                #     if param.requires_grad:
+                #         print(f"Parameter: {name}, Shape: {param.shape}, Values: {param.data}")
+           
+                # print(f'weights: {weights}')
+                # print(f'biases: {biases}')
+
                 return total_loss
 
             prev_loss = float('inf')
