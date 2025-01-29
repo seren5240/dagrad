@@ -46,4 +46,4 @@ for file in files:
 handles, labels = ax.get_legend_handles_labels()
 fig.legend(handles, labels, loc='upper center', ncol=2)
 
-plt.show()
+plt.savefig(f"normalized_shd_n=1000_var=random_trials=100.png")
