@@ -1,3 +1,5 @@
+import os
+os.environ["R_LIBS_USER"] = "~/Rlibs"
 from dagrad import dagrad
 from dagrad import generate_linear_data, count_accuracy, threshold_till_dag
 import torch
