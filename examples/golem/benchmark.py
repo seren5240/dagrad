@@ -117,11 +117,15 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
                 print(e)
                 print(f'trial with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error')
 
+    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, shd_results, "shd")
+    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
+
+def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, results, metric: str):
     plt.figure(figsize=(8, 6))
 
     for method in methods:
         means = [
-            np.mean(shd_results[method][d]) if shd_results[method][d] else None
+            np.mean(results[method][d]) if results[method][d] else None
             for d in num_nodes
         ]
         plt.plot(num_nodes, means, marker="o", label=method)
@@ -134,21 +138,21 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
 
     plt.title(f"{noise_names[noise_type]} Noise, ER{s0_ratio}\n(n={n}, trials={trials}, error_var={error_var})")
     plt.xlabel("d (Number of Nodes)")
-    plt.ylabel("Normalized SHD")
+    plt.ylabel(f"Normalized {metric.upper()}")
     plt.grid(True)
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"golem_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"golem_{metric}_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"golem_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"golem_{metric}_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
-        f.write("method,d,mean_normalized_shd\n")
+        f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:
             for d in num_nodes:
-                mean_shd = np.mean(shd_results[method][d]) if shd_results[method][d] else None
-                if mean_shd is not None:
-                    f.write(f"{method},{d},{mean_shd}\n")
+                mean_metric = np.mean(results[method][d]) if results[method][d] else None
+                if mean_metric is not None:
+                    f.write(f"{method},{d},{mean_metric}\n")
 
 
 def run_experiment(trials, error_var):
@@ -186,10 +190,10 @@ def run_experiment(trials, error_var):
                         print(e)
                         print(f'trial with {d} nodes and {sem_type} noise and s0_ratio {s0_ratio} skipped due to error')
 
-    make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, shd_results, "shd")
-    make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, sid_results, "sid")
+    make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, error_var, shd_results, "shd")
+    make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, error_var, sid_results, "sid")
 
-def make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, results, metric: str):
+def make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, error_var, results, metric: str):
     num_rows = len(s0_ratios)
     num_cols = len(noise_types)
 
