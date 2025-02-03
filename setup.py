@@ -30,7 +30,8 @@ setup(
         "python-igraph",
         "torch",
         "scikit-learn",
-        "notears @ git+https://github.com/xunzheng/notears.git"
+        "notears @ git+https://github.com/xunzheng/notears.git",
+        "cdt"
     ],
     url="https://github.com/Duntrain/dagrad",
     project_urls={
