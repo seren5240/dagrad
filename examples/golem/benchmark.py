@@ -95,7 +95,7 @@ def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None):
     return acc_nv
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
-    num_nodes = [5, 10, 50, 100]
+    num_nodes = [5, 10, 50, 100] if s0_ratio <= 2 else [10, 50, 100]
     methods = ["GOLEM-EV", "GOLEM-NV"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
