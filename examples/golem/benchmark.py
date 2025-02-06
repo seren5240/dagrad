@@ -165,7 +165,7 @@ def run_experiment(trials, error_var):
     """
     n = 1000
     num_nodes = [5, 10, 50, 100]
-    s0_ratios = [1, 2, 4]
+    s0_ratios = [0.5, 1, 2]
     noise_types = ["gauss", "exp", "gumbel"]
     methods = ["GOLEM-EV", "GOLEM-NV"]
 
