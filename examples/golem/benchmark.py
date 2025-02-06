@@ -7,6 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
+def format_ratio(ratio):
+    return 0.5 if ratio == 0.5 else int(ratio)
+
 def postprocess(B, graph_thres=0.3):
     """Post-process estimated solution:
         (1) Thresholding.
@@ -143,9 +146,9 @@ def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"golem_{metric}_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"golem_{metric}_ER{int(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:
