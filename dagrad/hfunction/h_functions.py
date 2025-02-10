@@ -2,6 +2,59 @@ import numpy as np
 import scipy.linalg as sla
 import numpy.linalg as la
 import torch
+import torch.nn as nn
+
+
+def normalize(v):
+    return v / torch.linalg.vector_norm(v)
+
+class PowerIterationGradient(nn.Module):
+    def __init__(self, init_adj_mtx, d, n_iter=5):
+        super().__init__()
+        self.d = d
+        self.n_iter = n_iter
+
+        self._dummy_param = nn.Parameter(
+            torch.zeros(1), requires_grad=False
+        )  # Used to track device
+
+        self.register_buffer("u", None)
+        self.register_buffer("v", None)
+
+        self.init_eigenvect(init_adj_mtx)
+
+    @property
+    def device(self):
+        return self._dummy_param.device
+
+    def init_eigenvect(self, adj_mtx):
+        self.u, self.v = torch.ones(size=(2, self.d), device=self.device)
+        self.u = normalize(self.u)
+        self.v = normalize(self.v)
+        self.iterate(adj_mtx, self.n_iter)
+
+    def iterate(self, adj_mtx, n=2):
+        with torch.no_grad():
+            A = adj_mtx + 1e-6
+            for _ in range(n):
+                self.one_iteration(A)
+
+    def one_iteration(self, A):
+        """One iteration of power method"""
+        self.u = normalize(A.T @ self.u)
+        self.v = normalize(A @ self.v)
+
+    def compute_gradient(self, adj_mtx):
+        """Gradient eigenvalue"""
+        A = adj_mtx  # **2
+        # fixed penalty
+        self.iterate(A, self.n_iter)
+        # self.init_eigenvect(adj_mtx)
+        grad = self.u[:, None] @ self.v[None] / (self.u.dot(self.v) + 1e-6)
+        # grad += torch.eye(self.d)
+        # grad += A.T
+        return grad, A
+
 class h_fn:
     @staticmethod
     def user_h(W,**kwargs):
@@ -31,8 +84,13 @@ class h_fn:
             pass
         elif isinstance(W,torch.Tensor):
             user_params = kwargs.get('user_params', None)
-            L2_penalty = 5.0 if user_params is None else user_params.get('L2_penalty', 5.0)
-            return (torch.trace(torch.matrix_exp(W * W)) - W.shape[0]) * L2_penalty
+            is_prescreen = user_params.get('is_prescreen')
+            if is_prescreen:
+                return 0
+            power_grad: PowerIterationGradient = user_params.get('power_grad')
+            grad, A = power_grad.compute_gradient(W)
+            h_val = (grad.detach() * A).sum()
+            return h_val
         else:
             raise ValueError("W must be either numpy array or torch tensor")
 
