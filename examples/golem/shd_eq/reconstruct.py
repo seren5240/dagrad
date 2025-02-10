@@ -22,14 +22,14 @@ fig, axes = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), sharex=
 file_pattern = "golem_shd_ER*_noise=*_n=1000_var=eq.txt"
 files = sorted(glob.glob(file_pattern))
 
-results = {method: {sem: {s0: {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
+results = {method: {sem: {str(s0): {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
 
 for file in files:
     base_name = os.path.basename(file)
     parts = base_name.replace("golem_", "").replace("_n=1000_var=eq.txt", "").split("_")
 
-    er_type = int(parts[0].replace("ER", ""))
-    noise_type = parts[1].split("=")[1]
+    er_type = parts[1].replace("ER", "")
+    noise_type = parts[2].split("=")[1]
 
     df = pd.read_csv(file)
 
@@ -44,10 +44,10 @@ for i, s0_ratio in enumerate(s0_ratios):
         ax = axes[i, j] if num_rows > 1 else axes[j]
 
         for method in methods:
-            means = [np.mean(results[method][noise][s0_ratio][d]) for d in num_nodes]
+            means = [np.mean(results[method][noise][str(s0_ratio)][d]) for d in num_nodes]
             ax.plot(num_nodes, means, marker="o", label=method)
 
-        ax.set_title(f"{noise_names[noise]} noise, ER{s0_ratio}")
+        ax.set_title(f"{noise_names[noise]} noise, s0={s0_ratio}")
         ax.set_xlabel("d (Number of Nodes)")
         if j == 0:
             ax.set_ylabel("Normalized SHD")
