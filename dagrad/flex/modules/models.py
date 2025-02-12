@@ -91,7 +91,7 @@ class LocallyConnected(nn.Module):
 
 class LinearModel(nn.Module):
     def __init__(self, d, bias=False, dtype=torch.double):
-        super(LinearModel, self).__init__()
+        super().__init__()
         self.W = nn.Linear(d, d, bias=bias, dtype=dtype)
         nn.init.zeros_(self.W.weight)
         if bias:
@@ -130,7 +130,7 @@ class MLP(nn.Module):
         self, dims, activation="sigmoid", bias=True, dtype=torch.float64
     ) -> None:
         torch.set_default_dtype(dtype)
-        super(MLP, self).__init__()
+        super().__init__()
         assert (
             len(dims) >= 2 and dims[-1] == 1
         ), "Invalid dimension size or output dimension."
