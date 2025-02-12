@@ -196,6 +196,33 @@ class MLP(nn.Module):
         W = torch.sqrt(A)
         W = W.cpu().detach().numpy()  # [i, j]
         return W
+    
+    def forward_given_params(self, W, x, weights, biases):
+        """
+
+        :param x: batch_size x num_vars
+        :param weights: list of lists. ith list contains weights for ith MLP
+        :param biases: list of lists. ith list contains biases for ith MLP
+        :return: batch_size x num_vars * num_params, the parameters of each variable conditional
+        """
+        # num_zero_weights = 0
+        num_layers = len(self.layers)
+        for k in range(num_layers + 1):
+            # apply affine operator
+            if k == 0:
+                adj = W.unsqueeze(0)
+                x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x) + biases[k]
+            else:
+                x = torch.einsum("tij,btj->bti", weights[k], x) + biases[k]
+
+            # count num of zeros
+            # num_zero_weights += weights[k].numel() - weights[k].nonzero().size(0)
+
+            # apply non-linearity
+            if k != num_layers:
+                x = F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
+
+        return torch.unbind(x, 1)
 
     def get_parameters(self):
         params = []
