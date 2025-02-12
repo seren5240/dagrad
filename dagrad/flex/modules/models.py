@@ -197,6 +197,21 @@ class MLP(nn.Module):
         W = W.cpu().detach().numpy()  # [i, j]
         return W
 
+    def get_parameters(self):
+        params = []
+        
+        weights = []
+        for w in self.fc2:
+            weights.append(w.weight)
+        params.append(weights)
+
+        biases = []
+        for j, b in enumerate(self.fc2):
+            biases.append(b.bias)
+        params.append(biases)
+
+        return tuple(params)
+
 
 class TopoMLP(nn.Module):
     def __init__(self, dims, activation="sigmoid", bias=True, dtype=torch.float64):
