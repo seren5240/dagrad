@@ -197,7 +197,7 @@ class MLP(nn.Module):
         W = W.cpu().detach().numpy()  # [i, j]
         return W
     
-    def forward_given_params(self, W, x, weights, biases):
+    def forward_given_params(self, x, weights, biases):
         """
 
         :param x: batch_size x num_vars
@@ -210,7 +210,8 @@ class MLP(nn.Module):
         for k in range(num_layers + 1):
             # apply affine operator
             if k == 0:
-                adj = W.unsqueeze(0)
+                adj = self.adj().unsqueeze(0)
+                # print(f'dimensions of weights[k] is {weights[k].shape} and of adj is {adj.shape} and of x is {x.shape}')
                 x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x) + biases[k]
             else:
                 x = torch.einsum("tij,btj->bti", weights[k], x) + biases[k]
@@ -241,6 +242,31 @@ class MLP(nn.Module):
 
     def get_distribution(self, dp):
         return torch.distributions.normal.Normal(dp[0], torch.exp(dp[1]))
+    
+    def compute_log_likelihood(self, x, weights, biases, detach=False):
+        """
+        Return log-likelihood of the model for each example.
+        WARNING: This is really a joint distribution only if the DAGness constraint on the mask is satisfied.
+                 Otherwise the joint does not integrate to one.
+        :param x: (batch_size, num_vars)
+        :param weights: list of tensor that are coherent with self.weights
+        :param biases: list of tensor that are coherent with self.biases
+        :return: (batch_size, num_vars) log-likelihoods
+        """
+        density_params = self.forward_given_params(x, weights, biases)
+
+        # if len(extra_params) != 0:
+        #     extra_params = self.transform_extra_params(self.extra_params)
+        log_probs = []
+        for i in range(self.d):
+            density_param = list(torch.unbind(density_params[i], 1))
+            # if len(extra_params) != 0:
+                # density_param.extend(list(torch.unbind(extra_params[i], 0)))
+            conditional = self.get_distribution(density_param)
+            x_d = x[:, i].detach() if detach else x[:, i]
+            log_probs.append(conditional.log_prob(x_d).unsqueeze(1))
+
+        return torch.cat(log_probs, 1)
 
 
 class TopoMLP(nn.Module):

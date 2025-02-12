@@ -4,6 +4,8 @@ import torch
 # import tqdm as tqdm
 from tqdm.auto import tqdm
 
+from dagrad.flex.modules.models import MLP
+
 class ConstrainedSolver:
     def __init__(self):
         self.device = None
@@ -78,7 +80,7 @@ class PathFollowing(ConstrainedSolver):
             if not hasattr(self.model, "l1_loss"):
                 raise ValueError("Model does not have l1_loss method")
 
-    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn):
+    def solve(self, dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn):
         torch.set_default_dtype(self.dtype)
         self.model = model
         self.unconstrained_solver = unconstrained_solver
@@ -89,7 +91,9 @@ class PathFollowing(ConstrainedSolver):
             dag_fn.s = self.s[i]  # used only for logdet function
 
             def new_loss(output, target):
-                total_loss = loss_fn(output, target)
+                # total_loss = loss_fn(output, target)
+                weights, biases = model.get_parameters()
+                total_loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
                 if self.l1_coeff > 0:
                     total_loss += self.l1_coeff * model.l1_loss()
                 if self.weight_decay > 0:
