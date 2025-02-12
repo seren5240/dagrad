@@ -137,7 +137,7 @@ class MLP(nn.Module):
         self.d = dims[0]
         self.dims = dims
         self.bias = bias
-        self.layers = nn.ModuleList()
+        # self.layers = nn.ModuleList()
 
         self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
         nn.init.zeros_(self.fc1.weight)
@@ -206,8 +206,9 @@ class MLP(nn.Module):
         :return: batch_size x num_vars * num_params, the parameters of each variable conditional
         """
         # num_zero_weights = 0
-        num_layers = len(self.layers)
-        for k in range(num_layers + 1):
+        num_layers = len(self.fc2)
+        # print(f'num_layers is {num_layers}, len weights are {len(weights)} and len biases is {len(biases)}')
+        for k in range(num_layers):
             # apply affine operator
             if k == 0:
                 adj = self.adj().unsqueeze(0)
@@ -221,7 +222,7 @@ class MLP(nn.Module):
 
             # apply non-linearity
             if k != num_layers:
-                x = F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
+                x = torch.sigmoid(x)#F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
 
         return torch.unbind(x, 1)
 
