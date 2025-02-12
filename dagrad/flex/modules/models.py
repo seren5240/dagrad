@@ -239,6 +239,9 @@ class MLP(nn.Module):
 
         return tuple(params)
 
+    def get_distribution(self, dp):
+        return torch.distributions.normal.Normal(dp[0], torch.exp(dp[1]))
+
 
 class TopoMLP(nn.Module):
     def __init__(self, dims, activation="sigmoid", bias=True, dtype=torch.float64):
