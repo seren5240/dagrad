@@ -188,7 +188,10 @@ class AugmentedLagrangian(ConstrainedSolver):
             while self.rho < self.rho_max:
                 def augmented_loss(output, target):
                     # Original loss
-                    loss = loss_fn(output, target)
+                    # loss = loss_fn(output, target)
+                    weights, biases = model.get_parameters()
+                    loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
+                    # print(f'total loss: {total_loss}')
                     
                     # L2 regularization
                     if self.weight_decay > 0:
