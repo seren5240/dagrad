@@ -3,57 +3,105 @@ import scipy.linalg as sla
 import numpy.linalg as la
 import torch
 import torch.nn as nn
+import scipy
 
 
 def normalize(v):
     return v / torch.linalg.vector_norm(v)
 
-class PowerIterationGradient(nn.Module):
-    def __init__(self, init_adj_mtx, d, n_iter=5):
+
+class SCCPowerIteration(nn.Module):
+    def __init__(self, init_adj_mtx, d, update_scc_freq=1000):
         super().__init__()
         self.d = d
-        self.n_iter = n_iter
+        self.update_scc_freq = update_scc_freq
 
         self._dummy_param = nn.Parameter(
             torch.zeros(1), requires_grad=False
         )  # Used to track device
 
-        self.register_buffer("u", None)
-        self.register_buffer("v", None)
+        self.scc_list = None
+        self.update_scc(init_adj_mtx)
 
-        self.init_eigenvect(init_adj_mtx)
+        self.register_buffer("v", None)
+        self.register_buffer("vt", None)
+        self.initialize_eigenvectors(init_adj_mtx)
+
+        self.n_updates = 0
 
     @property
     def device(self):
         return self._dummy_param.device
 
-    def init_eigenvect(self, adj_mtx):
-        self.u, self.v = torch.ones(size=(2, self.d), device=self.device)
-        self.u = normalize(self.u)
+    def initialize_eigenvectors(self, adj_mtx):
+        self.v, self.vt = torch.ones(size=(2, self.d), device=self.device)
         self.v = normalize(self.v)
-        self.iterate(adj_mtx, self.n_iter)
+        self.vt = normalize(self.vt)
+        return self.power_iteration(adj_mtx, 5)
 
-    def iterate(self, adj_mtx, n=2):
-        with torch.no_grad():
-            A = adj_mtx + 1e-6
-            for _ in range(n):
-                self.one_iteration(A)
+    def update_scc(self, adj_mtx):
+        n_components, labels = scipy.sparse.csgraph.connected_components(
+            csgraph=scipy.sparse.coo_matrix(adj_mtx.cpu().detach().numpy()),
+            directed=True,
+            return_labels=True,
+            connection="strong",
+        )
+        self.scc_list = []
+        for i in range(n_components):
+            scc = np.where(labels == i)[0]
+            self.scc_list.append(scc)
+        # print(len(self.scc_list))
 
-    def one_iteration(self, A):
-        """One iteration of power method"""
-        self.u = normalize(A.T @ self.u)
-        self.v = normalize(A @ self.v)
+    def power_iteration(self, adj_mtx, n_iter=5):
+        matrix = adj_mtx**2
+        for scc in self.scc_list:
+            if len(scc) == self.d:
+                sub_matrix = matrix
+                v = self.v
+                vt = self.vt
+                for i in range(n_iter):
+                    v = normalize(sub_matrix.mv(v) + 1e-6 * v.sum())
+                    vt = normalize(sub_matrix.T.mv(vt) + 1e-6 * vt.sum())
+                self.v = v
+                self.vt = vt
+
+            else:
+                sub_matrix = matrix[scc][:, scc]
+                v = self.v[scc]
+                vt = self.vt[scc]
+                for i in range(n_iter):
+                    v = normalize(sub_matrix.mv(v) + 1e-6 * v.sum())
+                    vt = normalize(sub_matrix.T.mv(vt) + 1e-6 * vt.sum())
+                self.v[scc] = v
+                self.vt[scc] = vt
+
+        return matrix
 
     def compute_gradient(self, adj_mtx):
-        """Gradient eigenvalue"""
-        A = adj_mtx  # **2
-        # fixed penalty
-        self.iterate(A, self.n_iter)
-        # self.init_eigenvect(adj_mtx)
-        grad = self.u[:, None] @ self.v[None] / (self.u.dot(self.v) + 1e-6)
-        # grad += torch.eye(self.d)
-        # grad += A.T
-        return grad, A
+        if self.n_updates % self.update_scc_freq == 0:
+            self.update_scc(adj_mtx)
+            self.initialize_eigenvectors(adj_mtx)
+
+        # matrix = self.power_iteration(4)
+        matrix = self.initialize_eigenvectors(adj_mtx)
+
+        gradient = torch.zeros(size=(self.d, self.d), device=self.device)
+        for scc in self.scc_list:
+            if len(scc) == self.d:
+                v = self.v
+                vt = self.vt
+                gradient = torch.outer(vt, v) / torch.inner(vt, v)
+            else:
+                v = self.v[scc]
+                vt = self.vt[scc]
+                gradient[scc][:, scc] = torch.outer(vt, v) / torch.inner(vt, v)
+
+        gradient += 100 * torch.eye(self.d, device=self.device)
+        # gradient += matrix.T
+
+        self.n_updates += 1
+
+        return gradient, matrix
 
 class h_fn:
     @staticmethod
@@ -87,7 +135,7 @@ class h_fn:
             is_prescreen = user_params.get('is_prescreen')
             if is_prescreen:
                 return torch.tensor(0.0, dtype=W.dtype, device=W.device)
-            power_grad: PowerIterationGradient = user_params.get('power_grad')
+            power_grad: SCCPowerIteration = user_params.get('power_grad')
             grad, A = power_grad.compute_gradient(W)
             h_val = (grad.detach() * A).sum()
             return h_val
