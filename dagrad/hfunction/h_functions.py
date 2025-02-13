@@ -17,7 +17,7 @@ class SCCPowerIteration(nn.Module):
         self.update_scc_freq = update_scc_freq
 
         self._dummy_param = nn.Parameter(
-            torch.zeros(1), requires_grad=False
+            torch.zeros(1, dtype=torch.double), requires_grad=False
         )  # Used to track device
 
         self.scc_list = None
@@ -34,7 +34,7 @@ class SCCPowerIteration(nn.Module):
         return self._dummy_param.device
 
     def initialize_eigenvectors(self, adj_mtx):
-        self.v, self.vt = torch.ones(size=(2, self.d), device=self.device)
+        self.v, self.vt = torch.ones(size=(2, self.d), device=self.device, dtype=torch.double)
         self.v = normalize(self.v)
         self.vt = normalize(self.vt)
         return self.power_iteration(adj_mtx, 5)
@@ -85,7 +85,7 @@ class SCCPowerIteration(nn.Module):
         # matrix = self.power_iteration(4)
         matrix = self.initialize_eigenvectors(adj_mtx)
 
-        gradient = torch.zeros(size=(self.d, self.d), device=self.device)
+        gradient = torch.zeros(size=(self.d, self.d), device=self.device, dtype=torch.double)
         for scc in self.scc_list:
             if len(scc) == self.d:
                 v = self.v
