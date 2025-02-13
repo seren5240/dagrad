@@ -1,4 +1,6 @@
 import os
+
+from dagrad.hfunction.h_functions import SCCPowerIteration
 os.environ["R_LIBS_USER"] = "~/Rlibs"
 from dagrad import dagrad
 from dagrad import generate_linear_data, count_accuracy, threshold_till_dag
@@ -38,16 +40,23 @@ def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
         model = model,
         method = 'dagma',
         compute_lib='torch',
-        loss_fn='user_loss',
-        reg='user_reg',
         h_fn='user_h',
-        general_options={'user_params': {
-            'equal_variances': True,
-        }}
+        general_options={
+            'user_params': {
+                'is_prescreen': False,
+                'power_grad': SCCPowerIteration(
+                    torch.zeros(d, d, dtype = torch.double, requires_grad = True, device = 'cpu'),
+                    d,
+                )
+            }
+        },
+        method_options={
+            'mu_factor': 0.9,
+        }
     ) # Learn the structure of the DAG using SDCD
+    # W_sdcd = postprocess(W_sdcd)
     print(f"Linear Model")
-    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
-
+    print(f"data size: {n}, graph type: {graph_type}, sem type: {noise_type}")
     acc_sdcd = count_accuracy(B_true, W_sdcd != 0) # Measure the accuracy of the learned structure using SDCD
     print('Accuracy of SDCD:', acc_sdcd)
 
