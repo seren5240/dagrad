@@ -140,8 +140,10 @@ class MLP(nn.Module):
         # self.layers = nn.ModuleList()
 
         self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
-        nn.init.zeros_(self.fc1.weight)
-        nn.init.zeros_(self.fc1.bias)
+        nn.init.xavier_uniform_(self.fc1.weight)
+        if self.fc1.bias is not None:
+            nn.init.constant_(self.fc1.bias, 0.0)
+
 
         if activation == "sigmoid":
             self.activation = torch.sigmoid
@@ -206,9 +208,9 @@ class MLP(nn.Module):
         :return: batch_size x num_vars * num_params, the parameters of each variable conditional
         """
         # num_zero_weights = 0
-        num_layers = len(self.fc2)
+        num_layers = len(self.fc2) - 1
         # print(f'num_layers is {num_layers}, len weights are {len(weights)} and len biases is {len(biases)}')
-        for k in range(num_layers):
+        for k in range(num_layers + 1):
             # apply affine operator
             if k == 0:
                 adj = self.adj().unsqueeze(0)
