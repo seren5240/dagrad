@@ -17,7 +17,7 @@ class SCCPowerIteration(nn.Module):
         self.update_scc_freq = update_scc_freq
 
         self._dummy_param = nn.Parameter(
-            torch.zeros(1, dtype=torch.double), requires_grad=False
+            torch.zeros(1), requires_grad=False
         )  # Used to track device
 
         self.scc_list = None
