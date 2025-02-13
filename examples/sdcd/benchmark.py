@@ -12,24 +12,24 @@ import sys
 def format_ratio(ratio):
     return 0.5 if ratio == 0.5 else int(ratio)
 
-# def postprocess(B, graph_thres=0.3):
-#     """Post-process estimated solution:
-#         (1) Thresholding.
-#         (2) Remove the edges with smallest absolute weight until a DAG
-#             is obtained.
+def postprocess(B, graph_thres=0.3):
+    """Post-process estimated solution:
+        (1) Thresholding.
+        (2) Remove the edges with smallest absolute weight until a DAG
+            is obtained.
 
-#     Args:
-#         B (numpy.ndarray): [d, d] weighted matrix.
-#         graph_thres (float): Threshold for weighted matrix. Default: 0.3.
+    Args:
+        B (numpy.ndarray): [d, d] weighted matrix.
+        graph_thres (float): Threshold for weighted matrix. Default: 0.3.
 
-#     Returns:
-#         numpy.ndarray: [d, d] weighted matrix of DAG.
-#     """
-#     B = np.copy(B)
-#     B[np.abs(B) <= graph_thres] = 0    # Thresholding
-#     B, _ = threshold_till_dag(B)
+    Returns:
+        numpy.ndarray: [d, d] weighted matrix of DAG.
+    """
+    B = np.copy(B)
+    # B[np.abs(B) <= graph_thres] = 0    # Thresholding
+    B, _ = threshold_till_dag(B)
 
-#     return B
+    return B
 
 def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
@@ -54,7 +54,7 @@ def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
             'mu_factor': 0.9,
         }
     ) # Learn the structure of the DAG using SDCD
-    # W_sdcd = postprocess(W_sdcd)
+    W_sdcd = postprocess(W_sdcd)
     print(f"Linear Model")
     print(f"data size: {n}, graph type: {graph_type}, sem type: {noise_type}")
     acc_sdcd = count_accuracy(B_true, W_sdcd != 0) # Measure the accuracy of the learned structure using SDCD
