@@ -31,6 +31,24 @@ def postprocess(B, graph_thres=0.3):
 
     return B
 
+def dagma_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
+    X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
+    X = torch.from_numpy(X).float()
+    model = 'linear' # Define the model
+    W_dagma = dagrad(
+        X,
+        model = model,
+        method = 'dagma',
+        compute_lib='torch',
+    )
+    W_dagma = postprocess(W_dagma)
+    print(f"Linear Model")
+    print(f"data size: {n}, graph type: {graph_type}, sem type: {noise_type}")
+    acc_dagma = count_accuracy(B_true, W_dagma != 0) # Measure the accuracy of the learned structure using SDCD
+    print('Accuracy of Dagma:', acc_dagma)
+
+    return acc_dagma
+
 def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None, mu_factor=0.1):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
     X = torch.from_numpy(X).float()
@@ -107,7 +125,7 @@ def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None, mu_factor=0.
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     num_nodes = [5, 10, 50, 100] if s0_ratio <= 2 else [10, 50, 100]
-    methods = ["SDCD-HIGH", "SDCD-LOW"]
+    methods = ["SDCD-HIGH", "SDCD-LOW", "DAGMA"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
@@ -124,6 +142,10 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
                 high_factor_result = sdcd_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type, mu_factor=0.9)
                 shd_results["SDCD-HIGH"][d].append(high_factor_result["shd"] / d)
                 sid_results["SDCD-HIGH"][d].append(high_factor_result["sid"] / d)
+
+                dagma_result = dagma_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
+                shd_results["DAGMA"][d].append(dagma_result["shd"] / d)
+                sid_results["DAGMA"][d].append(dagma_result["sid"] / d)
                 
             except Exception as e:
                 print(e)
