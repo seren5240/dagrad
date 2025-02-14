@@ -137,7 +137,7 @@ def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var
 
     for method in methods:
         means = [
-            np.mean(results[method][d]) if results[methods][d] else None
+            np.mean(results[method][d]) if results[method][d] else None
             for d in num_nodes
         ]
         plt.plot(num_nodes, means, marker="o", label=method)
