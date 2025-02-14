@@ -31,7 +31,7 @@ def postprocess(B, graph_thres=0.3):
 
     return B
 
-def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
+def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None, mu_factor=0.1):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
     X = torch.from_numpy(X).float()
     model = 'linear' # Define the model
@@ -51,7 +51,7 @@ def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
             }
         },
         method_options={
-            'mu_factor': 0.9,
+            'mu_factor': mu_factor,
         }
     ) # Learn the structure of the DAG using SDCD
     W_sdcd = postprocess(W_sdcd)
@@ -107,8 +107,9 @@ def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     num_nodes = [5, 10, 50, 100] if s0_ratio <= 2 else [10, 50, 100]
-    shd_results = {d: [] for d in num_nodes}
-    sid_results = {d: [] for d in num_nodes}
+    methods = ["SDCD-HIGH", "SDCD-LOW"]
+    shd_results = {method: {d: [] for d in num_nodes} for method in methods}
+    sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
     for d in num_nodes:
         s0 = int(s0_ratio * d)
@@ -116,24 +117,30 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for i in range(trials):
             print(f"Running trial {i} for {d} nodes")
             try:
-                ev_result = sdcd_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
-                shd_results[d].append(ev_result["shd"] / d)
-                sid_results[d].append(ev_result["sid"] / d)
+                low_factor_result = sdcd_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type, mu_factor=0.1)
+                shd_results["SDCD-LOW"][d].append(low_factor_result["shd"] / d)
+                sid_results["SDCD-LOW"][d].append(low_factor_result["sid"] / d)
+
+                high_factor_result = sdcd_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type, mu_factor=0.9)
+                shd_results["SDCD-HIGH"][d].append(high_factor_result["shd"] / d)
+                sid_results["SDCD-HIGH"][d].append(high_factor_result["sid"] / d)
+                
             except Exception as e:
                 print(e)
                 print(f'trial with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error')
 
-    make_one_plot(s0_ratio, noise_type, num_nodes, trials, n, error_var, shd_results, "shd")
-    make_one_plot(s0_ratio, noise_type, num_nodes, trials, n, error_var, sid_results, "sid")
+    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, shd_results, "shd")
+    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
 
-def make_one_plot(s0_ratio, noise_type, num_nodes, trials, n, error_var, results, metric: str):
+def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, results, metric: str):
     plt.figure(figsize=(8, 6))
 
-    means = [
-        np.mean(results[d]) if results[d] else None
-        for d in num_nodes
-    ]
-    plt.plot(num_nodes, means, marker="o", label="SDCD")
+    for method in methods:
+        means = [
+            np.mean(results[method][d]) if results[methods][d] else None
+            for d in num_nodes
+        ]
+        plt.plot(num_nodes, means, marker="o", label=method)
 
     noise_names = {
         "gauss": "Gaussian",
@@ -152,11 +159,12 @@ def make_one_plot(s0_ratio, noise_type, num_nodes, trials, n, error_var, results
 
     output_filename = f"sdcd_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
-        f.write(f"d,mean_normalized_{metric}\n")
-        for d in num_nodes:
-            mean_metric = np.mean(results[d]) if results[d] else None
-            if mean_metric is not None:
-                f.write(f"{d},{mean_metric}\n")
+        f.write(f"method,d,mean_normalized_{metric}\n")
+        for method in methods:
+            for d in num_nodes:
+                mean_metric = np.mean(results[method][d]) if results[method][d] else None
+                if mean_metric is not None:
+                    f.write(f"{method},{d},{mean_metric}\n")
 
 nTrials = int(sys.argv[1])
 nSamples = int(sys.argv[2])
