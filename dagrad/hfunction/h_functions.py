@@ -248,7 +248,9 @@ class h_fn:
             return h, G_h
         elif isinstance(W, torch.Tensor):
             device = W.device
+            dtype = W.dtype
             I = torch.eye(d, device=device)
+            s = torch.tensor(s, device=device, dtype=dtype)
             M = s* I - torch.abs(W)
             h = - torch.slogdet(M)[1] + d * torch.log(s)
             return h
