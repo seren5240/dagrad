@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 num_nodes = [5, 10, 50, 100]
 s0_ratios = [1, 2, 4]
 noise_types = ["gauss", "exp", "gumbel"]
-methods = ["SDCD-HIGH", "SDCD-LOW", "GOLEM"]
+methods = ["SDCD-HIGH", "SDCD-LOW", "DAGMA"]
 
 noise_names = {
     "gauss": "Gaussian",
@@ -18,7 +18,7 @@ noise_names = {
 method_names = {
     "SDCD-HIGH": "SDCD mu_factor=0.9",
     "SDCD-LOW": "SDCD mu_factor=0.1",
-    "GOLEM": "GOLEM"
+    "DAGMA": "DAGMA"
 }
 
 num_rows = len(s0_ratios)
