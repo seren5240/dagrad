@@ -131,6 +131,9 @@ class h_fn:
         if isinstance(W,np.ndarray):
             pass
         elif isinstance(W,torch.Tensor):
+            # A = W ** 2
+            # h = -torch.slogdet(torch.eye(W.shape[0]) - A)[1]
+            # return h
             user_params = kwargs.get('user_params', None)
             is_prescreen = user_params.get('is_prescreen')
             if is_prescreen:
