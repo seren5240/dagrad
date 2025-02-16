@@ -43,10 +43,11 @@ class LocallyConnected(nn.Module):
         self.output_features = output_features
 
         self.weight = nn.Parameter(
-            torch.Tensor(num_linear, input_features, output_features)
+            torch.zeros(num_linear, input_features, output_features)
         )
+        print(f'self.weight initialized to {self.weight}')
         if bias:
-            self.bias = nn.Parameter(torch.Tensor(num_linear, output_features))
+            self.bias = nn.Parameter(torch.zeros(num_linear, output_features))
         else:
             self.register_parameter("bias", None)
         self.reset_parameters()
@@ -140,9 +141,11 @@ class MLP(nn.Module):
         # self.layers = nn.ModuleList()
 
         self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
-        nn.init.xavier_uniform_(self.fc1.weight)
-        if self.fc1.bias is not None:
-            nn.init.constant_(self.fc1.bias, 0.0)
+        nn.init.zeros_(self.fc1.weight)
+        nn.init.zeros_(self.fc1.bias)
+        # nn.init.xavier_uniform_(self.fc1.weight)
+        # if self.fc1.bias is not None:
+        #     nn.init.constant_(self.fc1.bias, 0.0)
 
 
         if activation == "sigmoid":
