@@ -123,6 +123,55 @@ class LogisticModel(nn.Module):
     
     def l1_loss(self):
         return self.W.weight.abs().sum()
+    
+def sample_logistic(shape, uniform):
+    u = uniform.sample(shape)
+    return torch.log(u) - torch.log(1 - u)
+
+def gumbel_sigmoid(log_alpha, uniform, bs, tau=1, hard=False):
+    shape = tuple([bs] + list(log_alpha.size()))
+    logistic_noise = sample_logistic(shape, uniform)
+
+    y_soft = torch.sigmoid((log_alpha + logistic_noise) / tau)
+
+    if hard:
+        y_hard = (y_soft > 0.5).type(torch.Tensor)
+
+        # This weird line does two things:
+        #   1) at forward, we get a hard sample.
+        #   2) at backward, we differentiate the gumbel sigmoid
+        y = y_hard.detach() - y_soft.detach() + y_soft
+
+    else:
+        y = y_soft
+
+    return y
+
+
+class GumbelAdjacency(torch.nn.Module):
+    """
+    Random matrix M used for the mask. Can sample a m∂atrix and backpropagate using the
+    Gumbel straigth-through estimator.
+    :param int num_vars: number of variables
+    """
+
+    def __init__(self, num_vars):
+        super(GumbelAdjacency, self).__init__()
+        self.num_vars = num_vars
+        self.log_alpha = torch.nn.Parameter(torch.zeros((num_vars, num_vars)))
+        self.uniform = torch.distributions.uniform.Uniform(0, 1)
+        self.reset_parameters()
+
+    def forward(self, bs, tau=1, drawhard=True):
+        adj = gumbel_sigmoid(self.log_alpha, self.uniform, bs, tau=tau, hard=drawhard)
+        return adj
+
+    def get_proba(self):
+        """Returns probability of getting one"""
+        return torch.sigmoid(self.log_alpha)
+
+    def reset_parameters(self):
+        torch.nn.init.constant_(self.log_alpha, 5)
 
 
 class MLP(nn.Module):
@@ -137,6 +186,7 @@ class MLP(nn.Module):
         self.d = dims[0]
         self.dims = dims
         self.bias = bias
+        self.gumbel_adjacency = GumbelAdjacency(self.d)
         # self.layers = nn.ModuleList()
 
         self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
@@ -207,24 +257,66 @@ class MLP(nn.Module):
         :param biases: list of lists. ith list contains biases for ith MLP
         :return: batch_size x num_vars * num_params, the parameters of each variable conditional
         """
+        bs = x.size(0)
         # num_zero_weights = 0
         num_layers = len(self.fc2) - 1
-        # print(f'num_layers is {num_layers}, len weights are {len(weights)} and len biases is {len(biases)}')
-        for k in range(num_layers + 1):
-            # apply affine operator
-            if k == 0:
-                adj = self.adj().unsqueeze(0)
-                # print(f'dimensions of weights[k] is {weights[k].shape} and of adj is {adj.shape} and of x is {x.shape}')
-                x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x) + biases[k]
-            else:
-                x = torch.einsum("tij,btj->bti", weights[k], x) + biases[k]
 
-            # count num of zeros
-            # num_zero_weights += weights[k].numel() - weights[k].nonzero().size(0)
+        for layer in range(num_layers + 1):
+            # First layer, apply the mask
+            if layer == 0:
+                # sample the matrix M that will be applied as a mask at the MLP input
+                M = self.gumbel_adjacency(bs)
+                adj = self.adj().unsqueeze(0)
+
+                # if not self.intervention:
+                x = torch.einsum("tij,bjt,ljt,bj->bti", weights[layer], M, adj, x) + biases[layer]
+                # elif self.intervention_type == "perfect" and self.intervention_knowledge == "known":
+                #     # the mask is not applied here, it is applied in the loss term
+                #     x = torch.einsum("tij,bjt,ljt,bj->bti", weights[layer], M, adj, x) + biases[layer]
+                # else:
+                #     assert mask is not None, 'Mask is not set!'
+                #     assert regime is not None, 'Regime is not set!'
+
+                #     regime = torch.from_numpy(regime)
+                #     R = mask
+
+                #     if self.intervention_knowledge == "unknown":
+                #         # sample the matrix R and totally mask the
+                #         # input of MLPs that are intervened on (in R)
+                #         self.interv_w = self.gumbel_interv_w(bs, regime)
+                #         R = self.interv_w
+                #         M = torch.einsum("bjt,bt->bjt", M, R)
+
+                #     # transform the mask format from bs x num_vars
+                #     # to bs x num_vars x num_regimes, in order to select the
+                #     # MLP parameter corresponding to the regime
+                #     R = (1 - R).type(torch.int64)
+                #     R = R * regime.unsqueeze(1)
+                #     R = torch.zeros(R.size(0), self.num_vars, self.num_regimes).scatter_(2, R.unsqueeze(2), 1)
+
+                #     # apply the first MLP layer with the mask M and the
+                #     # parameters 'selected' by R
+                #     w = torch.einsum('tijk, btk -> btij', weights[layer], R)
+                #     x = torch.einsum("btij, bjt, ljt, bj -> bti", w, M, adj, x)
+                #     x += torch.einsum("btk,tik->bti", R, biases[layer])
+
+            # 2nd layer and more
+            else:
+                # if self.intervention and (self.intervention_type == "imperfect" or self.intervention_knowledge == "unknown"):
+                #     w = torch.einsum('tijk, btk -> btij', weights[layer], R)
+                #     x = torch.einsum("btij, btj -> bti", w, x)
+                #     x += torch.einsum("btk,tik->bti", R, biases[layer])
+                # else:
+                x = torch.einsum("tij,btj->bti", weights[layer], x) + biases[layer]
+
+            # count number of zeros
+            # num_zero_weights += weights[layer].numel() - weights[layer].nonzero().size(0)
 
             # apply non-linearity
-            if k != num_layers:
-                x = torch.sigmoid(x)#F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
+            if layer != num_layers:
+                x = F.leaky_relu(x) if self.activation == "leaky-relu" else torch.sigmoid(x)
+
+        # self.zero_weights_ratio = num_zero_weights / float(self.numel_weights)
 
         return torch.unbind(x, 1)
 
@@ -258,13 +350,14 @@ class MLP(nn.Module):
         """
         density_params = self.forward_given_params(x, weights, biases)
 
+        log_probs = []
+
         # if len(extra_params) != 0:
         #     extra_params = self.transform_extra_params(self.extra_params)
-        log_probs = []
         for i in range(self.d):
             density_param = list(torch.unbind(density_params[i], 1))
             # if len(extra_params) != 0:
-                # density_param.extend(list(torch.unbind(extra_params[i], 0)))
+            #     density_param.extend(list(torch.unbind(extra_params[i], 0)))
             conditional = self.get_distribution(density_param)
             x_d = x[:, i].detach() if detach else x[:, i]
             log_probs.append(conditional.log_prob(x_d).unsqueeze(1))
