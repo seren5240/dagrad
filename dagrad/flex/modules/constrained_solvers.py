@@ -90,7 +90,7 @@ class PathFollowing(ConstrainedSolver):
         for i in tqdm(range(self.num_iter)):
             dag_fn.s = self.s[i]  # used only for logdet function
 
-            def new_loss(output, target):
+            def new_loss(target):
                 # total_loss = loss_fn(output, target)
                 weights, biases = model.get_parameters()
                 total_loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
@@ -186,12 +186,14 @@ class AugmentedLagrangian(ConstrainedSolver):
                 continue
             h_new = None
             while self.rho < self.rho_max:
-                def augmented_loss(output, target):
+                def augmented_loss(target):
+                    model.train()
                     # Original loss
                     # loss = loss_fn(output, target)
                     weights, biases = model.get_parameters()
                     loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
                     # print(f'total loss: {total_loss}')
+                    model.eval()
                     
                     # L2 regularization
                     if self.weight_decay > 0:

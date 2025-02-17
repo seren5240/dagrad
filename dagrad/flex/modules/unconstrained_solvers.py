@@ -48,7 +48,7 @@ class GradientBasedSolver(UnconstrainedSolver):
 
         def closure():
             self.optimizer.zero_grad()
-            obj = loss(model(dataset), dataset)
+            obj = loss(dataset)
             obj.backward()
             return obj
 

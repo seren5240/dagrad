@@ -43,9 +43,9 @@ class LocallyConnected(nn.Module):
         self.output_features = output_features
 
         self.weight = nn.Parameter(
-            torch.zeros(num_linear, input_features, output_features)
+            torch.zeros(num_linear, output_features, input_features)
         )
-        print(f'self.weight initialized to {self.weight}')
+        # print(f'self.weight initialized to {self.weight}')
         if bias:
             self.bias = nn.Parameter(torch.zeros(num_linear, output_features))
         else:
@@ -78,6 +78,7 @@ class LocallyConnected(nn.Module):
         # [n, d, 1, m2] = [n, d, 1, m1] @ [1, d, m1, m2]
         out = input.unsqueeze(dim=2) @ self.weight.unsqueeze(dim=0)
         out = out.squeeze(dim=2)
+        print(f'out dimension is {out.shape}, bias dimension is {self.bias.shape}')
         if self.bias is not None:
             # [n, d, m2] += [d, m2]
             out += self.bias
@@ -128,24 +129,26 @@ class LogisticModel(nn.Module):
 
 class MLP(nn.Module):
     def __init__(
-        self, dims, activation="sigmoid", bias=True, dtype=torch.float64
+        self, dims, num_layers, hid_dim, activation="sigmoid", bias=True, dtype=torch.float64
     ) -> None:
         torch.set_default_dtype(dtype)
         super().__init__()
-        assert (
-            len(dims) >= 2 and dims[-1] == 1
-        ), "Invalid dimension size or output dimension."
+        # assert (
+        #     len(dims) >= 2 and dims[-1] == 1
+        # ), "Invalid dimension size or output dimension."
         self.d = dims[0]
         self.dims = dims
+        self.num_layers = num_layers
+        self.hid_dim = hid_dim
         self.bias = bias
         # self.layers = nn.ModuleList()
 
         self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
-        nn.init.zeros_(self.fc1.weight)
-        nn.init.zeros_(self.fc1.bias)
-        # nn.init.xavier_uniform_(self.fc1.weight)
-        # if self.fc1.bias is not None:
-        #     nn.init.constant_(self.fc1.bias, 0.0)
+        # nn.init.zeros_(self.fc1.weight)
+        # nn.init.zeros_(self.fc1.bias)
+        nn.init.xavier_uniform_(self.fc1.weight)
+        if self.fc1.bias is not None:
+            nn.init.constant_(self.fc1.bias, 0.0)
 
 
         if activation == "sigmoid":
@@ -155,9 +158,15 @@ class MLP(nn.Module):
         else:
             raise ValueError("Activation function not supported.")
         self.fc2 = nn.ModuleList()
-        for k in range(len(dims) - 2):
+        for k in range(self.num_layers + 1):
+            in_dim = self.hid_dim
+            out_dim = self.hid_dim
+            if k == 0:
+                in_dim = self.d
+            if k == self.num_layers:
+                out_dim = dims[1]
             self.fc2.append(
-                LocallyConnected(self.d, dims[k + 1], dims[k + 2], bias=bias)
+                LocallyConnected(self.d, in_dim, out_dim, bias=bias)
             )
 
         self.fc1.weight.register_hook(self.make_hook_function(self.d))
@@ -178,14 +187,14 @@ class MLP(nn.Module):
         """Take l1 norm of fc1 weight"""
         return torch.sum(torch.abs(self.fc1.weight))
 
-    def forward(self, x):
-        x = self.fc1(x)
-        x = x.view(-1, self.dims[0], self.dims[1])
-        for fc in self.fc2:
-            x = self.activation(x)
-            x = fc(x)
-        x = x.squeeze(dim=2)
-        return x
+    # def forward(self, x):
+    #     x = self.fc1(x)
+    #     x = x.view(-1, self.dims[0], self.dims[1])
+    #     for fc in self.fc2:
+    #         x = self.activation(x)
+    #         x = fc(x)
+    #     x = x.squeeze(dim=2)
+    #     return x
 
     def adj(self):
         fc1_weight = self.fc1.weight
@@ -211,14 +220,13 @@ class MLP(nn.Module):
         :return: batch_size x num_vars * num_params, the parameters of each variable conditional
         """
         # num_zero_weights = 0
-        num_layers = len(self.fc2) - 1
         # print(f'num_layers is {num_layers}, len weights are {len(weights)} and len biases is {len(biases)}')
-        for k in range(num_layers + 1):
+        for k in range(self.num_layers + 1):
             # apply affine operator
             if k == 0:
                 adj = self.adj().unsqueeze(0)
-                # print(f'dimensions of weights[k] is {weights[k].shape} and of adj is {adj.shape} and of x is {x.shape}')
-                x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x) + biases[k]
+                x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x)
+                x = x + biases[k]
             else:
                 x = torch.einsum("tij,btj->bti", weights[k], x) + biases[k]
 
@@ -226,7 +234,7 @@ class MLP(nn.Module):
             # num_zero_weights += weights[k].numel() - weights[k].nonzero().size(0)
 
             # apply non-linearity
-            if k != num_layers:
+            if k != self.num_layers:
                 x = torch.sigmoid(x)#F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
 
         return torch.unbind(x, 1)
