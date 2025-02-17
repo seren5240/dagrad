@@ -61,7 +61,6 @@ def sdcd_ev(n, d, s0, graph_type, noise_type, error_var, seed=None, mu_factor=0.
         h_fn='user_h',
         general_options={
             'user_params': {
-                'is_prescreen': False,
                 'power_grad': SCCPowerIteration(
                     torch.zeros(d, d, dtype = torch.double, requires_grad = True, device = 'cpu'),
                     d,

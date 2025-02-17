@@ -135,9 +135,6 @@ class h_fn:
             # h = -torch.slogdet(torch.eye(W.shape[0]) - A)[1]
             # return h
             user_params = kwargs.get('user_params', None)
-            is_prescreen = user_params.get('is_prescreen')
-            if is_prescreen:
-                return torch.tensor(0.0, dtype=W.dtype, device=W.device)
             power_grad: SCCPowerIteration = user_params.get('power_grad')
             grad, A = power_grad.compute_gradient(W)
             h_val = (grad.detach() * A).sum()
