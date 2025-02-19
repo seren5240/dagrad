@@ -55,11 +55,14 @@ class GradientBasedSolver(UnconstrainedSolver):
         obj_prev = 1e16
         for i in range(1, int(self.num_steps) + 1):
             with torch.no_grad():
-                h = dag_fn(model.adj())
+                h = dag_fn(model)
             if h.item() < 0:
                 self.vprint(f"Found h negative {h.item()} at iter {i}. Stopping.")
                 return False
             obj_new = self.optimizer.step(closure)
+            with torch.no_grad():
+                to_keep = (model.adj() > 1e-4).type(torch.Tensor)
+                model.adjacency *= to_keep
             if lr_scheduler and (i + 1) % 1000 == 0:  # every 1000 iters reduce lr
                 scheduler.step()
             if i % self.logging_steps == 0 or i == self.num_steps:

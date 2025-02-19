@@ -150,6 +150,9 @@ class MLP(nn.Module):
         if self.fc1.bias is not None:
             nn.init.constant_(self.fc1.bias, 0.0)
 
+        self.adjacency = torch.ones((self.d, self.d)) - torch.eye(
+            self.d
+        )
 
         if activation == "sigmoid":
             self.activation = torch.sigmoid
@@ -196,12 +199,6 @@ class MLP(nn.Module):
     #     x = x.squeeze(dim=2)
     #     return x
 
-    def adj(self):
-        fc1_weight = self.fc1.weight
-        fc1_weight = fc1_weight.view(self.d, -1, self.d)
-        A = torch.sum(fc1_weight**2, dim=1).t()
-        return A
-
     @torch.no_grad()
     def fc1_to_adj(self):
         fc1_weight = self.fc1.weight
@@ -224,7 +221,7 @@ class MLP(nn.Module):
         for k in range(self.num_layers + 1):
             # apply affine operator
             if k == 0:
-                adj = self.adj().unsqueeze(0)
+                adj = self.adjacency.unsqueeze(0)
                 x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x)
                 x = x + biases[k]
             else:
@@ -238,6 +235,10 @@ class MLP(nn.Module):
                 x = torch.sigmoid(x)#F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
 
         return torch.unbind(x, 1)
+
+    def adj(self):
+        """Get weighted adjacency matrix"""
+        return compute_A_phi(self, norm="paths", square=False)
 
     def get_parameters(self):
         params = []
@@ -268,6 +269,7 @@ class MLP(nn.Module):
         :return: (batch_size, num_vars) log-likelihoods
         """
         density_params = self.forward_given_params(x, weights, biases)
+        # print(f'density params are {density_params}')
 
         # if len(extra_params) != 0:
         #     extra_params = self.transform_extra_params(self.extra_params)
@@ -429,3 +431,40 @@ class TopoMLP(nn.Module):
         W = torch.reshape(W, (self.d, self.d)).t()
 
         return W.numpy()
+
+def compute_A_phi(model: MLP, norm="none", square=False):
+    weights = model.get_parameters()[0]
+    prod = torch.eye(model.d)
+    if norm != "none":
+        prod_norm = torch.eye(model.d)
+    for i, w in enumerate(weights):
+        if square:
+            w = w**2
+        else:
+            w = torch.abs(w)
+        if i == 0:
+            prod = torch.einsum(
+                "tij,ljt,jk->tik", w, model.adjacency.unsqueeze(0), prod
+            )
+            if norm != "none":
+                tmp = 1.0 - torch.eye(model.d).unsqueeze(0)
+                prod_norm = torch.einsum(
+                    "tij,ljt,jk->tik", torch.ones_like(w).detach(), tmp, prod_norm
+                )
+        else:
+            prod = torch.einsum("tij,tjk->tik", w, prod)
+            if norm != "none":
+                prod_norm = torch.einsum(
+                    "tij,tjk->tik", torch.ones_like(w).detach(), prod_norm
+                )
+
+    # sum over density parameter axis
+    prod = torch.sum(prod, 1)
+    if norm == "paths":
+        prod_norm = torch.sum(prod_norm, 1)
+        denominator = prod_norm + torch.eye(model.d)  # avoid / 0 on diagonal
+        return (prod / denominator).t()
+    elif norm == "none":
+        return prod.t()
+    else:
+        raise NotImplementedError

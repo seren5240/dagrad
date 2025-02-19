@@ -101,7 +101,7 @@ class PathFollowing(ConstrainedSolver):
                     for param in model.parameters():
                         l2_loss += torch.sum(param**2)
                     total_loss += 0.5 * self.weight_decay * l2_loss
-                return self.mu * total_loss + dag_fn(model.adj())
+                return self.mu * total_loss + dag_fn(model)
 
             success = False
             model_copy = copy.deepcopy(model)
@@ -139,7 +139,7 @@ class AugmentedLagrangian(ConstrainedSolver):
         rho_max: float = 1e8,
         weight_decay: float = 0.0,
         l1_coeff: float = 0.0,
-        h_tol: float = 1e-8
+        h_tol: float = 1e-8,
     ):
         super().__init__()
         self.num_iter = num_iter
@@ -206,10 +206,12 @@ class AugmentedLagrangian(ConstrainedSolver):
                         loss += self.l1_coeff * model.l1_loss()
                         
                     # DAG constraint
-                    h = dag_fn(model.adj())
+                    h = dag_fn(model)
                     
                     # Augmented Lagrangian terms
                     alm_term = self.alpha_multiplier * h + 0.5 * self.rho * h**2
+                    # print(f'loss is {loss} and alm term is {alm_term}')
+                    # alm_term = 0.5 * self.mu * h ** 2 + self.lambda_param * h
                     
                     return loss + alm_term
 
@@ -237,7 +239,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                             break
                 
                 with torch.no_grad():
-                    h_new = dag_fn(model.adj()).item()
+                    h_new = dag_fn(model).item()
                 if h_new > 0.25 * h:
                     self.rho *= self.rho_scale
                 else:

@@ -1,4 +1,4 @@
-from .dags import DagFn, Exp, LogDet, Poly, ExpAbs, LogDetAbs, PolyAbs
+from .dags import DagFn, Exp, LogDet, Poly, ExpAbs, LogDetAbs, PolyAbs, Grandag_h
 from .loss import Loss, L1Loss, L2Loss, MCPLoss, MSELoss, NLLLoss, BCELoss
 from . import functional
 from .models import LinearModel, LogisticModel, MLP, TopoMLP
@@ -8,6 +8,7 @@ from .unconstrained_solvers import UnconstrainedSolver, GradientBasedSolver
 __all__ = [
     "DagFn",
     "Exp",
+    "Grandag_h",
     "LogDet",
     "Poly",
     "ExpAbs",
