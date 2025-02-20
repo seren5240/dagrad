@@ -1,5 +1,6 @@
 import copy
 from typing import List, Optional, Union
+import numpy as np
 import torch
 # import tqdm as tqdm
 from tqdm.auto import tqdm
@@ -172,7 +173,7 @@ class AugmentedLagrangian(ConstrainedSolver):
             if not hasattr(self.model, "l1_loss"):
                 raise ValueError("Model does not have l1_loss method")
 
-    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn):
+    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn, omega_lambda=1e-4, stop_crit_win=100):
         torch.set_default_dtype(self.dtype)
         self.model = model
         self.unconstrained_solver = unconstrained_solver
@@ -181,6 +182,10 @@ class AugmentedLagrangian(ConstrainedSolver):
 
         h = float("inf")
         end = False
+
+        not_nlls = []  # Augmented Lagrangrian minus (pseudo) NLL
+        aug_lagrangians_val = []
+        nlls_val = []  # NLL on validation
         for i in tqdm(range(self.num_iter)):
             if end:
                 continue
@@ -212,7 +217,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                     alm_term = self.alpha_multiplier * h + 0.5 * self.rho * h**2
                     # print(f'loss is {loss} and alm term is {alm_term}')
                     # alm_term = 0.5 * self.mu * h ** 2 + self.lambda_param * h
-                    
+                    not_nlls.append(alm_term.item())
                     return loss + alm_term
 
                 success = False
@@ -240,15 +245,60 @@ class AugmentedLagrangian(ConstrainedSolver):
                 
                 with torch.no_grad():
                     h_new = dag_fn(model).item()
-                if h_new > 0.25 * h:
-                    self.rho *= self.rho_scale
+                
+                if i % stop_crit_win == 0:
+                    with torch.no_grad():
+                        loss_val = augmented_loss(dataset)
+                        nlls_val.append(loss_val)
+                        aug_lagrangians_val.append([iter, loss_val + not_nlls[-1]])
+                    if i >= 2 * stop_crit_win and iter % (2 * stop_crit_win) == 0:
+                        t0, t_half, t1 = aug_lagrangians_val[-3][1], aug_lagrangians_val[-2][1], aug_lagrangians_val[-1][1]
+
+                        # if the validation loss went up and down, do not update lagrangian and penalty coefficients.
+                        if not (min(t0, t1) < t_half < max(t0, t1)):
+                            delta_lambda = -np.inf
+                        else:
+                            delta_lambda = (t1 - t0) / stop_crit_win
+                    else:
+                        delta_lambda = -np.inf  # do not update lambda nor mu
+                
+                if h_new > self.h_tol:
+                    if abs(delta_lambda) < omega_lambda or delta_lambda > 0:
+                        self.alpha_multiplier += self.rho * h
+                    # print("Updated lambda to {}".format(lamb))
+
+                    # Did the constraint improve sufficiently?
+                    # hs.append(h.item())
+                    # if len(hs) >= 2:
+                    if h_new > 0.9 * h:
+                        self.rho *= self.rho_scale
+                        # print("Updated mu to {}".format(mu))
+
+                    # little hack to make sure the moving average is going down.
+                    with torch.no_grad():
+                        gap_in_not_nll = 0.5 * self.rho * h_new ** 2 + self.alpha_multiplier * h_new - not_nlls[-1]
+                        # aug_lagrangian_ma[iter + 1] += gap_in_not_nll
+                        aug_lagrangians_val[-1][1] += gap_in_not_nll
+                    
+                    h = h_new
+
+                    # if opt.optimizer == "rmsprop":
+                    # optimizer = torch.optim.RMSprop(model.parameters(), lr=opt.lr_reinit)
+                    # else:
+                    #     optimizer = torch.optim.SGD(model.parameters(), lr=opt.lr_reinit)
+
                 else:
-                    break
-            h = h_new
-            self.vprint(f"Current h(W): {h:.4f}")
-            self.alpha_multiplier += self.rho * h
-            if h <= self.h_tol or self.rho >= self.rho_max:
-                end = True
+                    end = True
+
+                # if h_new > 0.9 * h:
+                #     self.rho *= self.rho_scale
+                # else:
+                #     break
+            # h = h_new
+            # self.vprint(f"Current h(W): {h:.4f}")
+            # self.alpha_multiplier += self.rho * h
+            # if h <= self.h_tol or self.rho >= self.rho_max:
+            #     end = True
 
 
 
