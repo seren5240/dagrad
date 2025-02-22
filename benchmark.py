@@ -74,7 +74,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
 
     W_est = postprocess(W_est)
 
-    acc = utils.count_accuracy(nonlinear_B_true, W_est != 0)
+    acc = utils.count_accuracy(nonlinear_B_true, W_est.detach().cpu().numpy() != 0)
     print(f'Results before CAM pruning: {acc}')
 
     to_keep = (torch.from_numpy(W_est) > 0).type(torch.Tensor)
@@ -97,7 +97,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
     return acc
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
-    num_nodes = [5, 10, 50, 100] if s0_ratio <= 2 else [10, 50, 100]
+    num_nodes = [5, 10, 50, 100]
     methods = ["GRAN-DAG"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
@@ -108,7 +108,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for i in range(trials):
             print(f"Running trial {i} for {d} nodes")
             try:
-                results = grandag_aug_lagrangian(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
+                results = grandag_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type)
                 shd_results["GRAN-DAG"][d].append(results["shd"] / d)
                 sid_results["GRAN-DAG"][d].append(results["sid"] / d)
             except Exception as e:

@@ -473,4 +473,4 @@ def count_accuracy(B_true: np.ndarray, B_est: np.ndarray) -> dict:
     missing_lower = np.setdiff1d(cond_lower, pred_lower, assume_unique=True)
     shd = len(extra_lower) + len(missing_lower) + len(reverse)
     sid = float(cdt.metrics.SID(target=B_true, pred=B_est))
-    return {'fdr': fdr, 'tpr': tpr, 'fpr': fpr, 'shd': shd, 'nnz': pred_size}
+    return {'fdr': fdr, 'tpr': tpr, 'fpr': fpr, 'shd': shd, 'sid': sid, 'nnz': pred_size}
