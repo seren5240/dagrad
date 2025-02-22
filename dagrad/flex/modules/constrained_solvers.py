@@ -141,8 +141,6 @@ class AugmentedLagrangian(ConstrainedSolver):
         weight_decay: float = 0.0,
         l1_coeff: float = 0.0,
         h_tol: float = 1e-8,
-        random_seed = 42,
-        batch_size = 64,
     ):
         super().__init__()
         self.num_iter = num_iter
@@ -154,8 +152,6 @@ class AugmentedLagrangian(ConstrainedSolver):
         self.weight_decay = weight_decay
         self.l1_coeff = l1_coeff
         self.h_tol = h_tol
-        self.random = np.random.RandomState(random_seed)
-        self.batch_size = batch_size
 
     def validate_inputs(self):
         if isinstance(self.num_steps, list):
@@ -198,9 +194,8 @@ class AugmentedLagrangian(ConstrainedSolver):
                 model.train()
                 # Original loss
                 # loss = loss_fn(output, target)
-                x, _ = self.sample(self.batch_size, target)
                 weights, biases = model.get_parameters()
-                loss = - torch.mean(model.compute_log_likelihood(x, weights, biases))
+                loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
                 # print(f'total loss: {total_loss}')
                 model.eval()
                 
@@ -307,16 +302,6 @@ class AugmentedLagrangian(ConstrainedSolver):
             # self.alpha_multiplier += self.rho * h
             # if h <= self.h_tol or self.rho >= self.rho_max:
             #     end = True
-
-    def sample(self, batch_size, dataset):
-        num_samples = len(dataset)
-        sample_idxs = self.random.choice(
-            np.arange(int(num_samples)), size=(int(batch_size),), replace=False
-        )
-        samples = dataset[torch.as_tensor(sample_idxs).long()]
-        return samples, torch.ones_like(
-            samples
-        )  # second output is mask (for intervention in the future)
 
 
 
