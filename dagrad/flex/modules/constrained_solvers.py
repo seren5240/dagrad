@@ -180,7 +180,6 @@ class AugmentedLagrangian(ConstrainedSolver):
         self.vprint("Using Augmented Lagrangian Method to Solve the DAG constrained Problem")
         self.validate_inputs()
 
-        h = float("inf")
         end = False
 
         not_nlls = []  # Augmented Lagrangrian minus (pseudo) NLL
@@ -190,7 +189,6 @@ class AugmentedLagrangian(ConstrainedSolver):
         for i in tqdm(range(self.num_iter)):
             if end:
                 continue
-            h_new = None
             # while self.rho < self.rho_max:
             def augmented_loss(target):
                 model.train()
@@ -213,6 +211,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                     
                 # DAG constraint
                 h = dag_fn(model)
+                hs.append(h.item())
                 
                 # Augmented Lagrangian terms
                 alm_term = self.alpha_multiplier * h + 0.5 * self.rho * h**2
@@ -245,9 +244,6 @@ class AugmentedLagrangian(ConstrainedSolver):
                     if lr_scale < 1e-6:
                         break
             
-            with torch.no_grad():
-                h_new = dag_fn(model).item()
-            
             if i % stop_crit_win == 0:
                 with torch.no_grad():
                     loss_val = augmented_loss(dataset)
@@ -265,13 +261,12 @@ class AugmentedLagrangian(ConstrainedSolver):
             else:
                 delta_lambda = -np.inf  # do not update lambda nor mu
             
-            if h_new > self.h_tol:
+            if hs[-1] > self.h_tol:
                 if abs(delta_lambda) < omega_lambda or delta_lambda > 0:
-                    self.alpha_multiplier += self.rho * h_new
+                    self.alpha_multiplier += self.rho * hs[-1]
                     # print("Updated lambda to {}".format(lamb))
 
                     # Did the constraint improve sufficiently?
-                    hs.append(h_new)
                     # if len(hs) >= 2:
                     if len(hs) >= 2:
                         if hs[-1] > 0.9 * hs[-2]:
@@ -280,11 +275,10 @@ class AugmentedLagrangian(ConstrainedSolver):
 
                     # little hack to make sure the moving average is going down.
                     with torch.no_grad():
-                        gap_in_not_nll = 0.5 * self.rho * h_new ** 2 + self.alpha_multiplier * h_new - not_nlls[-1]
+                        gap_in_not_nll = 0.5 * self.rho * hs[-1] ** 2 + self.alpha_multiplier * hs[-1] - not_nlls[-1]
                         # aug_lagrangian_ma[iter + 1] += gap_in_not_nll
                         aug_lagrangians_val[-1][1] += gap_in_not_nll
 
-                    h = h_new
 
                 # if opt.optimizer == "rmsprop":
                 # optimizer = torch.optim.RMSprop(model.parameters(), lr=opt.lr_reinit)
@@ -292,7 +286,11 @@ class AugmentedLagrangian(ConstrainedSolver):
                 #     optimizer = torch.optim.SGD(model.parameters(), lr=opt.lr_reinit)
 
             else:
-                print(f'h new is {h_new} and h tol is {self.h_tol} so ending at {i}th iteration')
+                print(f'h new is {hs[-1]} and h tol is {self.h_tol} so ending at {i}th iteration')
+                with torch.no_grad():
+                    w_adj = model.adj()
+                    to_keep = (w_adj > 0).type(torch.Tensor)
+                    model.adjacency *= to_keep
                 end = True
 
                 # if h_new > 0.9 * h:
