@@ -186,6 +186,7 @@ class AugmentedLagrangian(ConstrainedSolver):
         not_nlls = []  # Augmented Lagrangrian minus (pseudo) NLL
         aug_lagrangians_val = []
         nlls_val = []  # NLL on validation
+        hs = []
         for i in tqdm(range(self.num_iter)):
             if end:
                 continue
@@ -218,6 +219,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                 # print(f'loss is {loss} and alm term is {alm_term}')
                 # alm_term = 0.5 * self.mu * h ** 2 + self.lambda_param * h
                 not_nlls.append(alm_term.item())
+                # print(f'at iteration {i} loss is {loss} and alm term is {alm_term} and h is {h} and rho is {self.rho}')
                 return loss + alm_term
 
             success = False
@@ -250,37 +252,39 @@ class AugmentedLagrangian(ConstrainedSolver):
                 with torch.no_grad():
                     loss_val = augmented_loss(dataset)
                     nlls_val.append(loss_val)
-                    aug_lagrangians_val.append([iter, loss_val + not_nlls[-1]])
-                if i >= 2 * stop_crit_win and iter % (2 * stop_crit_win) == 0:
-                    t0, t_half, t1 = aug_lagrangians_val[-3][1], aug_lagrangians_val[-2][1], aug_lagrangians_val[-1][1]
+                    aug_lagrangians_val.append([i, loss_val + not_nlls[-1]])
+                    
+            if i >= 2 * stop_crit_win and i % (2 * stop_crit_win) == 0:
+                t0, t_half, t1 = aug_lagrangians_val[-3][1], aug_lagrangians_val[-2][1], aug_lagrangians_val[-1][1]
 
-                    # if the validation loss went up and down, do not update lagrangian and penalty coefficients.
-                    if not (min(t0, t1) < t_half < max(t0, t1)):
-                        delta_lambda = -np.inf
-                    else:
-                        delta_lambda = (t1 - t0) / stop_crit_win
+                # if the validation loss went up and down, do not update lagrangian and penalty coefficients.
+                if not (min(t0, t1) < t_half < max(t0, t1)):
+                    delta_lambda = -np.inf
                 else:
-                    delta_lambda = -np.inf  # do not update lambda nor mu
+                    delta_lambda = (t1 - t0) / stop_crit_win
+            else:
+                delta_lambda = -np.inf  # do not update lambda nor mu
             
             if h_new > self.h_tol:
                 if abs(delta_lambda) < omega_lambda or delta_lambda > 0:
-                    self.alpha_multiplier += self.rho * h
-                # print("Updated lambda to {}".format(lamb))
+                    self.alpha_multiplier += self.rho * h_new
+                    # print("Updated lambda to {}".format(lamb))
 
-                # Did the constraint improve sufficiently?
-                # hs.append(h.item())
-                # if len(hs) >= 2:
-                if h_new > 0.9 * h:
-                    self.rho *= self.rho_scale
-                    # print("Updated mu to {}".format(mu))
+                    # Did the constraint improve sufficiently?
+                    hs.append(h_new)
+                    # if len(hs) >= 2:
+                    if len(hs) >= 2:
+                        if hs[-1] > 0.9 * hs[-2]:
+                            self.rho *= self.rho_scale
+                            # print("Updated mu to {}".format(mu))
 
-                # little hack to make sure the moving average is going down.
-                with torch.no_grad():
-                    gap_in_not_nll = 0.5 * self.rho * h_new ** 2 + self.alpha_multiplier * h_new - not_nlls[-1]
-                    # aug_lagrangian_ma[iter + 1] += gap_in_not_nll
-                    aug_lagrangians_val[-1][1] += gap_in_not_nll
-                
-                h = h_new
+                    # little hack to make sure the moving average is going down.
+                    with torch.no_grad():
+                        gap_in_not_nll = 0.5 * self.rho * h_new ** 2 + self.alpha_multiplier * h_new - not_nlls[-1]
+                        # aug_lagrangian_ma[iter + 1] += gap_in_not_nll
+                        aug_lagrangians_val[-1][1] += gap_in_not_nll
+
+                    h = h_new
 
                 # if opt.optimizer == "rmsprop":
                 # optimizer = torch.optim.RMSprop(model.parameters(), lr=opt.lr_reinit)
