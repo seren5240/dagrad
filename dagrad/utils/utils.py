@@ -1,3 +1,4 @@
+import cdt
 import numpy as np
 from scipy.special import expit as sigmoid
 import igraph as ig
@@ -471,4 +472,5 @@ def count_accuracy(B_true: np.ndarray, B_est: np.ndarray) -> dict:
     extra_lower = np.setdiff1d(pred_lower, cond_lower, assume_unique=True)
     missing_lower = np.setdiff1d(cond_lower, pred_lower, assume_unique=True)
     shd = len(extra_lower) + len(missing_lower) + len(reverse)
+    sid = float(cdt.metrics.SID(target=B_true, pred=B_est))
     return {'fdr': fdr, 'tpr': tpr, 'fpr': fpr, 'shd': shd, 'nnz': pred_size}
