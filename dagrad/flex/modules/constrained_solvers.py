@@ -286,7 +286,6 @@ class AugmentedLagrangian(ConstrainedSolver):
                 #     optimizer = torch.optim.SGD(model.parameters(), lr=opt.lr_reinit)
 
             else:
-                print(f'h new is {hs[-1]} and h tol is {self.h_tol} so ending at {i}th iteration')
                 with torch.no_grad():
                     w_adj = model.adj()
                     to_keep = (w_adj > 0).type(torch.Tensor)
