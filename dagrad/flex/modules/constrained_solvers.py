@@ -190,105 +190,106 @@ class AugmentedLagrangian(ConstrainedSolver):
             if end:
                 continue
             h_new = None
-            while self.rho < self.rho_max:
-                def augmented_loss(target):
-                    model.train()
-                    # Original loss
-                    # loss = loss_fn(output, target)
-                    weights, biases = model.get_parameters()
-                    loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
-                    # print(f'total loss: {total_loss}')
-                    model.eval()
-                    
-                    # L2 regularization
-                    if self.weight_decay > 0:
-                        l2_loss = 0.0
-                        for param in model.parameters():
-                            l2_loss += torch.sum(param**2)
-                        loss += 0.5 * self.weight_decay * l2_loss
-                        
-                    if self.l1_coeff > 0:
-                        loss += self.l1_coeff * model.l1_loss()
-                        
-                    # DAG constraint
-                    h = dag_fn(model)
-                    
-                    # Augmented Lagrangian terms
-                    alm_term = self.alpha_multiplier * h + 0.5 * self.rho * h**2
-                    # print(f'loss is {loss} and alm term is {alm_term}')
-                    # alm_term = 0.5 * self.mu * h ** 2 + self.lambda_param * h
-                    not_nlls.append(alm_term.item())
-                    return loss + alm_term
-
-                success = False
-                model_copy = model.state_dict().copy()
-                lr_scale = None
-                lr_scheduler = False
-
-                while not success:
-                    self.vprint(
-                        f"\nSolving ALM iteration #{i+1} with lambda={self.alpha_multiplier:.3f}, "
-                        f"rho={self.rho:.3f} for {self.num_steps[i]} steps"
-                    )
-                    
-                    unconstrained_solver.num_steps = self.num_steps[i]
-                    success = unconstrained_solver(
-                        dataset, model, augmented_loss, dag_fn, lr_scale, lr_scheduler
-                    )
-
-                    if not success:
-                        model.load_state_dict(model_copy)
-                        lr_scale = 0.5 if lr_scale is None else 0.5 * lr_scale
-                        lr_scheduler = True
-                        if lr_scale < 1e-6:
-                            break
+            # while self.rho < self.rho_max:
+            def augmented_loss(target):
+                model.train()
+                # Original loss
+                # loss = loss_fn(output, target)
+                weights, biases = model.get_parameters()
+                loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
+                # print(f'total loss: {total_loss}')
+                model.eval()
                 
+                # L2 regularization
+                if self.weight_decay > 0:
+                    l2_loss = 0.0
+                    for param in model.parameters():
+                        l2_loss += torch.sum(param**2)
+                    loss += 0.5 * self.weight_decay * l2_loss
+                    
+                if self.l1_coeff > 0:
+                    loss += self.l1_coeff * model.l1_loss()
+                    
+                # DAG constraint
+                h = dag_fn(model)
+                
+                # Augmented Lagrangian terms
+                alm_term = self.alpha_multiplier * h + 0.5 * self.rho * h**2
+                # print(f'loss is {loss} and alm term is {alm_term}')
+                # alm_term = 0.5 * self.mu * h ** 2 + self.lambda_param * h
+                not_nlls.append(alm_term.item())
+                return loss + alm_term
+
+            success = False
+            model_copy = model.state_dict().copy()
+            lr_scale = None
+            lr_scheduler = False
+
+            while not success:
+                self.vprint(
+                    f"\nSolving ALM iteration #{i+1} with lambda={self.alpha_multiplier:.3f}, "
+                    f"rho={self.rho:.3f} for {self.num_steps[i]} steps"
+                )
+                
+                unconstrained_solver.num_steps = self.num_steps[i]
+                success = unconstrained_solver(
+                    dataset, model, augmented_loss, dag_fn, lr_scale, lr_scheduler
+                )
+
+                if not success:
+                    model.load_state_dict(model_copy)
+                    lr_scale = 0.5 if lr_scale is None else 0.5 * lr_scale
+                    lr_scheduler = True
+                    if lr_scale < 1e-6:
+                        break
+            
+            with torch.no_grad():
+                h_new = dag_fn(model).item()
+            
+            if i % stop_crit_win == 0:
                 with torch.no_grad():
-                    h_new = dag_fn(model).item()
-                
-                if i % stop_crit_win == 0:
-                    with torch.no_grad():
-                        loss_val = augmented_loss(dataset)
-                        nlls_val.append(loss_val)
-                        aug_lagrangians_val.append([iter, loss_val + not_nlls[-1]])
-                    if i >= 2 * stop_crit_win and iter % (2 * stop_crit_win) == 0:
-                        t0, t_half, t1 = aug_lagrangians_val[-3][1], aug_lagrangians_val[-2][1], aug_lagrangians_val[-1][1]
+                    loss_val = augmented_loss(dataset)
+                    nlls_val.append(loss_val)
+                    aug_lagrangians_val.append([iter, loss_val + not_nlls[-1]])
+                if i >= 2 * stop_crit_win and iter % (2 * stop_crit_win) == 0:
+                    t0, t_half, t1 = aug_lagrangians_val[-3][1], aug_lagrangians_val[-2][1], aug_lagrangians_val[-1][1]
 
-                        # if the validation loss went up and down, do not update lagrangian and penalty coefficients.
-                        if not (min(t0, t1) < t_half < max(t0, t1)):
-                            delta_lambda = -np.inf
-                        else:
-                            delta_lambda = (t1 - t0) / stop_crit_win
+                    # if the validation loss went up and down, do not update lagrangian and penalty coefficients.
+                    if not (min(t0, t1) < t_half < max(t0, t1)):
+                        delta_lambda = -np.inf
                     else:
-                        delta_lambda = -np.inf  # do not update lambda nor mu
-                
-                if h_new > self.h_tol:
-                    if abs(delta_lambda) < omega_lambda or delta_lambda > 0:
-                        self.alpha_multiplier += self.rho * h
-                    # print("Updated lambda to {}".format(lamb))
-
-                    # Did the constraint improve sufficiently?
-                    # hs.append(h.item())
-                    # if len(hs) >= 2:
-                    if h_new > 0.9 * h:
-                        self.rho *= self.rho_scale
-                        # print("Updated mu to {}".format(mu))
-
-                    # little hack to make sure the moving average is going down.
-                    with torch.no_grad():
-                        gap_in_not_nll = 0.5 * self.rho * h_new ** 2 + self.alpha_multiplier * h_new - not_nlls[-1]
-                        # aug_lagrangian_ma[iter + 1] += gap_in_not_nll
-                        aug_lagrangians_val[-1][1] += gap_in_not_nll
-                    
-                    h = h_new
-
-                    # if opt.optimizer == "rmsprop":
-                    # optimizer = torch.optim.RMSprop(model.parameters(), lr=opt.lr_reinit)
-                    # else:
-                    #     optimizer = torch.optim.SGD(model.parameters(), lr=opt.lr_reinit)
-
+                        delta_lambda = (t1 - t0) / stop_crit_win
                 else:
-                    end = True
+                    delta_lambda = -np.inf  # do not update lambda nor mu
+            
+            if h_new > self.h_tol:
+                if abs(delta_lambda) < omega_lambda or delta_lambda > 0:
+                    self.alpha_multiplier += self.rho * h
+                # print("Updated lambda to {}".format(lamb))
+
+                # Did the constraint improve sufficiently?
+                # hs.append(h.item())
+                # if len(hs) >= 2:
+                if h_new > 0.9 * h:
+                    self.rho *= self.rho_scale
+                    # print("Updated mu to {}".format(mu))
+
+                # little hack to make sure the moving average is going down.
+                with torch.no_grad():
+                    gap_in_not_nll = 0.5 * self.rho * h_new ** 2 + self.alpha_multiplier * h_new - not_nlls[-1]
+                    # aug_lagrangian_ma[iter + 1] += gap_in_not_nll
+                    aug_lagrangians_val[-1][1] += gap_in_not_nll
+                
+                h = h_new
+
+                # if opt.optimizer == "rmsprop":
+                # optimizer = torch.optim.RMSprop(model.parameters(), lr=opt.lr_reinit)
+                # else:
+                #     optimizer = torch.optim.SGD(model.parameters(), lr=opt.lr_reinit)
+
+            else:
+                print(f'h new is {h_new} and h tol is {self.h_tol} so ending at {i}th iteration')
+                end = True
 
                 # if h_new > 0.9 * h:
                 #     self.rho *= self.rho_scale

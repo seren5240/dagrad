@@ -85,5 +85,6 @@ def struct_learn(
     print(f"Total Time: {time.time() - time_start}")
     
     W_est = model.adj().detach().cpu().numpy()
+    print(f'w_est is {W_est} and model adjacency is {model.adjacency}')
     W_est[np.abs(W_est) < w_threshold] = 0
     return W_est
