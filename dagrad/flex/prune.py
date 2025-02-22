@@ -27,7 +27,7 @@ def np_to_csv(array, save_path):
 
 def cam_pruning_(model_adj, train_data, test_data, cutoff, save_path, verbose=False):
     # convert numpy data to csv, so R can access them
-    data_np = np.concatenate([train_data.dataset.detach().cpu().numpy(), test_data.dataset.detach().cpu().numpy()], 0)
+    data_np = np.concatenate([train_data, test_data], 0)
     data_csv_path = np_to_csv(data_np, save_path)
     dag_csv_path = np_to_csv(model_adj, save_path)
 
@@ -49,8 +49,8 @@ def cam_pruning_(model_adj, train_data, test_data, cutoff, save_path, verbose=Fa
     def retrieve_result():
         return pd.read_csv(arguments['{PATH_RESULTS}']).values
 
-    dag_pruned = launch_R_script("{}/utils/cam_pruning.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                     arguments, output_function=retrieve_result)
+    dag_pruned = launch_R_script("{}/../utils/cam_pruning.R".format(os.path.dirname(os.path.realpath(__file__))),
+                                     arguments, output_function=retrieve_result, verbose=False)
 
     # remove the temporary csv files
     os.remove(data_csv_path)
@@ -58,28 +58,28 @@ def cam_pruning_(model_adj, train_data, test_data, cutoff, save_path, verbose=Fa
 
     return dag_pruned
 
-def cam_pruning(model, train_data, test_data, opt, cutoff=0.001, verbose=False):
+def cam_pruning(model_adj, train_data, test_data, opt, cutoff=0.001, verbose=False):
     """Execute CAM pruning on a given model and datasets"""
     # time0 = time.time()
-    model.eval()
+    # model.eval()
 
     # Prepare path for saving results
     stage_name = "cam-pruning/cutoff_%.6f" % cutoff
-    save_path = os.path.join(opt.exp_path, stage_name)
-    # if not os.path.exists(save_path):
-    #     os.makedirs(save_path)
+    save_path = os.path.join(opt['exp_path'], stage_name)
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
 
     # # Check if already computed
     # if os.path.exists(os.path.join(save_path, "DAG.npy")):
     #     print(stage_name, "already computed. Loading result from disk.")
     #     return load(save_path, "model.pkl")
 
-    model_adj = model.adjacency.detach().cpu().numpy()
+    # model_adj = model.adjacency.detach().cpu().numpy()
 
     dag_pruned = cam_pruning_(model_adj, train_data, test_data, cutoff, save_path, verbose)
 
     # set new adjacency matrix to model
-    model.adjacency.copy_(torch.as_tensor(dag_pruned).type(torch.Tensor))
+    # model.adjacency.copy_(torch.as_tensor(dag_pruned).type(torch.Tensor))
 
     # evaluate on validation set
     # x, _ = test_data.sample(test_data.num_samples)
@@ -112,4 +112,4 @@ def cam_pruning(model, train_data, test_data, opt, cutoff=0.001, verbose=False):
     # plot adjacency
     # plot_adjacency(model.adjacency.detach().cpu().numpy(), train_data.adjacency.detach().cpu().numpy(), save_path)
 
-    return model
+    return torch.as_tensor(dag_pruned).type(torch.Tensor)
