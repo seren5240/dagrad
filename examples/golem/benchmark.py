@@ -36,7 +36,7 @@ def golem_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
     W_golem = dagrad(
         X,
         model = model,
-        method = 'dagma',
+        method = 'notears',
         compute_lib='torch',
         loss_fn='user_loss',
         reg='user_reg',
@@ -61,7 +61,7 @@ def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None):
     W_ev = dagrad(
         X,
         model = model,
-        method = 'dagma',
+        method = 'notears',
         compute_lib='torch',
         loss_fn='user_loss',
         reg='user_reg',
@@ -80,7 +80,7 @@ def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None):
     W_nv = dagrad(
         X,
         model = model,
-        method = 'dagma',
+        method = 'notears',
         compute_lib='torch',
         loss_fn='user_loss',
         reg='user_reg',
@@ -99,7 +99,7 @@ def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None):
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     num_nodes = [5, 10, 50, 100] if s0_ratio <= 2 else [10, 50, 100]
-    methods = ["GOLEM-EV", "GOLEM-NV"]
+    methods = ["GOLEM-NOTEARS-EV", "GOLEM-NOTEARS-NV"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
@@ -110,12 +110,12 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
             print(f"Running trial {i} for {d} nodes")
             try:
                 ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
-                shd_results["GOLEM-EV"][d].append(ev_result["shd"] / d)
-                sid_results["GOLEM-EV"][d].append(ev_result["sid"] / d)
+                shd_results["GOLEM-NOTEARS-EV"][d].append(ev_result["shd"] / d)
+                sid_results["GOLEM-NOTEARS-EV"][d].append(ev_result["sid"] / d)
 
                 nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
-                shd_results["GOLEM-NV"][d].append(nv_result["shd"] / d)
-                sid_results["GOLEM-NV"][d].append(nv_result["sid"] / d)
+                shd_results["GOLEM-NOTEARS-NV"][d].append(nv_result["shd"] / d)
+                sid_results["GOLEM-NOTEARS-NV"][d].append(nv_result["sid"] / d)
             except Exception as e:
                 print(e)
                 print(f'trial with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error')
@@ -170,7 +170,7 @@ def run_experiment(trials, error_var):
     num_nodes = [5, 10, 50, 100]
     s0_ratios = [0.5, 1, 2]
     noise_types = ["gauss", "exp", "gumbel"]
-    methods = ["GOLEM-EV", "GOLEM-NV"]
+    methods = ["GOLEM-NOTEARS-EV", "GOLEM-NOTEARS-NV"]
 
     shd_results = {method: {sem: {s0: {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
     sid_results = {method: {sem: {s0: {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
@@ -183,12 +183,12 @@ def run_experiment(trials, error_var):
                 for _ in range(trials):
                     try:
                         ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
-                        shd_results["GOLEM-EV"][sem_type][s0_ratio][d].append(ev_result["shd"] / d)
-                        sid_results["GOLEM-EV"][sem_type][s0_ratio][d].append(ev_result["sid"] / d)
+                        shd_results["GOLEM-NOTEARS-EV"][sem_type][s0_ratio][d].append(ev_result["shd"] / d)
+                        sid_results["GOLEM-NOTEARS-EV"][sem_type][s0_ratio][d].append(ev_result["sid"] / d)
 
                         nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
-                        shd_results["GOLEM-NV"][sem_type][s0_ratio][d].append(nv_result["shd"] / d)
-                        sid_results["GOLEM-NV"][sem_type][s0_ratio][d].append(nv_result["sid"] / d)
+                        shd_results["GOLEM-NOTEARS-NV"][sem_type][s0_ratio][d].append(nv_result["shd"] / d)
+                        sid_results["GOLEM-NOTEARS-NV"][sem_type][s0_ratio][d].append(nv_result["sid"] / d)
                     except Exception as e:
                         print(e)
                         print(f'trial with {d} nodes and {sem_type} noise and s0_ratio {s0_ratio} skipped due to error')
