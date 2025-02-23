@@ -97,7 +97,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
     return acc
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
-    num_nodes = [5, 10, 50, 100]
+    num_nodes = [5, 10, 20]#[5, 10, 50, 100]
     methods = ["GRAN-DAG"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
@@ -141,9 +141,9 @@ def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"grandag_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"grandag_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:
