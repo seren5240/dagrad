@@ -141,9 +141,9 @@ def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"grandag_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"grandag_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:
