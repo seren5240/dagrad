@@ -177,7 +177,7 @@ class AugmentedLagrangian(ConstrainedSolver):
 
         h = float("inf")
         end = False
-        for i in range(self.num_iter):
+        for i in tqdm(range(self.num_iter)):
             if end:
                 continue
             h_new = None
