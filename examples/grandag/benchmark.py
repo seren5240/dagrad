@@ -97,7 +97,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     # maximum number of edges with 5 nodes is 10
-    num_nodes = [5, 10, 20] if s0_ratio < 2.0 else [10, 20]
+    num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
     methods = ["GRAN-DAG"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
