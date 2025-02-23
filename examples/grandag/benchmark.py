@@ -91,7 +91,6 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
         cam_pruning_cutoff = [float(opt['cam_pruning_cutoff'])]
     for cutoff in cam_pruning_cutoff:
         B_est = cam_pruning(B_est, train_dataset, test_dataset, opt, cutoff=cutoff)
-        # print(f'now B_est is {B_est}')
     acc = utils.count_accuracy(nonlinear_B_true, B_est.detach().cpu().numpy() != 0)
     print("Results: ", acc)
     return acc
