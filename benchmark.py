@@ -74,7 +74,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
 
     W_est = postprocess(W_est)
 
-    acc = utils.count_accuracy(nonlinear_B_true, W_est.detach().cpu().numpy() != 0)
+    acc = utils.count_accuracy(nonlinear_B_true, W_est != 0)
     print(f'Results before CAM pruning: {acc}')
 
     to_keep = (torch.from_numpy(W_est) > 0).type(torch.Tensor)
@@ -92,7 +92,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
     for cutoff in cam_pruning_cutoff:
         B_est = cam_pruning(B_est, train_dataset, test_dataset, opt, cutoff=cutoff)
         # print(f'now B_est is {B_est}')
-    acc = utils.count_accuracy(nonlinear_B_true, B_est != 0)
+    acc = utils.count_accuracy(nonlinear_B_true, B_est.detach().cpu().numpy() != 0)
     print("Results: ", acc)
     return acc
 
