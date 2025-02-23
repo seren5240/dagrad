@@ -82,7 +82,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for i in range(trials):
             print(f"Running trial {i} for {d} nodes")
             try:
-                results = notears_flex(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type)
+                results = notears_flex(n=n, d=d, s0=s0, noise_type=noise_type)
                 shd_results["GRAN-DAG"][d].append(results["shd"] / d)
                 # sid_results["GRAN-DAG"][d].append(results["sid"] / d)
             except Exception as e:
