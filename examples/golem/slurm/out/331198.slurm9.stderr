@@ -1,0 +1,303 @@
+  Running command git clone --filter=blob:none --quiet https://github.com/xunzheng/notears.git /tmp/user/26357/pip-install-z_o1_4pm/notears_b66236a644a0421f83fbe390b7713281
+WARNING: You are using pip version 22.0.4; however, version 25.0 is available.
+You should consider upgrading via the '/bin/python3 -m pip install --upgrade pip' command.
+also installing the dependency ‘curl’
+
+Warning messages:
+1: In install.packages(c("V8"), lib = "~/Rlibs", repos = "http://cran.us.r-project.org",  :
+  installation of package ‘curl’ had non-zero exit status
+2: In install.packages(c("V8"), lib = "~/Rlibs", repos = "http://cran.us.r-project.org",  :
+  installation of package ‘V8’ had non-zero exit status
+trying URL 'https://cran.r-project.org/src/contrib/Archive/randomForest/randomForest_4.6-14.tar.gz'
+Content type 'application/x-gzip' length 80074 bytes (78 KB)
+==================================================
+downloaded 78 KB
+
+* installing *source* package ‘randomForest’ ...
+** package ‘randomForest’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+installing to /home/serenkwok/Rlibs/00LOCK-randomForest/00new/randomForest/libs
+** R
+** data
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (randomForest)
+Warning message:
+package ‘lattice’ is not available (for R version 3.6.3) 
+Warning: dependencies ‘pkgdown’, ‘profvis’, ‘purrr’, ‘cpp11’, ‘waldo’, ‘httr2’ are not available
+also installing the dependencies ‘credentials’, ‘curl’, ‘gert’, ‘gh’, ‘usethis’, ‘rcmdcheck’, ‘roxygen2’, ‘rversions’, ‘testthat’, ‘urlchecker’
+
+There were 11 warnings (use warnings() to see them)
+Warning message:
+package ‘MASS’ is not available (for R version 3.6.3) 
+trying URL 'http://cran.us.r-project.org/src/contrib/BiocManager_1.30.25.tar.gz'
+Content type 'application/x-gzip' length 593414 bytes (579 KB)
+==================================================
+downloaded 579 KB
+
+* installing *source* package ‘BiocManager’ ...
+** package ‘BiocManager’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (BiocManager)
+
+The downloaded source packages are in
+	‘/tmp/user/26357/RtmpMe5XjN/downloaded_packages’
+'getOption("repos")' replaces Bioconductor standard repositories, see
+'help("repositories", package = "BiocManager")' for details.
+Replacement repositories:
+    CRAN: https://cloud.r-project.org
+Bioconductor version 3.10 (BiocManager 1.30.25), R 3.6.3 (2020-02-29)
+Installing package(s) 'igraph'
+Warning: dependency ‘cpp11’ is not available
+trying URL 'https://cloud.r-project.org/src/contrib/igraph_2.1.4.tar.gz'
+Content type 'application/x-gzip' length 4997408 bytes (4.8 MB)
+==================================================
+downloaded 4.8 MB
+
+ERROR: dependency ‘cpp11’ is not available for package ‘igraph’
+* removing ‘/home/serenkwok/Rlibs/igraph’
+
+The downloaded source packages are in
+	‘/tmp/user/26357/RtmpDqVGPo/downloaded_packages’
+Warning message:
+In install.packages(...) :
+  installation of package ‘igraph’ had non-zero exit status
+trying URL 'https://cran.r-project.org/src/contrib/Archive/fastICA/fastICA_1.2-2.tar.gz'
+Content type 'application/x-gzip' length 11556 bytes (11 KB)
+==================================================
+downloaded 11 KB
+
+* installing *source* package ‘fastICA’ ...
+** package ‘fastICA’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+installing to /home/serenkwok/Rlibs/00LOCK-fastICA/00new/fastICA/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (fastICA)
+'getOption("repos")' replaces Bioconductor standard repositories, see
+'help("repositories", package = "BiocManager")' for details.
+Replacement repositories:
+    CRAN: https://cloud.r-project.org
+Bioconductor version 3.10 (BiocManager 1.30.25), R 3.6.3 (2020-02-29)
+Installing package(s) 'SID', 'bnlearn', 'pcalg', 'kpcalg'
+Warning: dependencies ‘cpp11’, ‘gsl’ are not available
+also installing the dependencies ‘igraph’, ‘ggm’, ‘energy’
+
+trying URL 'https://cloud.r-project.org/src/contrib/igraph_2.1.4.tar.gz'
+Content type 'application/x-gzip' length 4997408 bytes (4.8 MB)
+==================================================
+downloaded 4.8 MB
+
+trying URL 'https://cloud.r-project.org/src/contrib/ggm_2.5.1.tar.gz'
+Content type 'application/x-gzip' length 77957 bytes (76 KB)
+==================================================
+downloaded 76 KB
+
+trying URL 'https://cloud.r-project.org/src/contrib/energy_1.7-12.tar.gz'
+Content type 'application/x-gzip' length 58015 bytes (56 KB)
+==================================================
+downloaded 56 KB
+
+trying URL 'https://cloud.r-project.org/src/contrib/SID_1.1.tar.gz'
+Content type 'application/x-gzip' length 12455 bytes (12 KB)
+==================================================
+downloaded 12 KB
+
+trying URL 'https://cloud.r-project.org/src/contrib/pcalg_2.7-12.tar.gz'
+Content type 'application/x-gzip' length 4095856 bytes (3.9 MB)
+==================================================
+downloaded 3.9 MB
+
+trying URL 'https://cloud.r-project.org/src/contrib/kpcalg_1.0.1.tar.gz'
+Content type 'application/x-gzip' length 159022 bytes (155 KB)
+==================================================
+downloaded 155 KB
+
+ERROR: dependency ‘cpp11’ is not available for package ‘igraph’
+* removing ‘/home/serenkwok/Rlibs/igraph’
+ERROR: dependency ‘gsl’ is not available for package ‘energy’
+* removing ‘/home/serenkwok/Rlibs/energy’
+ERROR: dependency ‘igraph’ is not available for package ‘ggm’
+* removing ‘/home/serenkwok/Rlibs/ggm’
+ERROR: dependencies ‘igraph’, ‘ggm’ are not available for package ‘pcalg’
+* removing ‘/home/serenkwok/Rlibs/pcalg’
+ERROR: dependencies ‘pcalg’, ‘igraph’ are not available for package ‘SID’
+* removing ‘/home/serenkwok/Rlibs/SID’
+ERROR: dependencies ‘pcalg’, ‘energy’ are not available for package ‘kpcalg’
+* removing ‘/home/serenkwok/Rlibs/kpcalg’
+
+The downloaded source packages are in
+	‘/tmp/user/26357/RtmpPW9L9g/downloaded_packages’
+Installation paths not writeable, unable to update packages
+  path: /usr/lib/R/library
+  packages:
+    boot, class, cluster, codetools, KernSmooth, mgcv, nlme, nnet, rpart,
+    spatial, survival
+  path: /usr/local/lib/R/site-library
+  packages:
+    Bessel, bit, chron, DistributionUtils, ff, GeneralizedHyperbolic, gmp,
+    kernlab, ks, mclust, multicool, mvtnorm, pcaPP, plot3D, pracma, Rcpp,
+    RcppArmadillo, Rmpfr, rugarch, shape, SkewHyperbolic, truncnorm, xts, zoo
+Warning messages:
+1: package(s) not installed when version(s) same as or greater than current; use
+  `force = TRUE` to re-install: 'glmnet' 'mboost' 
+2: package ‘bnlearn’ is not available (for R version 3.6.3) 
+3: In install.packages(...) :
+  installation of package ‘igraph’ had non-zero exit status
+4: In install.packages(...) :
+  installation of package ‘energy’ had non-zero exit status
+5: In install.packages(...) :
+  installation of package ‘ggm’ had non-zero exit status
+6: In install.packages(...) :
+  installation of package ‘pcalg’ had non-zero exit status
+7: In install.packages(...) :
+  installation of package ‘SID’ had non-zero exit status
+8: In install.packages(...) :
+  installation of package ‘kpcalg’ had non-zero exit status
+trying URL 'https://cran.r-project.org/src/contrib/Archive/CAM/CAM_1.0.tar.gz'
+Content type 'application/x-gzip' length 13992 bytes (13 KB)
+==================================================
+downloaded 13 KB
+
+* installing *source* package ‘CAM’ ...
+** package ‘CAM’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (CAM)
+trying URL 'https://cran.r-project.org/src/contrib/sparsebnUtils_0.0.8.tar.gz'
+Error in download.file(p, destfile, method, mode = "wb", ...) : 
+  cannot open URL 'https://cran.r-project.org/src/contrib/sparsebnUtils_0.0.8.tar.gz'
+In addition: Warning message:
+In download.file(p, destfile, method, mode = "wb", ...) :
+  cannot open URL 'https://cran.r-project.org/src/contrib/sparsebnUtils_0.0.8.tar.gz': HTTP status was '404 Not Found'
+'getOption("repos")' replaces Bioconductor standard repositories, see
+'help("repositories", package = "BiocManager")' for details.
+Replacement repositories:
+    CRAN: https://cloud.r-project.org
+Bioconductor version 3.10 (BiocManager 1.30.25), R 3.6.3 (2020-02-29)
+Installing package(s) 'ccdrAlgorithm', 'discretecdAlgorithm'
+Warning message:
+packages ‘ccdrAlgorithm’, ‘discretecdAlgorithm’ are not available (for R version 3.6.3) 
+Warning: dependencies ‘pkgdown’, ‘profvis’, ‘purrr’, ‘cpp11’, ‘waldo’, ‘httr2’ are not available
+also installing the dependencies ‘credentials’, ‘curl’, ‘gert’, ‘gh’, ‘usethis’, ‘rcmdcheck’, ‘roxygen2’, ‘rversions’, ‘testthat’, ‘urlchecker’
+
+trying URL 'http://cran.us.r-project.org/src/contrib/credentials_2.0.2.tar.gz'
+Content type 'application/x-gzip' length 283111 bytes (276 KB)
+==================================================
+downloaded 276 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/curl_6.2.0.tar.gz'
+Content type 'application/x-gzip' length 933187 bytes (911 KB)
+==================================================
+downloaded 911 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/gert_2.1.4.tar.gz'
+Content type 'application/x-gzip' length 122659 bytes (119 KB)
+==================================================
+downloaded 119 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/gh_1.4.1.tar.gz'
+Content type 'application/x-gzip' length 46164 bytes (45 KB)
+==================================================
+downloaded 45 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/usethis_3.1.0.tar.gz'
+Content type 'application/x-gzip' length 384582 bytes (375 KB)
+==================================================
+downloaded 375 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/rcmdcheck_1.4.0.tar.gz'
+Content type 'application/x-gzip' length 73522 bytes (71 KB)
+==================================================
+downloaded 71 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/roxygen2_7.3.2.tar.gz'
+Content type 'application/x-gzip' length 298741 bytes (291 KB)
+==================================================
+downloaded 291 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/rversions_2.1.2.tar.gz'
+Content type 'application/x-gzip' length 42135 bytes (41 KB)
+==================================================
+downloaded 41 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/testthat_3.2.3.tar.gz'
+Content type 'application/x-gzip' length 738940 bytes (721 KB)
+==================================================
+downloaded 721 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/urlchecker_1.0.1.tar.gz'
+Content type 'application/x-gzip' length 13340 bytes (13 KB)
+==================================================
+downloaded 13 KB
+
+trying URL 'http://cran.us.r-project.org/src/contrib/devtools_2.4.5.tar.gz'
+Content type 'application/x-gzip' length 374718 bytes (365 KB)
+==================================================
+downloaded 365 KB
+
+* installing *source* package ‘curl’ ...
+** package ‘curl’ successfully unpacked and MD5 sums checked
+** using staged installation
+ERROR: configuration failed for package ‘curl’
+* removing ‘/home/serenkwok/Rlibs/curl’
+ERROR: dependency ‘httr2’ is not available for package ‘gh’
+* removing ‘/home/serenkwok/Rlibs/gh’
+ERROR: dependencies ‘purrr’, ‘cpp11’ are not available for package ‘roxygen2’
+* removing ‘/home/serenkwok/Rlibs/roxygen2’
+ERROR: dependency ‘waldo’ is not available for package ‘testthat’
+* removing ‘/home/serenkwok/Rlibs/testthat’
+ERROR: dependency ‘curl’ is not available for package ‘credentials’
+* removing ‘/home/serenkwok/Rlibs/credentials’
+ERROR: dependency ‘curl’ is not available for package ‘rcmdcheck’
+* removing ‘/home/serenkwok/Rlibs/rcmdcheck’
+ERROR: dependency ‘curl’ is not available for package ‘rversions’
+* removing ‘/home/serenkwok/Rlibs/rversions’
+ERROR: dependency ‘curl’ is not available for package ‘urlchecker’
+* removing ‘/home/serenkwok/Rlibs/urlchecker’
+ERROR: dependency ‘credentials’ is not available for package ‘gert’
+* removing ‘/home/serenkwok/Rlibs/gert’
+ERROR: dependencies ‘curl’, ‘gert’, ‘gh’, ‘purrr’ are not available for package ‘usethis’
+* removing ‘/home/serenkwok/Rlibs/usethis’
+ERROR: dependencies ‘usethis’, ‘pkgdown’, ‘profvis’, ‘rcmdcheck’, ‘roxygen2’, ‘rversions’, ‘testthat’, ‘urlchecker’ are not available for package ‘devtools’
+* removing ‘/home/serenkwok/Rlibs/devtools’
+
+The downloaded source packages are in
+	‘/tmp/user/26357/RtmpZLwLHC/downloaded_packages’
+There were 11 warnings (use warnings() to see them)
+Error in library(devtools) : there is no package called ‘devtools’
+Execution halted

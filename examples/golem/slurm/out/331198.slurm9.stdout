@@ -1,0 +1,90 @@
+Defaulting to user installation because normal site-packages is not writeable
+Obtaining file:///home/serenkwok/dagrad
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting notears@ git+https://github.com/xunzheng/notears.git
+  Cloning https://github.com/xunzheng/notears.git to /tmp/user/26357/pip-install-z_o1_4pm/notears_b66236a644a0421f83fbe390b7713281
+  Resolved https://github.com/xunzheng/notears.git to commit eb06eaf08ca90501a8caa4062d62466747ba3cec
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Requirement already satisfied: numpy in /usr/local/lib/python3.8/dist-packages (from dagrad==0.0.1) (1.24.4)
+Requirement already satisfied: dagma in /home/serenkwok/.local/lib/python3.8/site-packages (from dagrad==0.0.1) (1.1.1)
+Requirement already satisfied: scipy in /usr/local/lib/python3.8/dist-packages (from dagrad==0.0.1) (1.10.1)
+Requirement already satisfied: python-igraph in /home/serenkwok/.local/lib/python3.8/site-packages (from dagrad==0.0.1) (0.11.8)
+Requirement already satisfied: torch in /home/serenkwok/.local/lib/python3.8/site-packages (from dagrad==0.0.1) (2.4.1)
+Requirement already satisfied: scikit-learn in /usr/local/lib/python3.8/dist-packages (from dagrad==0.0.1) (1.2.0)
+Requirement already satisfied: cdt in /home/serenkwok/.local/lib/python3.8/site-packages (from dagrad==0.0.1) (0.6.0)
+Requirement already satisfied: requests in /usr/local/lib/python3.8/dist-packages (from cdt->dagrad==0.0.1) (2.27.1)
+Requirement already satisfied: joblib in /usr/local/lib/python3.8/dist-packages (from cdt->dagrad==0.0.1) (1.2.0)
+Requirement already satisfied: skrebate in /home/serenkwok/.local/lib/python3.8/site-packages (from cdt->dagrad==0.0.1) (0.62)
+Requirement already satisfied: pandas in /usr/local/lib/python3.8/dist-packages (from cdt->dagrad==0.0.1) (1.5.2)
+Requirement already satisfied: statsmodels in /home/serenkwok/.local/lib/python3.8/site-packages (from cdt->dagrad==0.0.1) (0.14.1)
+Requirement already satisfied: tqdm in /usr/local/lib/python3.8/dist-packages (from cdt->dagrad==0.0.1) (4.54.1)
+Requirement already satisfied: networkx in /home/serenkwok/.local/lib/python3.8/site-packages (from cdt->dagrad==0.0.1) (3.1)
+Requirement already satisfied: GPUtil in /home/serenkwok/.local/lib/python3.8/site-packages (from cdt->dagrad==0.0.1) (1.4.0)
+Requirement already satisfied: igraph in /home/serenkwok/.local/lib/python3.8/site-packages (from dagma->dagrad==0.0.1) (0.11.8)
+Requirement already satisfied: texttable>=1.6.2 in /home/serenkwok/.local/lib/python3.8/site-packages (from igraph->dagma->dagrad==0.0.1) (1.7.0)
+Requirement already satisfied: threadpoolctl>=2.0.0 in /usr/local/lib/python3.8/dist-packages (from scikit-learn->dagrad==0.0.1) (2.1.0)
+Requirement already satisfied: nvidia-curand-cu12==10.3.2.106 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (10.3.2.106)
+Requirement already satisfied: nvidia-cusolver-cu12==11.4.5.107 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (11.4.5.107)
+Requirement already satisfied: sympy in /usr/lib/python3/dist-packages (from torch->dagrad==0.0.1) (1.5.1)
+Requirement already satisfied: fsspec in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (2025.2.0)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.1.105 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (12.1.105)
+Requirement already satisfied: filelock in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (3.16.1)
+Requirement already satisfied: nvidia-cublas-cu12==12.1.3.1 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (12.1.3.1)
+Requirement already satisfied: typing-extensions>=4.8.0 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (4.12.2)
+Requirement already satisfied: jinja2 in /usr/local/lib/python3.8/dist-packages (from torch->dagrad==0.0.1) (2.11.2)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.1.105 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (12.1.105)
+Requirement already satisfied: nvidia-nccl-cu12==2.20.5 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (2.20.5)
+Requirement already satisfied: nvidia-cufft-cu12==11.0.2.54 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (11.0.2.54)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.1.105 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (12.1.105)
+Requirement already satisfied: nvidia-cusparse-cu12==12.1.0.106 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (12.1.0.106)
+Requirement already satisfied: nvidia-nvtx-cu12==12.1.105 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (12.1.105)
+Requirement already satisfied: triton==3.0.0 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (3.0.0)
+Requirement already satisfied: nvidia-cudnn-cu12==9.1.0.70 in /home/serenkwok/.local/lib/python3.8/site-packages (from torch->dagrad==0.0.1) (9.1.0.70)
+Requirement already satisfied: nvidia-nvjitlink-cu12 in /home/serenkwok/.local/lib/python3.8/site-packages (from nvidia-cusolver-cu12==11.4.5.107->torch->dagrad==0.0.1) (12.8.61)
+Requirement already satisfied: MarkupSafe>=0.23 in /usr/local/lib/python3.8/dist-packages (from jinja2->torch->dagrad==0.0.1) (1.1.1)
+Requirement already satisfied: python-dateutil>=2.8.1 in /usr/local/lib/python3.8/dist-packages (from pandas->cdt->dagrad==0.0.1) (2.8.1)
+Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.8/dist-packages (from pandas->cdt->dagrad==0.0.1) (2021.3)
+Requirement already satisfied: charset-normalizer~=2.0.0 in /usr/local/lib/python3.8/dist-packages (from requests->cdt->dagrad==0.0.1) (2.0.12)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.8/dist-packages (from requests->cdt->dagrad==0.0.1) (1.26.20)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.8/dist-packages (from requests->cdt->dagrad==0.0.1) (2024.8.30)
+Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.8/dist-packages (from requests->cdt->dagrad==0.0.1) (3.4)
+Requirement already satisfied: packaging>=21.3 in /home/serenkwok/.local/lib/python3.8/site-packages (from statsmodels->cdt->dagrad==0.0.1) (24.2)
+Requirement already satisfied: patsy>=0.5.4 in /home/serenkwok/.local/lib/python3.8/site-packages (from statsmodels->cdt->dagrad==0.0.1) (1.0.1)
+Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.8/dist-packages (from python-dateutil>=2.8.1->pandas->cdt->dagrad==0.0.1) (1.15.0)
+Installing collected packages: dagrad
+  Attempting uninstall: dagrad
+    Found existing installation: dagrad 0.0.1
+    Uninstalling dagrad-0.0.1:
+      Successfully uninstalled dagrad-0.0.1
+  Running setup.py develop for dagrad
+Successfully installed dagrad
+Installing R packages
+gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG     -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c classTree.c -o classTree.o
+gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG     -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c init.c -o init.o
+gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG     -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c regTree.c -o regTree.o
+gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG     -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c regrf.c -o regrf.o
+gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG     -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c rf.c -o rf.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong  -c rfsub.f -o rfsub.o
+gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG     -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c rfutils.c -o rfutils.o
+gcc -std=gnu99 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -o randomForest.so classTree.o init.o regTree.o regrf.o rf.o rfsub.o rfutils.o -lgfortran -lm -lquadmath -L/usr/lib/R/lib -lR
+gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG     -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-jbaK_j/r-base-3.6.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c ica.c -o ica.o
+gcc -std=gnu99 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -o fastICA.so ica.o -llapack -lblas -lgfortran -lm -lquadmath -L/usr/lib/R/lib -lR
+Warning: replacing previous import ‘glmnet::Cindex’ by ‘mboost::Cindex’ when loading ‘CAM’
+Warning: replacing previous import ‘glmnet::Cindex’ by ‘mboost::Cindex’ when loading ‘CAM’
+Warning: replacing previous import ‘glmnet::Cindex’ by ‘mboost::Cindex’ when loading ‘CAM’
+Using PKG_CFLAGS=
+Using PKG_LIBS=-lcurl
+--------------------------- [ANTICONF] --------------------------------
+Configuration failed because libcurl was not found. Try installing:
+ * deb: libcurl4-openssl-dev (Debian, Ubuntu, etc)
+ * rpm: libcurl-devel (Fedora, CentOS, RHEL)
+If libcurl is already installed, check that 'pkg-config' is in your
+PATH and PKG_CONFIG_PATH contains a libcurl.pc file. If pkg-config
+is unavailable you can set INCLUDE_DIR and LIB_DIR manually via:
+R CMD INSTALL --configure-vars='INCLUDE_DIR=... LIB_DIR=...'
+-------------------------- [ERROR MESSAGE] ---------------------------
+<stdin>:1:10: fatal error: curl/curl.h: No such file or directory
+compilation terminated.
+--------------------------------------------------------------------
