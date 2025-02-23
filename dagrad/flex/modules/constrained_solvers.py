@@ -186,7 +186,7 @@ class AugmentedLagrangian(ConstrainedSolver):
         aug_lagrangians_val = []
         nlls_val = []  # NLL on validation
         hs = []
-        for i in tqdm(range(self.num_iter)):
+        for i in range(self.num_iter):
             if end:
                 continue
             # while self.rho < self.rho_max:
