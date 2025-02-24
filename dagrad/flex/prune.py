@@ -32,8 +32,8 @@ def cam_pruning_(model_adj, train_data, test_data, cutoff, save_path, verbose=Fa
     dag_csv_path = np_to_csv(model_adj, save_path)
 
     #dag_pruned = cam_pruning(path_data, path_dag, cutoff, verbose)
-    if not RPackages.CAM:
-        raise ImportError("R Package CAM is not available.")
+    # if not RPackages.CAM:
+    #     raise ImportError("R Package CAM is not available.")
 
     arguments = dict()
     arguments['{PATH_DATA}'] = data_csv_path
