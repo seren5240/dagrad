@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 num_nodes = [5, 10, 20]
 s0_ratios = [1]
 noise_types = ["gauss", "exp", "gumbel"]
-methods = ["GRAN-DAG-NCAM", "NOTEARS"]
+methods = ["GRAN-DAG-NCAM", "GRAN-DAG", "NOTEARS"]
 
 noise_names = {
     "gauss": "Gaussian",
@@ -17,6 +17,7 @@ noise_names = {
 
 method_labels = {
     "GRAN-DAG-NCAM": "GRAN-DAG without CAM pruning",
+    "GRAN-DAG": "GRAN-DAG with CAM pruning",
     "NOTEARS": "NOTEARS"
 }
 
