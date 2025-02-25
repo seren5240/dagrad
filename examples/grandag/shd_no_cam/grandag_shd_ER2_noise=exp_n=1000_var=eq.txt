@@ -1,1 +1,3 @@
 method,d,mean_normalized_shd
+GRAN-DAG-NCAM,10,2.58
+GRAN-DAG-NCAM,20,6.26
