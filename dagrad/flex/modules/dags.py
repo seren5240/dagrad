@@ -97,8 +97,8 @@ class TrExpScipy(torch.autograd.Function):
             (expm_input,) = ctx.saved_tensors
             return expm_input.t() * grad_output
 
-class Grandag_h(DagFn):
-    def eval(self, model: MLP):
-        w_adj = model.adj()
-        assert (w_adj >= 0).detach().cpu().numpy().all()
-        return TrExpScipy.apply(w_adj) - model.d
+class DCDI_h(DagFn):
+    def eval(self, w_adj):
+            assert (w_adj >= 0).detach().cpu().numpy().all()
+            h = TrExpScipy.apply(w_adj) - w_adj.shape[0]
+            return h

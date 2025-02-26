@@ -59,7 +59,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
     loss_fn = flex.MSELoss()
 
     # Use Trace of matrix exponential as DAG function
-    dag_fn = flex.Grandag_h()
+    dag_fn = flex.DCDI_h()
 
     # Learn the DAG
     W_est = flex.struct_learn(
