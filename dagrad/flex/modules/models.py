@@ -176,6 +176,14 @@ class MLP(nn.Module):
         self.reset_params()
         self.fc1.weight.register_hook(self.make_hook_function(self.d))
 
+        extra_params = np.ones((self.d,))
+        np.random.shuffle(extra_params)
+        # each element in the list represents a variable, the size of the element is the number of extra_params per var
+        self.extra_params = nn.ParameterList()
+        for extra_param in extra_params:
+            self.extra_params.append(nn.Parameter(torch.tensor(np.log(extra_param).reshape(1)).type(torch.Tensor)))
+
+
     @staticmethod
     def make_hook_function(d):
         def hook_function(grad):
@@ -268,6 +276,13 @@ class MLP(nn.Module):
 
     def get_distribution(self, dp):
         return torch.distributions.normal.Normal(dp[0], torch.exp(dp[1]))
+
+    def transform_extra_params(self, extra_params):
+        transformed_extra_params = []
+        for extra_param in extra_params:
+            transformed_extra_params.append(torch.exp(extra_param))
+        return transformed_extra_params  # returns std_dev
+
     
     def compute_log_likelihood(self, x, weights, biases, detach=False):
         """
@@ -283,12 +298,12 @@ class MLP(nn.Module):
         # print(f'density params are {density_params}')
 
         # if len(extra_params) != 0:
-        #     extra_params = self.transform_extra_params(self.extra_params)
+        extra_params = self.transform_extra_params(self.extra_params)
         log_probs = []
         for i in range(self.d):
             density_param = list(torch.unbind(density_params[i], 1))
-            # if len(extra_params) != 0:
-                # density_param.extend(list(torch.unbind(extra_params[i], 0)))
+            if len(extra_params) != 0:
+                density_param.extend(list(torch.unbind(self.extra_params[i], 0)))
             conditional = self.get_distribution(density_param)
             x_d = x[:, i].detach() if detach else x[:, i]
             log_probs.append(conditional.log_prob(x_d).unsqueeze(1))
