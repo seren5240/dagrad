@@ -128,6 +128,27 @@ class PathFollowing(ConstrainedSolver):
                     dag_fn.s = 1  # only useful when dag_fn is the logdet function
             self.mu *= self.mu_scale
 
+def compute_loss(x, mask, model: MLP, weights, biases, extra_params,mean_std=False):
+    # TODO: add param
+    """
+    Compute the loss. If intervention is perfect and known, remove
+    the intervened targets from the loss with a mask.
+    """
+    # if intervention and intervention_type == "perfect" and intervention_knowledge =="known":
+    #     log_likelihood = model.compute_log_likelihood(x, weights, biases, extra_params)
+    #     log_likelihood = torch.sum(log_likelihood * mask, dim=0) / mask.size(0)
+    # else:
+    log_likelihood = model.compute_log_likelihood(x, weights, biases,
+                                                  extra_params, mask=mask)
+    log_likelihood = torch.sum(log_likelihood, dim=0) / mask.size(0)
+    loss = - torch.mean(log_likelihood)
+
+    if not mean_std:
+        return loss
+    else:
+        joint_log_likelihood = torch.mean(log_likelihood * mask, dim=1)
+        return loss, torch.sqrt(torch.var(joint_log_likelihood) / joint_log_likelihood.size(0))
+
 
 class AugmentedLagrangian(ConstrainedSolver):
     def __init__(
