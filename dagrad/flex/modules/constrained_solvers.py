@@ -148,6 +148,25 @@ def compute_loss(x, mask, model: MLP, weights, biases, extra_params,mean_std=Fal
     else:
         joint_log_likelihood = torch.mean(log_likelihood * mask, dim=1)
         return loss, torch.sqrt(torch.var(joint_log_likelihood) / joint_log_likelihood.size(0))
+    
+def sample(target, batch_size):
+    """
+    Sample without replacement `batch_size` examples from the data and
+    return the corresponding masks and regimes
+    :param int batch_size: number of samples to sample
+    :return: samples, masks, regimes
+    """
+    random = np.random.RandomState()
+    num_samples = target.shape[0]
+    sample_idxs = random.choice(np.arange(int(num_samples)), size=(int(batch_size),), replace=False)
+    samples = target[torch.as_tensor(sample_idxs).long()]
+    # if self.intervention:
+    #     masks = self.convert_masks(sample_idxs)
+    #     regimes = self.regimes[torch.as_tensor(sample_idxs).long()]
+    # else:
+    masks = torch.ones_like(samples)
+    regimes = None
+    return samples, masks, regimes
 
 
 class AugmentedLagrangian(ConstrainedSolver):
@@ -215,8 +234,9 @@ class AugmentedLagrangian(ConstrainedSolver):
                 model.train()
                 # Original loss
                 # loss = loss_fn(output, target)
+                x, mask, regime = sample(target,64)
                 weights, biases = model.get_parameters()
-                loss = - torch.mean(model.compute_log_likelihood(target, weights, biases))
+                loss = compute_loss(x, mask, model, weights, biases, model.extra_params)
                 # print(f'total loss: {total_loss}')
                 model.eval()
                 
