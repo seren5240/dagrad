@@ -432,39 +432,50 @@ class TopoMLP(nn.Module):
 
         return W.numpy()
 
-def compute_A_phi(model: MLP, norm="none", square=False):
-    weights = model.get_parameters()[0]
-    prod = torch.eye(model.d)
-    if norm != "none":
-        prod_norm = torch.eye(model.d)
-    for i, w in enumerate(weights):
-        if square:
-            w = w**2
-        else:
-            w = torch.abs(w)
-        if i == 0:
-            prod = torch.einsum(
-                "tij,ljt,jk->tik", w, model.adjacency.unsqueeze(0), prod
-            )
-            if norm != "none":
-                tmp = 1.0 - torch.eye(model.d).unsqueeze(0)
-                prod_norm = torch.einsum(
-                    "tij,ljt,jk->tik", torch.ones_like(w).detach(), tmp, prod_norm
-                )
-        else:
-            prod = torch.einsum("tij,tjk->tik", w, prod)
-            if norm != "none":
-                prod_norm = torch.einsum(
-                    "tij,tjk->tik", torch.ones_like(w).detach(), prod_norm
-                )
+def sample_logistic(shape, uniform):
+    u = uniform.sample(shape)
+    return torch.log(u) - torch.log(1 - u)
+    
+def gumbel_sigmoid(log_alpha, uniform, bs, tau=1, hard=False):
+    shape = tuple([bs] + list(log_alpha.size()))
+    logistic_noise = sample_logistic(shape, uniform)
 
-    # sum over density parameter axis
-    prod = torch.sum(prod, 1)
-    if norm == "paths":
-        prod_norm = torch.sum(prod_norm, 1)
-        denominator = prod_norm + torch.eye(model.d)  # avoid / 0 on diagonal
-        return (prod / denominator).t()
-    elif norm == "none":
-        return prod.t()
+    y_soft = torch.sigmoid((log_alpha + logistic_noise) / tau)
+
+    if hard:
+        y_hard = (y_soft > 0.5).type(torch.Tensor)
+
+        # This weird line does two things:
+        #   1) at forward, we get a hard sample.
+        #   2) at backward, we differentiate the gumbel sigmoid
+        y = y_hard.detach() - y_soft.detach() + y_soft
+
     else:
-        raise NotImplementedError
+        y = y_soft
+
+    return y
+
+
+class GumbelAdjacency(torch.nn.Module):
+    """
+    Random matrix M used for the mask. Can sample a matrix and backpropagate using the
+    Gumbel straigth-through estimator.
+    :param int num_vars: number of variables
+    """
+    def __init__(self, num_vars):
+        super(GumbelAdjacency, self).__init__()
+        self.num_vars = num_vars
+        self.log_alpha = torch.nn.Parameter(torch.zeros((num_vars, num_vars)))
+        self.uniform = torch.distributions.uniform.Uniform(0, 1)
+        self.reset_parameters()
+
+    def forward(self, bs, tau=1, drawhard=True):
+        adj = gumbel_sigmoid(self.log_alpha, self.uniform, bs, tau=tau, hard=drawhard)
+        return adj
+
+    def get_proba(self):
+        """Returns probability of getting one"""
+        return torch.sigmoid(self.log_alpha)
+
+    def reset_parameters(self):
+        torch.nn.init.constant_(self.log_alpha, 5)
