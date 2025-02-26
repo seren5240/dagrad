@@ -213,7 +213,7 @@ class AugmentedLagrangian(ConstrainedSolver):
             if not hasattr(self.model, "l1_loss"):
                 raise ValueError("Model does not have l1_loss method")
 
-    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn, omega_lambda=1e-4, stop_crit_win=100):
+    def solve(self, dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn, omega_lambda=1e-4, stop_crit_win=100):
         torch.set_default_dtype(self.dtype)
         self.model = model
         self.unconstrained_solver = unconstrained_solver
@@ -226,6 +226,12 @@ class AugmentedLagrangian(ConstrainedSolver):
         aug_lagrangians_val = []
         nlls_val = []  # NLL on validation
         hs = []
+
+        with torch.no_grad():
+            full_adjacency = torch.ones((model.d, model.d)) - torch.eye(model.d)
+            constraint_normalization = dag_fn(full_adjacency).item()
+
+
         for i in range(self.num_iter):
             if end:
                 continue
@@ -239,28 +245,28 @@ class AugmentedLagrangian(ConstrainedSolver):
                 loss = compute_loss(x, mask, model, weights, biases, model.extra_params)
                 # print(f'total loss: {total_loss}')
                 model.eval()
-                
-                # L2 regularization
-                if self.weight_decay > 0:
-                    l2_loss = 0.0
-                    for param in model.parameters():
-                        l2_loss += torch.sum(param**2)
-                    loss += 0.5 * self.weight_decay * l2_loss
-                    
-                if self.l1_coeff > 0:
-                    loss += self.l1_coeff * model.l1_loss()
-                    
+
                 # DAG constraint
-                h = dag_fn(model)
+                w_adj = model.adj()
+                h = dag_fn(w_adj) / constraint_normalization
                 hs.append(h.item())
                 
+                reg = self.l1_coeff * model.compute_penalty([w_adj], p=1)
+                reg /= w_adj.shape[0]**2
+                reg_interv = torch.tensor(0)
+
+                lagrangian = loss + reg + reg_interv + self.alpha_multiplier * h
+                augmentation = h ** 2
+
+                aug_lagrangian = lagrangian + 0.5 * self.rho * augmentation
+
                 # Augmented Lagrangian terms
-                alm_term = self.alpha_multiplier * h + 0.5 * self.rho * h**2
+                # alm_term = self.alpha_multiplier * h + 0.5 * self.rho * h**2
                 # print(f'loss is {loss} and alm term is {alm_term}')
                 # alm_term = 0.5 * self.mu * h ** 2 + self.lambda_param * h
-                not_nlls.append(alm_term.item())
+                not_nlls.append(reg.item() + 0.5 * self.rho * h.item() ** 2 + self.alpha_multiplier * h.item())
                 # print(f'at iteration {i} loss is {loss} and alm term is {alm_term} and h is {h} and rho is {self.rho}')
-                return loss + alm_term
+                return aug_lagrangian
 
             success = False
             model_copy = model.state_dict().copy()

@@ -191,6 +191,12 @@ class MLP(nn.Module):
         """Take l1 norm of fc1 weight"""
         return torch.sum(torch.abs(self.fc1.weight))
 
+    def compute_penalty(list_, p=2, target=0.):
+        penalty = 0
+        for m in list_:
+            penalty += torch.norm(m - target, p=p) ** p
+        return penalty
+
     @torch.no_grad()
     def fc1_to_adj(self):
         fc1_weight = self.fc1.weight
