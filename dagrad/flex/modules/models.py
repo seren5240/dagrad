@@ -191,15 +191,6 @@ class MLP(nn.Module):
         """Take l1 norm of fc1 weight"""
         return torch.sum(torch.abs(self.fc1.weight))
 
-    # def forward(self, x):
-    #     x = self.fc1(x)
-    #     x = x.view(-1, self.dims[0], self.dims[1])
-    #     for fc in self.fc2:
-    #         x = self.activation(x)
-    #         x = fc(x)
-    #     x = x.squeeze(dim=2)
-    #     return x
-
     @torch.no_grad()
     def fc1_to_adj(self):
         fc1_weight = self.fc1.weight
@@ -217,23 +208,25 @@ class MLP(nn.Module):
         :param biases: list of lists. ith list contains biases for ith MLP
         :return: batch_size x num_vars * num_params, the parameters of each variable conditional
         """
+        bs = x.size(0)
         # num_zero_weights = 0
         # print(f'num_layers is {num_layers}, len weights are {len(weights)} and len biases is {len(biases)}')
-        for k in range(self.num_layers + 1):
+        for layer in range(self.num_layers + 1):
             # apply affine operator
-            if k == 0:
+            if layer == 0:
+                M = self.gumbel_adjacency(bs)
                 adj = self.adjacency.unsqueeze(0)
-                x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x)
-                x = x + biases[k]
+                x = torch.einsum("tij,bjt,ljt,bj->bti", weights[layer], M, adj, x) 
+                x = x + biases[layer]
             else:
-                x = torch.einsum("tij,btj->bti", weights[k], x) + biases[k]
+                x = torch.einsum("tij,btj->bti", weights[layer], x) + biases[layer]
 
             # count num of zeros
             # num_zero_weights += weights[k].numel() - weights[k].nonzero().size(0)
 
             # apply non-linearity
-            if k != self.num_layers:
-                x = torch.sigmoid(x)#F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
+            if layer != self.num_layers:
+                x = F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
 
         return torch.unbind(x, 1)
 
@@ -257,7 +250,7 @@ class MLP(nn.Module):
         return tuple(params)
 
     def get_distribution(self, dp):
-        return torch.distributions.normal.Normal(dp[0], torch.exp(dp[1]))
+        return torch.distributions.normal.Normal(dp[0], dp[1])
     
     def compute_log_likelihood(self, x, weights, biases, detach=False):
         """
