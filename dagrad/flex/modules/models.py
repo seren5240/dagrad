@@ -173,6 +173,7 @@ class MLP(nn.Module):
                 LocallyConnected(self.d, in_dim, out_dim, bias=bias)
             )
 
+        self.reset_params()
         self.fc1.weight.register_hook(self.make_hook_function(self.d))
 
     @staticmethod
@@ -191,7 +192,7 @@ class MLP(nn.Module):
         """Take l1 norm of fc1 weight"""
         return torch.sum(torch.abs(self.fc1.weight))
 
-    def compute_penalty(list_, p=2, target=0.):
+    def compute_penalty(self, list_, p=2, target=0.):
         penalty = 0
         for m in list_:
             penalty += torch.norm(m - target, p=p) ** p
@@ -240,6 +241,16 @@ class MLP(nn.Module):
         """Get weighted adjacency matrix"""
         return self.gumbel_adjacency.get_proba() * self.adjacency
 
+    def reset_params(self):
+        with torch.no_grad():
+            for node in range(self.d):
+                for w in self.fc2:
+                    w = w.weight[node]
+                    nn.init.xavier_uniform_(w, gain=nn.init.calculate_gain('leaky_relu'))
+                for b in self.fc2:
+                    b = b.bias[node]
+                    b.zero_()
+
     def get_parameters(self):
         params = []
         
@@ -256,7 +267,7 @@ class MLP(nn.Module):
         return tuple(params)
 
     def get_distribution(self, dp):
-        return torch.distributions.normal.Normal(dp[0], dp[1])
+        return torch.distributions.normal.Normal(dp[0], torch.exp(dp[1]))
     
     def compute_log_likelihood(self, x, weights, biases, detach=False):
         """
