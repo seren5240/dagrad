@@ -153,6 +153,7 @@ class MLP(nn.Module):
         self.adjacency = torch.ones((self.d, self.d)) - torch.eye(
             self.d
         )
+        self.gumbel_adjacency = GumbelAdjacency(self.d)
 
         if activation == "sigmoid":
             self.activation = torch.sigmoid
@@ -238,7 +239,7 @@ class MLP(nn.Module):
 
     def adj(self):
         """Get weighted adjacency matrix"""
-        return compute_A_phi(self, norm="paths", square=False)
+        return self.gumbel_adjacency.get_proba() * self.adjacency
 
     def get_parameters(self):
         params = []
