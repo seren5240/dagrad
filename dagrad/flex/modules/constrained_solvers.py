@@ -102,7 +102,8 @@ class PathFollowing(ConstrainedSolver):
                     for param in model.parameters():
                         l2_loss += torch.sum(param**2)
                     total_loss += 0.5 * self.weight_decay * l2_loss
-                return self.mu * total_loss + dag_fn(model)
+                w_adj = model.adj()
+                return self.mu * total_loss + dag_fn(w_adj)
 
             success = False
             model_copy = copy.deepcopy(model)
@@ -128,7 +129,7 @@ class PathFollowing(ConstrainedSolver):
                     dag_fn.s = 1  # only useful when dag_fn is the logdet function
             self.mu *= self.mu_scale
 
-def compute_loss(x, mask, model: MLP, weights, biases, extra_params,mean_std=False):
+def compute_loss(x, mask, model: MLP, weights, biases,mean_std=False):
     # TODO: add param
     """
     Compute the loss. If intervention is perfect and known, remove
@@ -138,8 +139,7 @@ def compute_loss(x, mask, model: MLP, weights, biases, extra_params,mean_std=Fal
     #     log_likelihood = model.compute_log_likelihood(x, weights, biases, extra_params)
     #     log_likelihood = torch.sum(log_likelihood * mask, dim=0) / mask.size(0)
     # else:
-    log_likelihood = model.compute_log_likelihood(x, weights, biases,
-                                                  extra_params, mask=mask)
+    log_likelihood = model.compute_log_likelihood(x, weights, biases)
     log_likelihood = torch.sum(log_likelihood, dim=0) / mask.size(0)
     loss = - torch.mean(log_likelihood)
 
@@ -242,7 +242,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                 # loss = loss_fn(output, target)
                 x, mask, regime = sample(target,64)
                 weights, biases = model.get_parameters()
-                loss = compute_loss(x, mask, model, weights, biases, model.extra_params)
+                loss = compute_loss(x, mask, model, weights, biases)
                 # print(f'total loss: {total_loss}')
                 model.eval()
 

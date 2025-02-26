@@ -56,7 +56,8 @@ class GradientBasedSolver(UnconstrainedSolver):
         obj_prev = 1e16
         for i in range(1, int(self.num_steps) + 1):
             with torch.no_grad():
-                h = dag_fn(model)
+                w_adj = model.adj()
+                h = dag_fn(w_adj)
             if h.item() < 0:
                 self.vprint(f"Found h negative {h.item()} at iter {i}. Stopping.")
                 return False
