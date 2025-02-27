@@ -1,0 +1,4 @@
+method,d,mean_normalized_shd
+GRAN-DAG,5,0.58
+GRAN-DAG,10,0.77
+GRAN-DAG,20,0.99
