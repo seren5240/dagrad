@@ -6,6 +6,7 @@ import torch
 from tqdm.auto import tqdm
 
 from dagrad.flex.modules.models import MLP
+from dagrad.utils.utils import is_dag
 
 class ConstrainedSolver:
     def __init__(self):
@@ -214,6 +215,14 @@ class AugmentedLagrangian(ConstrainedSolver):
                 raise ValueError("Model does not have l1_loss method")
 
     def solve(self, dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn, omega_lambda=1e-4, stop_crit_win=100):
+        first_stop = 0
+        second_stop = 0
+        thresholded = False
+        patience = 5
+        patience_thresh = 5
+        best_nll_val = np.inf
+        best_lagrangian_val = np.inf
+
         torch.set_default_dtype(self.dtype)
         self.model = model
         self.unconstrained_solver = unconstrained_solver
@@ -296,6 +305,11 @@ class AugmentedLagrangian(ConstrainedSolver):
                     loss_val = augmented_loss(dataset)
                     nlls_val.append(loss_val)
                     aug_lagrangians_val.append([i, loss_val + not_nlls[-1]])
+                    to_keep = (model.adj() > 0.5).type(torch.Tensor)
+                    current_adj = model.adjacency * to_keep
+                    current_adj = current_adj.cpu().numpy()
+                    acyclic = is_dag(current_adj)
+                    # print(f'current adj is {current_adj}, setting acyclic to {acyclic}')
                     
             if i >= 2 * stop_crit_win and i % (2 * stop_crit_win) == 0:
                 t0, t_half, t1 = aug_lagrangians_val[-3][1], aug_lagrangians_val[-2][1], aug_lagrangians_val[-1][1]
@@ -308,7 +322,7 @@ class AugmentedLagrangian(ConstrainedSolver):
             else:
                 delta_lambda = -np.inf  # do not update lambda nor mu
             
-            if hs[-1] > self.h_tol:
+            if hs[-1] > self.h_tol or not acyclic:
                 if abs(delta_lambda) < omega_lambda or delta_lambda > 0:
                     self.alpha_multiplier += self.rho * hs[-1]
                     # print("Updated lambda to {}".format(lamb))
@@ -333,11 +347,54 @@ class AugmentedLagrangian(ConstrainedSolver):
                 #     optimizer = torch.optim.SGD(model.parameters(), lr=opt.lr_reinit)
 
             else:
-                with torch.no_grad():
-                    w_adj = model.adj()
-                    to_keep = (w_adj > 0).type(torch.Tensor)
-                    model.adjacency *= to_keep
-                end = True
+                if patience > 0:
+                    if i % 1000 == 0:
+                        # compute loss on whole validation set
+                        # and then aug lagrangian
+                        with torch.no_grad():
+                            x, mask, _ = sample(dataset, 64)
+                            weights, biases = model.get_parameters()
+                            loss_val = compute_loss(x, mask, model, weights, biases).item()
+                        aug_lagrangian_val = loss_val + not_nlls[-1]
+
+                        if aug_lagrangian_val < best_lagrangian_val:
+                            best_lagrangian_val = aug_lagrangian_val
+                            patience = 5
+                            # best_model = copy.deepcopy(model)
+                        else:
+                            patience -= 1
+                        print(f"aug_lagrangian_val: {aug_lagrangian_val}, \
+                            best_lagrangian_val:{best_lagrangian_val}")
+
+                elif not thresholded:
+                    # Final thresholding of all edges <= 0.5
+                    # and edges > 0.5 are set to 1
+                    with torch.no_grad():
+                        w_adj = model.adj()
+                        higher = (w_adj > 0.5).type(torch.Tensor)
+                        lower = (w_adj <= 0.5).type(torch.Tensor)
+                        model.gumbel_adjacency.log_alpha.copy_(higher * 100 + lower * -100)
+                        model.gumbel_adjacency.log_alpha.requires_grad = False
+                        model.adjacency.copy_(higher)
+                    best_nll_val = np.inf
+                    thresholded = True
+
+                elif patience_thresh > 0:
+                    if i % 1000 == 0:
+                        # compute loss on whole validation set
+                        with torch.no_grad():
+                            x, mask, _ = sample(dataset, 64)
+                            weights, biases = model.get_parameters()
+                            loss_val = compute_loss(x, mask, model, weights, biases).item()
+
+                        # nll_val the best?
+                        if loss_val < best_nll_val:
+                            best_nll_val = loss_val
+                            patience_thresh = 5
+                        else:
+                            patience_thresh -= 1
+                else:
+                    return model
 
                 # if h_new > 0.9 * h:
                 #     self.rho *= self.rho_scale

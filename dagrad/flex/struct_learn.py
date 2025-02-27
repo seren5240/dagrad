@@ -84,7 +84,8 @@ def struct_learn(
     constrained_solver(dataset, model, unconstrained_solver, loss_fn, dag_fn)
     print(f"Total Time: {time.time() - time_start}")
     
-    W_est = model.adjacency #model.adj().detach().cpu().numpy()
+    W_est = model.adjacency.detach().cpu().numpy() #model.adj().detach().cpu().numpy()
     # print(f'w_est is {W_est} and model adjacency is {model.adjacency}')
     # W_est[np.abs(W_est) < w_threshold] = 0
+    print(f'struct learn returning {W_est}')
     return W_est
