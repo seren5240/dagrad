@@ -257,7 +257,7 @@ class MLP(nn.Module):
         return tuple(params)
 
     def get_distribution(self, dp):
-        return torch.distributions.normal.Normal(dp[0], torch.exp(dp[1]))
+        return torch.distributions.normal.Normal(dp[0], dp[1])
 
     def transform_extra_params(self, extra_params):
         transformed_extra_params = []
@@ -285,7 +285,7 @@ class MLP(nn.Module):
         for i in range(self.d):
             density_param = list(torch.unbind(density_params[i], 1))
             if len(extra_params) != 0:
-                density_param.extend(list(torch.unbind(self.extra_params[i], 0)))
+                density_param.extend(list(torch.unbind(extra_params[i], 0)))
             conditional = self.get_distribution(density_param)
             x_d = x[:, i].detach() if detach else x[:, i]
             log_probs.append(conditional.log_prob(x_d).unsqueeze(1))
