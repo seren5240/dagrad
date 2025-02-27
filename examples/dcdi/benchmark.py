@@ -56,7 +56,7 @@ def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     # maximum number of edges with 5 nodes is 10
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
-    methods = ["GRAN-DAG"]
+    methods = ["DCDI-G"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
@@ -67,8 +67,8 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
             print(f"Running trial {i} for {d} nodes")
             try:
                 results = dcdi_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type)
-                shd_results["GRAN-DAG"][d].append(results["shd"] / d)
-                sid_results["GRAN-DAG"][d].append(results["sid"] / d)
+                shd_results["DCDI-G"][d].append(results["shd"] / d)
+                sid_results["DCDI-G"][d].append(results["sid"] / d)
             except Exception as e:
                 print(e)
                 print(f'trial with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error')
@@ -99,9 +99,9 @@ def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"grandag_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"dcdi_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"grandag_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"dcdi_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:
