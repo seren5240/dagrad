@@ -208,15 +208,8 @@ class AugmentedLagrangian(ConstrainedSolver):
                 raise ValueError("num_steps is None in Unconstrained Solver")
             else:
                 self.num_steps = self.num_iter * [self.unconstrained_solver.num_steps]
-        
-        if self.l1_coeff > 0:
-            # make sure the function l1_loss is implemented in the model
-            if not hasattr(self.model, "l1_loss"):
-                raise ValueError("Model does not have l1_loss method")
 
     def solve(self, dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn, omega_lambda=1e-4, stop_crit_win=100):
-        first_stop = 0
-        second_stop = 0
         thresholded = False
         patience = 5
         patience_thresh = 5

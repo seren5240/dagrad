@@ -143,13 +143,6 @@ class MLP(nn.Module):
         self.bias = bias
         # self.layers = nn.ModuleList()
 
-        self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
-        # nn.init.zeros_(self.fc1.weight)
-        # nn.init.zeros_(self.fc1.bias)
-        nn.init.xavier_uniform_(self.fc1.weight)
-        if self.fc1.bias is not None:
-            nn.init.constant_(self.fc1.bias, 0.0)
-
         self.adjacency = torch.ones((self.d, self.d)) - torch.eye(
             self.d
         )
@@ -161,7 +154,11 @@ class MLP(nn.Module):
             self.activation = F.relu
         else:
             raise ValueError("Activation function not supported.")
-        self.fc2 = nn.ModuleList()
+
+        self.weights = nn.ParameterList()
+        self.biases = nn.ParameterList()
+
+        # self.fc2 = nn.ModuleList()
         for k in range(self.num_layers + 1):
             in_dim = self.hid_dim
             out_dim = self.hid_dim
@@ -169,12 +166,10 @@ class MLP(nn.Module):
                 in_dim = self.d
             if k == self.num_layers:
                 out_dim = dims[1]
-            self.fc2.append(
-                LocallyConnected(self.d, in_dim, out_dim, bias=bias)
-            )
+            self.weights.append(nn.Parameter(torch.zeros(self.d, out_dim, in_dim)))
+            self.biases.append(nn.Parameter(torch.zeros(self.d, out_dim)))
 
         self.reset_params()
-        self.fc1.weight.register_hook(self.make_hook_function(self.d))
 
         extra_params = np.ones((self.d,))
         np.random.shuffle(extra_params)
@@ -196,24 +191,11 @@ class MLP(nn.Module):
 
         return hook_function
 
-    def l1_loss(self):
-        """Take l1 norm of fc1 weight"""
-        return torch.sum(torch.abs(self.fc1.weight))
-
     def compute_penalty(self, list_, p=2, target=0.):
         penalty = 0
         for m in list_:
             penalty += torch.norm(m - target, p=p) ** p
         return penalty
-
-    @torch.no_grad()
-    def fc1_to_adj(self):
-        fc1_weight = self.fc1.weight
-        fc1_weight = fc1_weight.view(self.d, -1, self.d)
-        A = torch.sum(fc1_weight**2, dim=1).t()
-        W = torch.sqrt(A)
-        W = W.cpu().detach().numpy()  # [i, j]
-        return W
     
     def forward_given_params(self, x, weights, biases):
         """
@@ -252,24 +234,24 @@ class MLP(nn.Module):
     def reset_params(self):
         with torch.no_grad():
             for node in range(self.d):
-                for w in self.fc2:
-                    w = w.weight[node]
+                for i, w in enumerate(self.weights):
+                    w = w[node]
                     nn.init.xavier_uniform_(w, gain=nn.init.calculate_gain('leaky_relu'))
-                for b in self.fc2:
-                    b = b.bias[node]
+                for i, b in enumerate(self.biases):
+                    b = b[node]
                     b.zero_()
 
     def get_parameters(self):
         params = []
         
         weights = []
-        for w in self.fc2:
-            weights.append(w.weight)
+        for w in self.weights:
+            weights.append(w)
         params.append(weights)
 
         biases = []
-        for j, b in enumerate(self.fc2):
-            biases.append(b.bias)
+        for b in self.biases:
+            biases.append(b)
         params.append(biases)
 
         return tuple(params)
