@@ -363,8 +363,8 @@ class AugmentedLagrangian(ConstrainedSolver):
                             # best_model = copy.deepcopy(model)
                         else:
                             patience -= 1
-                        print(f"aug_lagrangian_val: {aug_lagrangian_val}, \
-                            best_lagrangian_val:{best_lagrangian_val}")
+                        # print(f"aug_lagrangian_val: {aug_lagrangian_val}, \
+                        #     best_lagrangian_val:{best_lagrangian_val}")
 
                 elif not thresholded:
                     # Final thresholding of all edges <= 0.5
