@@ -87,5 +87,5 @@ def struct_learn(
     W_est = model.adjacency.detach().cpu().numpy() #model.adj().detach().cpu().numpy()
     # print(f'w_est is {W_est} and model adjacency is {model.adjacency}')
     # W_est[np.abs(W_est) < w_threshold] = 0
-    print(f'struct learn returning {W_est}')
+    # print(f'struct learn returning {W_est}')
     return W_est

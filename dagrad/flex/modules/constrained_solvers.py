@@ -209,12 +209,21 @@ class AugmentedLagrangian(ConstrainedSolver):
             else:
                 self.num_steps = self.num_iter * [self.unconstrained_solver.num_steps]
 
-    def solve(self, dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn, omega_lambda=1e-4, stop_crit_win=100):
+    def solve(self, dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn):
+        opt = {
+            'omega_lambda': 1e-4,
+            'stop_crit_win': 100,
+            'patience': 0,
+            'patience_thresh': 0,
+        }
+
         thresholded = False
-        patience = 5
-        patience_thresh = 5
+        patience = opt["patience"]
+        patience_thresh = opt["patience_thresh"]
         best_nll_val = np.inf
         best_lagrangian_val = np.inf
+        omega_lambda = opt["omega_lambda"]
+        stop_crit_win = opt["stop_crit_win"]
 
         torch.set_default_dtype(self.dtype)
         self.model = model
@@ -352,7 +361,7 @@ class AugmentedLagrangian(ConstrainedSolver):
 
                         if aug_lagrangian_val < best_lagrangian_val:
                             best_lagrangian_val = aug_lagrangian_val
-                            patience = 5
+                            patience = opt["patience"]
                             # best_model = copy.deepcopy(model)
                         else:
                             patience -= 1
@@ -383,7 +392,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                         # nll_val the best?
                         if loss_val < best_nll_val:
                             best_nll_val = loss_val
-                            patience_thresh = 5
+                            patience_thresh = opt["patience_thresh"]
                         else:
                             patience_thresh -= 1
                 else:
