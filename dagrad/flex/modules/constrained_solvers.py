@@ -213,8 +213,8 @@ class AugmentedLagrangian(ConstrainedSolver):
         opt = {
             'omega_lambda': 1e-4,
             'stop_crit_win': 100,
-            'patience': 0,
-            'patience_thresh': 0,
+            'patience': 5,
+            'patience_thresh': 5,
         }
 
         thresholded = False

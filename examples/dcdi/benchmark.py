@@ -14,7 +14,7 @@ def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
     nonlinear_dataset = utils.simulate_nonlinear_sem(nonlinear_B_true, n, sem_type, noise_type=noise_type)
 
     # Nonlinear model
-    model = flex.MLP(dims=[d, 2, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True)
+    model = flex.MLP(dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True)
 
     # Use AML to solve the constrained problem
     cons_solver = flex.AugmentedLagrangian(
