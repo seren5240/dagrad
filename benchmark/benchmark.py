@@ -3,7 +3,7 @@ import numpy as np
 from dagrad.utils import utils
 
 
-def run_one_benchmark(
+def run_one_trial(
     n: int,
     d: int,
     edges: int,
@@ -30,3 +30,39 @@ def run_one_benchmark(
         W_est = benchmark_fn(dataset)
         acc = utils.count_accuracy(B_true, W_est != 0)
         results[name].append(acc["shd"])
+
+
+def run_one_benchmark(
+    n: int,
+    d: int,
+    edges: int,
+    noise_type: str,
+    error_var: str,
+    linear: bool,
+    graph_type: str,
+    benchmark_fns: dict[str, callable[[ndarray], ndarray]],
+    trials: int,
+):
+    results = {name: [] for name in benchmark_fns.keys()}
+    for _ in range(trials):
+        run_one_trial(
+            n,
+            d,
+            edges,
+            noise_type,
+            error_var,
+            linear,
+            graph_type,
+            benchmark_fns,
+            results,
+        )
+    output_filename = "benchmark.txt"
+    with open(output_filename, "w") as f:
+        f.write(
+            "method,n,d,edges,noise_type,error_var,linearity,graph_type,mean_normalized_shd\n"
+        )
+        for method in results:
+            mean = np.mean(results[method])
+            f.write(
+                f"{method},{n},{d},{edges},{noise_type},{error_var},{'linear' if linear else 'nonlinear'},{graph_type},{mean}\n"
+            )
