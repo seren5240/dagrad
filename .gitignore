@@ -16,3 +16,4 @@ examples/example.py
 dist/
 build/
 dagrad/flex/backup/
+**/slurm/**
