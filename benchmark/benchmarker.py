@@ -1,3 +1,4 @@
+from typing import Callable
 from numpy import ndarray
 import numpy as np
 from dagrad.utils import utils
@@ -11,7 +12,7 @@ def run_one_trial(
     error_var: str,
     linear: bool,
     graph_type: str,
-    benchmark_fns: dict[str, callable[[ndarray], ndarray]],
+    benchmark_fns: dict[str, Callable[[ndarray], ndarray]],
     results: dict[str, list[float]],
 ):
     B_true = utils.simulate_dag(d, edges, graph_type)
@@ -40,7 +41,7 @@ def run_one_benchmark(
     error_var: str,
     linear: bool,
     graph_type: str,
-    benchmark_fns: dict[str, callable[[ndarray], ndarray]],
+    benchmark_fns: dict[str, Callable[[ndarray], ndarray]],
     trials: int,
 ):
     results = {name: [] for name in benchmark_fns.keys()}
