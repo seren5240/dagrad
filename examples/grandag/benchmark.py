@@ -28,10 +28,11 @@ def postprocess(B, graph_thres=0.3):
 
     return B
 
-def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
+def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="eq"):
     graph_type, sem_type = "ER", "mlp"
+    noise_scale = None if error_var == "eq" else np.random.uniform(0.5,1.0,d)
     nonlinear_B_true = utils.simulate_dag(d, s0, graph_type)
-    nonlinear_dataset = utils.simulate_nonlinear_sem(nonlinear_B_true, n, sem_type, noise_type=noise_type)
+    nonlinear_dataset = utils.simulate_nonlinear_sem(nonlinear_B_true, n, sem_type, noise_type=noise_type, noise_scale=noise_scale)
     # print(f'b_true is {nonlinear_B_true}')
 
     train_samples = int(nonlinear_dataset.shape[0] * 0.8)
@@ -108,7 +109,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for i in range(trials):
             print(f"Running trial {i} for {d} nodes")
             try:
-                results = grandag_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type)
+                results = grandag_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type, error_var=error_var)
                 shd_results["GRAN-DAG"][d].append(results["shd"] / d)
                 sid_results["GRAN-DAG"][d].append(results["sid"] / d)
             except Exception as e:
