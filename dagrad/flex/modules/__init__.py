@@ -1,7 +1,7 @@
 from .dags import DagFn, Exp, LogDet, Poly, ExpAbs, LogDetAbs, PolyAbs, DCDI_h
 from .loss import Loss, L1Loss, L2Loss, MCPLoss, MSELoss, NLLLoss, BCELoss
 from . import functional
-from .models import LinearModel, LogisticModel, MLP, TopoMLP, DeepSigmoidalFlowModel
+from .models import LinearModel, LogisticModel, MLP, TopoMLP
 from .constrained_solvers import ConstrainedSolver, AugmentedLagrangian, PathFollowing 
 from .unconstrained_solvers import UnconstrainedSolver, GradientBasedSolver
 
@@ -26,7 +26,6 @@ __all__ = [
     "LogisticModel",
     "MLP",
     "TopoMLP",
-    "DeepSigmoidalFlowModel",
     "ConstrainedSolver",
     "AugmentedLagrangian",
     "PathFollowing",
