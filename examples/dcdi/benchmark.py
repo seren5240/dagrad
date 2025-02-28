@@ -23,7 +23,7 @@ def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
         l1_coeff=0.1,
         # weight_decay=0.01,
         rho_init=1e-8,
-        rho_scale=2,
+        rho_scale=10,
     )
 
     # Use Adam to solve the unconstrained problem
