@@ -11,7 +11,7 @@ def run_one_benchmark(
     error_var: str,
     linear: bool,
     graph_type: str,
-    benchmark_fns: dict[str, callable[[int, ndarray], ndarray]],
+    benchmark_fns: dict[str, callable[[ndarray], ndarray]],
     results: dict[str, list[float]],
 ):
     B_true = utils.simulate_dag(d, edges, graph_type)
@@ -25,3 +25,8 @@ def run_one_benchmark(
             B_true, n, sem_type=noise_type, noise_scale=noise_scale
         )
     )
+
+    for name, benchmark_fn in benchmark_fns.items():
+        W_est = benchmark_fn(dataset)
+        acc = utils.count_accuracy(B_true, W_est != 0)
+        results[name].append(acc["shd"])
