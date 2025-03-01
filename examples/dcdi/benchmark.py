@@ -32,8 +32,7 @@ def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="e
         optimizer=torch.optim.RMSprop(model.parameters(), lr=1e-3),
     )
 
-    # Use MSE loss
-    loss_fn = flex.MSELoss()
+    loss_fn = None
 
     dag_fn = flex.DCDI_h()
 
