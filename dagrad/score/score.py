@@ -183,24 +183,47 @@ class loss_fn:
             mean = np.mean(X, axis=0)
             X = X - mean
             n, d = X.shape
-            Sigma = 1/n * X.T@X
+            Sigma = 1 / n * X.T @ X
             I = np.eye(d)
-            diag_elements = np.diag((W-I).transpose()@Sigma@ (W-I))
-            loss = 1/2* np.sum(np.log(diag_elements))
-            G_loss = Sigma@(W-I)@np.diag(1/diag_elements)
+            diag_elements = np.diag((W - I).transpose() @ Sigma @ (W - I))
+            loss = 1 / 2 * np.sum(np.log(diag_elements))
+            G_loss = Sigma @ (W - I) @ np.diag(1 / diag_elements)
             return loss, G_loss
         elif isinstance(W, torch.Tensor):
             n, d = X.shape
             X = X - torch.mean(X, dim=0)
-            Sigma = 1/n * X.T@X
+            Sigma = 1 / n * X.T @ X
             I = torch.eye(d)
-            diag_elements = torch.diag((W-I).transpose(0,1)@Sigma@ (W-I))
-            loss = 1/2* torch.sum(torch.log(diag_elements))
+            diag_elements = torch.diag((W - I).transpose(0, 1) @ Sigma @ (W - I))
+            loss = 1 / 2 * torch.sum(torch.log(diag_elements))
             return loss
-            
+
         else:
             raise ValueError("W must be either numpy array or torch tensor")
-        
+
+    @staticmethod
+    def logdetll_ev_loss(W, X, **kwargs):
+        """
+        Calculate the logdet loglikelihood loss assuming equal noise variance
+
+        Structural Equation Model: x_i = (\sum_j w_ji x_j) + \epsilon where \epsilon is normal distribution
+
+        Args:
+        W: ndarray, shape (n_nodes,n_nodes)
+        """
+        if isinstance(W, np.ndarray):
+            raise ValueError("logdetll_ev_loss is not implemented for numpy")
+        elif isinstance(W, torch.Tensor):
+            return (
+                0.5
+                * W.shape[0]
+                * torch.log(torch.square(torch.linalg.matrix_norm(X - X @ W)))
+                - torch.linalg.slogdet(torch.eye(W.shape[1]) - W)[1]
+            )
+
+        else:
+            raise ValueError("W must be either numpy array or torch tensor")
+
 
 class nl_loss_fn:
     @staticmethod
