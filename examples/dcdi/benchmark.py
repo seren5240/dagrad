@@ -12,7 +12,7 @@ def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="e
     graph_type, sem_type = "ER", "mlp"
     noise_scale = None if error_var == "eq" else np.random.uniform(0.5,1.0,d)
     nonlinear_B_true = utils.simulate_dag(d, s0, graph_type)
-    nonlinear_dataset = utils.simulate_linear_sem(nonlinear_B_true, n, sem_type=noise_type, noise_scale=noise_scale)
+    nonlinear_dataset = utils.simulate_nonlinear_sem(nonlinear_B_true, n, sem_type, noise_type=noise_type, noise_scale=noise_scale)
 
     # Nonlinear model
     model = flex.MLP(dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True)
@@ -66,7 +66,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for i in range(trials):
             print(f"Running trial {i} for {d} nodes")
             try:
-                results = dcdi_aug_lagrangian(n=n, d=d, s0=s0, num_layers=0, noise_type=noise_type, error_var=error_var)
+                results = dcdi_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type, error_var=error_var)
                 shd_results["DCDI-G"][d].append(results["shd"] / d)
                 sid_results["DCDI-G"][d].append(results["sid"] / d)
             except Exception as e:
