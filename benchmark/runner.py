@@ -1,5 +1,5 @@
 import torch
-from benchmark.benchmarker import run_one_benchmark
+from benchmark.benchmarker import run_benchmarks
 from dagrad import flex
 from dagrad.core import dagrad
 
@@ -38,4 +38,14 @@ benchmark_fns = {
     "NOTEARS": notears,
     "DAGMA": dagma,
 }
-run_one_benchmark(500, 5, 5, "gauss", "eq", True, "ER", benchmark_fns, 2)
+run_benchmarks(
+    500,
+    [[5, 5], [5, 10]],
+    "gauss",
+    "eq",
+    "linear",
+    "ER",
+    benchmark_fns,
+    2,
+    "benchmark.txt",
+)
