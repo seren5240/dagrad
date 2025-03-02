@@ -178,6 +178,7 @@ class loss_fn:
 
         Args:
         W: ndarray, shape (n_nodes,n_nodes)
+        X: ndarray, shape (n_samples, n_nodes)
         """
         if isinstance(W, np.ndarray):
             mean = np.mean(X, axis=0)
@@ -206,10 +207,9 @@ class loss_fn:
         """
         Calculate the logdet loglikelihood loss assuming equal noise variance
 
-        Structural Equation Model: x_i = (\sum_j w_ji x_j) + \epsilon where \epsilon is normal distribution
-
         Args:
         W: ndarray, shape (n_nodes,n_nodes)
+        X: ndarray, shape (n_samples, n_nodes)
         """
         if isinstance(W, np.ndarray):
             raise ValueError("logdetll_ev_loss is not implemented for numpy")
@@ -229,13 +229,12 @@ class loss_fn:
         """
         Calculate the logdet loglikelihood loss assuming non-equal noise variance
 
-        Structural Equation Model: x_i = (\sum_j w_ji x_j) + \epsilon where \epsilon is normal distribution
-
         Args:
         W: ndarray, shape (n_nodes,n_nodes)
+        X: ndarray, shape (n_samples, n_nodes)
         """
         if isinstance(W, np.ndarray):
-            raise ValueError("logdetll_ev_loss is not implemented for numpy")
+            raise ValueError("logdetll_nv_loss is not implemented for numpy")
         elif isinstance(W, torch.Tensor):
             return (
                 0.5 * torch.sum(torch.log(torch.sum(torch.square(X - X @ W), axis=0)))
