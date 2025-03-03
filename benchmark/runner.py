@@ -127,7 +127,7 @@ def grandag(dataset):
 
 
 benchmark_fns = {
-    # "GRAN-DAG": grandag,
+    "GRAN-DAG": grandag,
     "NOTEARS": notears,
     "DAGMA": dagma,
     "GOLEM": golem_like,

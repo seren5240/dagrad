@@ -233,7 +233,7 @@ class GrandagLocallyConnected(nn.Module):
         self.output_features = output_features
 
         self.weight = nn.Parameter(
-            torch.zeros(num_linear, input_features, output_features)
+            torch.zeros(num_linear, output_features, input_features)
         )
         if bias:
             self.bias = nn.Parameter(torch.zeros(num_linear, output_features))
@@ -398,7 +398,6 @@ def compute_A_phi(model: GrandagMLP, norm="none", square=False):
         else:
             w = torch.abs(w)
         if i == 0:
-            print(f'dimensions are {w.shape}, {model.adjacency.unsqueeze(0).shape}, {prod.shape}')
             prod = torch.einsum(
                 "tij,ljt,jk->tik", w, model.adjacency.unsqueeze(0), prod
             )

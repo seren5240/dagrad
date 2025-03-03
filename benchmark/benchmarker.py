@@ -38,7 +38,7 @@ def run_one_trial(
     for name, benchmark_fn in benchmark_fns.items():
         W_est = benchmark_fn(dataset)
         acc = utils.count_accuracy(B_true, W_est != 0)
-        results[name].append(acc["shd"])
+        results[name].append(acc["shd"] / d)
 
 
 def run_one_benchmark(
