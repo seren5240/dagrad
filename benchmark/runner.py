@@ -132,6 +132,7 @@ benchmark_fns = {
     "DAGMA": dagma,
     "GOLEM": golem_like,
 }
+# parallelize, tell user how many cores initialized
 run_benchmarks(
     500,
     [[5, 5], [5, 10]],
