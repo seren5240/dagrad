@@ -86,7 +86,7 @@ def run_benchmarks(
     benchmark_fns: dict[str, Callable[[ndarray], ndarray]],
     trials: int,
     output_filename: str,
-    sem_type: str = "MLP",
+    sem_type: str = "mlp",
 ):
     """
     Run benchmarks on multiple vertex/edge combinations and benchmark functions.
