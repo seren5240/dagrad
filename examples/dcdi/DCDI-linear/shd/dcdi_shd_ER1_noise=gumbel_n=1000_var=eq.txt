@@ -2,3 +2,6 @@ method,d,mean_normalized_shd
 DCDI-linear,5,0.8
 DCDI-linear,10,0.78
 DCDI-linear,20,1.1949999999999998
+NOTEARS,5,0.04
+NOTEARS,10,0.0
+NOTEARS,20,0.045
