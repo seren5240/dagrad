@@ -34,17 +34,29 @@ def dagma(dataset):
     return dagrad(dataset, model="linear", method="dagma")
 
 
+def golem_like(dataset):
+    return dagrad(
+        dataset,
+        model="linear",
+        method="dagma",
+        reg="l1",
+        reg_coeff=2e-3,
+        h_fn="h_exp_sq",
+    )
+
+
 benchmark_fns = {
     "NOTEARS": notears,
     "DAGMA": dagma,
+    "GOLEM": golem_like,
 }
 run_benchmarks(
     500,
     [[5, 5], [5, 10]],
-    "gauss",
-    "eq",
-    "linear",
-    "ER",
+    ["gauss", "gumbel"],
+    ["eq", "random"],
+    ["linear"],
+    ["ER"],
     benchmark_fns,
     2,
     "benchmark.txt",

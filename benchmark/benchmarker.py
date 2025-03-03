@@ -79,10 +79,10 @@ def run_one_benchmark(
 def run_benchmarks(
     n: int,
     sizes: list[tuple[int, int]],
-    noise_type: str,
-    error_var: str,
-    linearity: str,
-    graph_type: str,
+    noise_types: list[str],
+    error_vars: list[str],
+    linearities: list[str],
+    graph_types: list[str],
     benchmark_fns: dict[str, Callable[[ndarray], ndarray]],
     trials: int,
     output_filename: str,
@@ -97,14 +97,14 @@ def run_benchmarks(
         Number of samples
     sizes: list[tuple[int, int]]
         List of node/edge combinations
-    noise_type: str
-        ``gauss``, ``exp``, ``gumbel``, ``uniform``, ``logistic``, ``poisson``
+    noise_type: list[str]
+        list of ``gauss``, ``exp``, ``gumbel``, ``uniform``, ``logistic``, ``poisson``
     error_var: str
-        ``eq``, ``random``
-    linearity: str
-        ``linear``, ``nonlinear``
-    graph_type: str
-        One of ``["ER", "SF", "BP"]``
+        list of ``eq``, ``random``
+    linearities: str
+        list of ``linear``, ``nonlinear``
+    graph_types: str
+        list of ``ER``, ``SF``, ``BP``
     sem_type: str
         ``mlp``, ``mim``, ``gp``, ``gp-add``. Only applicable for nonlinear models.
     """
@@ -114,16 +114,20 @@ def run_benchmarks(
         )
 
     for d, edges in sizes:
-        run_one_benchmark(
-            n,
-            d,
-            edges,
-            sem_type,
-            noise_type,
-            error_var,
-            linearity,
-            graph_type,
-            benchmark_fns,
-            trials,
-            output_filename,
-        )
+        for noise_type in noise_types:
+            for error_var in error_vars:
+                for linearity in linearities:
+                    for graph_type in graph_types:
+                        run_one_benchmark(
+                            n,
+                            d,
+                            edges,
+                            sem_type,
+                            noise_type,
+                            error_var,
+                            linearity,
+                            graph_type,
+                            benchmark_fns,
+                            trials,
+                            output_filename,
+                        )
