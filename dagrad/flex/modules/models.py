@@ -198,6 +198,180 @@ class MLP(nn.Module):
         return W
 
 
+class GrandagMLP(nn.Module):
+    def __init__(
+        self, dims, num_layers, hid_dim, activation="sigmoid", bias=True, dtype=torch.float64
+    ) -> None:
+        torch.set_default_dtype(dtype)
+        super().__init__()
+        self.d = dims[0]
+        self.dims = dims
+        self.num_layers = num_layers
+        self.hid_dim = hid_dim
+        self.bias = bias
+
+        self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
+        nn.init.xavier_uniform_(self.fc1.weight)
+        if self.fc1.bias is not None:
+            nn.init.constant_(self.fc1.bias, 0.0)
+
+        self.adjacency = torch.ones((self.d, self.d)) - torch.eye(
+            self.d
+        )
+
+        if activation == "sigmoid":
+            self.activation = torch.sigmoid
+        elif activation == "relu":
+            self.activation = F.relu
+        else:
+            raise ValueError("Activation function not supported.")
+        self.fc2 = nn.ModuleList()
+        for k in range(self.num_layers + 1):
+            in_dim = self.hid_dim
+            out_dim = self.hid_dim
+            if k == 0:
+                in_dim = self.d
+            if k == self.num_layers:
+                out_dim = dims[1]
+            self.fc2.append(
+                LocallyConnected(self.d, in_dim, out_dim, bias=bias)
+            )
+
+        self.fc1.weight.register_hook(self.make_hook_function(self.d))
+
+    @staticmethod
+    def make_hook_function(d):
+        def hook_function(grad):
+            grad_clone = grad.clone()
+            grad_clone = grad_clone.view(d, -1, d)
+            for i in range(d):
+                grad_clone[i, :, i] = 0.0
+            grad_clone = grad_clone.view(-1, d)
+            return grad_clone
+
+        return hook_function
+
+    def l1_loss(self):
+        """Take l1 norm of fc1 weight"""
+        return torch.sum(torch.abs(self.fc1.weight))
+
+    @torch.no_grad()
+    def fc1_to_adj(self):
+        fc1_weight = self.fc1.weight
+        fc1_weight = fc1_weight.view(self.d, -1, self.d)
+        A = torch.sum(fc1_weight**2, dim=1).t()
+        W = torch.sqrt(A)
+        W = W.cpu().detach().numpy()  # [i, j]
+        return W
+    
+    def forward_given_params(self, x, weights, biases):
+        """
+
+        :param x: batch_size x num_vars
+        :param weights: list of lists. ith list contains weights for ith MLP
+        :param biases: list of lists. ith list contains biases for ith MLP
+        :return: batch_size x num_vars * num_params, the parameters of each variable conditional
+        """
+        for k in range(self.num_layers + 1):
+            # apply affine operator
+            if k == 0:
+                adj = self.adjacency.unsqueeze(0)
+                x = torch.einsum("tij,ljt,bj->bti", weights[k], adj, x)
+                x = x + biases[k]
+            else:
+                x = torch.einsum("tij,btj->bti", weights[k], x) + biases[k]
+
+            # apply non-linearity
+            if k != self.num_layers:
+                x = torch.sigmoid(x)#F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
+
+        return torch.unbind(x, 1)
+
+    def adj(self):
+        """Get weighted adjacency matrix"""
+        return compute_A_phi(self, norm="paths", square=False)
+
+    def get_parameters(self):
+        params = []
+        
+        weights = []
+        for w in self.fc2:
+            weights.append(w.weight)
+        params.append(weights)
+
+        biases = []
+        for j, b in enumerate(self.fc2):
+            biases.append(b.bias)
+        params.append(biases)
+
+        return tuple(params)
+
+    def get_distribution(self, dp):
+        return torch.distributions.normal.Normal(dp[0], torch.exp(dp[1]))
+    
+    def compute_log_likelihood(self, x, weights, biases, detach=False):
+        """
+        Return log-likelihood of the model for each example.
+        WARNING: This is really a joint distribution only if the DAGness constraint on the mask is satisfied.
+                 Otherwise the joint does not integrate to one.
+        :param x: (batch_size, num_vars)
+        :param weights: list of tensor that are coherent with self.weights
+        :param biases: list of tensor that are coherent with self.biases
+        :return: (batch_size, num_vars) log-likelihoods
+        """
+        density_params = self.forward_given_params(x, weights, biases)
+        # if len(extra_params) != 0:
+        #     extra_params = self.transform_extra_params(self.extra_params)
+        log_probs = []
+        for i in range(self.d):
+            density_param = list(torch.unbind(density_params[i], 1))
+            # if len(extra_params) != 0:
+                # density_param.extend(list(torch.unbind(extra_params[i], 0)))
+            conditional = self.get_distribution(density_param)
+            x_d = x[:, i].detach() if detach else x[:, i]
+            log_probs.append(conditional.log_prob(x_d).unsqueeze(1))
+
+        return torch.cat(log_probs, 1)
+
+
+def compute_A_phi(model: GrandagMLP, norm="none", square=False):
+    weights = model.get_parameters()[0]
+    prod = torch.eye(model.d)
+    if norm != "none":
+        prod_norm = torch.eye(model.d)
+    for i, w in enumerate(weights):
+        if square:
+            w = w**2
+        else:
+            w = torch.abs(w)
+        if i == 0:
+            prod = torch.einsum(
+                "tij,ljt,jk->tik", w, model.adjacency.unsqueeze(0), prod
+            )
+            if norm != "none":
+                tmp = 1.0 - torch.eye(model.d).unsqueeze(0)
+                prod_norm = torch.einsum(
+                    "tij,ljt,jk->tik", torch.ones_like(w).detach(), tmp, prod_norm
+                )
+        else:
+            prod = torch.einsum("tij,tjk->tik", w, prod)
+            if norm != "none":
+                prod_norm = torch.einsum(
+                    "tij,tjk->tik", torch.ones_like(w).detach(), prod_norm
+                )
+
+    # sum over density parameter axis
+    prod = torch.sum(prod, 1)
+    if norm == "paths":
+        prod_norm = torch.sum(prod_norm, 1)
+        denominator = prod_norm + torch.eye(model.d)  # avoid / 0 on diagonal
+        return (prod / denominator).t()
+    elif norm == "none":
+        return prod.t()
+    else:
+        raise NotImplementedError
+
+
 class TopoMLP(nn.Module):
     def __init__(self, dims, activation="sigmoid", bias=True, dtype=torch.float64):
         super(TopoMLP, self).__init__()
