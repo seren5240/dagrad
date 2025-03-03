@@ -40,8 +40,10 @@ def golem_like(dataset):
         model="linear",
         method="dagma",
         reg="l1",
-        reg_coeff=2e-3,
         h_fn="h_exp_sq",
+        general_options={
+            "lambda1": 2e-3,
+        },
     )
 
 
