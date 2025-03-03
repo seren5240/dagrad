@@ -240,7 +240,7 @@ class AugmentedLagrangian(ConstrainedSolver):
             if h <= self.h_tol or self.rho >= self.rho_max:
                 end = True
 
-class GrandagSolver(ConstrainedSolver):
+class GrandagAugmentedLagrangian(ConstrainedSolver):
     def __init__(
         self,
         num_iter: int = 20,

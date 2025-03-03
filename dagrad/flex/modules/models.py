@@ -197,6 +197,59 @@ class MLP(nn.Module):
         W = W.cpu().detach().numpy()  # [i, j]
         return W
 
+class GrandagLocallyConnected(nn.Module):
+    """
+    Implements a local linear layer
+    """
+
+    def __init__(
+        self,
+        num_linear: int,
+        input_features: int,
+        output_features: int,
+        bias: bool = True,
+    ):
+        r"""
+        Parameters
+        ----------
+        num_linear : int
+            num of local linear layers, i.e.
+        input_features : int
+            m1
+        output_features : int
+            m2
+        bias : bool, optional
+            Whether to include bias or not. Default: ``True``.
+
+
+        Attributes
+        ----------
+        weight : [d, m1, m2]
+        bias : [d, m2]
+        """
+        super(GrandagLocallyConnected, self).__init__()
+        self.num_linear = num_linear
+        self.input_features = input_features
+        self.output_features = output_features
+
+        self.weight = nn.Parameter(
+            torch.zeros(num_linear, input_features, output_features)
+        )
+        if bias:
+            self.bias = nn.Parameter(torch.zeros(num_linear, output_features))
+        else:
+            self.register_parameter("bias", None)
+        self.reset_parameters()
+
+    @torch.no_grad()
+    def reset_parameters(self):
+        k = 1.0 / self.input_features
+        bound = math.sqrt(k)
+        nn.init.uniform_(self.weight, -bound, bound)
+        if self.bias is not None:
+            bound = 1 / math.sqrt(self.input_features)
+            nn.init.uniform_(self.bias, -bound, bound)
+
 
 class GrandagMLP(nn.Module):
     def __init__(
@@ -234,7 +287,7 @@ class GrandagMLP(nn.Module):
             if k == self.num_layers:
                 out_dim = dims[1]
             self.fc2.append(
-                LocallyConnected(self.d, in_dim, out_dim, bias=bias)
+                GrandagLocallyConnected(self.d, in_dim, out_dim, bias=bias)
             )
 
         self.fc1.weight.register_hook(self.make_hook_function(self.d))
@@ -345,6 +398,7 @@ def compute_A_phi(model: GrandagMLP, norm="none", square=False):
         else:
             w = torch.abs(w)
         if i == 0:
+            print(f'dimensions are {w.shape}, {model.adjacency.unsqueeze(0).shape}, {prod.shape}')
             prod = torch.einsum(
                 "tij,ljt,jk->tik", w, model.adjacency.unsqueeze(0), prod
             )
