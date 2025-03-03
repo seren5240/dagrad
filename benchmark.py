@@ -39,7 +39,7 @@ def notears_flex(n, d, s0, noise_type="gauss", error_var="eq", linearity="linear
         )
     else:
         dataset = utils.simulate_nonlinear_sem(
-            B_true, n, sem_type="MLP", noise_type=noise_type, noise_scale=noise_scale
+            B_true, n, sem_type="mlp", noise_type=noise_type, noise_scale=noise_scale
         )
     model = flex.LinearModel(d)
 
