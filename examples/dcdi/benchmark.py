@@ -8,13 +8,18 @@ from dagrad.utils import utils
 def format_ratio(ratio):
     return 0.5 if ratio == 0.5 else int(ratio)
 
-def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="eq"):
+def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="eq", linearity="linear"):
     graph_type, sem_type = "ER", "mlp"
     noise_scale = None if error_var == "eq" else np.random.uniform(0.5,1.0,d)
-    nonlinear_B_true = utils.simulate_dag(d, s0, graph_type)
-    nonlinear_dataset = utils.simulate_nonlinear_sem(nonlinear_B_true, n, sem_type, noise_type=noise_type, noise_scale=noise_scale)
-
-    # Nonlinear model
+    B_true = utils.simulate_dag(d, s0, graph_type)
+    if linearity == "linear":
+        dataset = utils.simulate_linear_sem(
+            B_true, n, sem_type=noise_type, noise_scale=noise_scale
+        )
+    else:
+        dataset = utils.simulate_nonlinear_sem(
+            B_true, n, sem_type=sem_type, noise_type=noise_type, noise_scale=noise_scale
+        )
     model = flex.MLP(dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True)
 
     # Use AML to solve the constrained problem
@@ -38,7 +43,7 @@ def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="e
 
     # Learn the DAG
     W_est = flex.struct_learn(
-        dataset=nonlinear_dataset,
+        dataset=dataset,
         model=model,
         constrained_solver=cons_solver,
         unconstrained_solver=uncons_solver,
@@ -49,11 +54,11 @@ def dcdi_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="e
 
     # W_est = postprocess(W_est)
 
-    acc = utils.count_accuracy(nonlinear_B_true, W_est != 0)
+    acc = utils.count_accuracy(B_true, W_est != 0)
     print("Results: ", acc)
     return acc
 
-def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
+def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
     # maximum number of edges with 5 nodes is 10
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
     methods = ["DCDI-G"]
@@ -66,7 +71,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for i in range(trials):
             print(f"Running trial {i} for {d} nodes")
             try:
-                results = dcdi_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type, error_var=error_var)
+                results = dcdi_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type, error_var=error_var, linearity=linearity)
                 shd_results["DCDI-G"][d].append(results["shd"] / d)
                 sid_results["DCDI-G"][d].append(results["sid"] / d)
             except Exception as e:
@@ -115,4 +120,5 @@ nSamples = int(sys.argv[2])
 s0_ratio = float(sys.argv[3])
 noise_type = sys.argv[4]
 error_var = sys.argv[5]
-run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var)
+linearity = sys.argv[6]
+run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var, linearity)
