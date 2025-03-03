@@ -1,0 +1,2 @@
+method,d,mean_normalized_sid
+DCDI-linear,20,5.425

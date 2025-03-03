@@ -1,0 +1,4 @@
+method,d,mean_normalized_shd
+DCDI-linear,5,0.66
+DCDI-linear,10,0.86
+DCDI-linear,20,1.5050000000000001
