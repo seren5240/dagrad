@@ -28,16 +28,22 @@ def postprocess(B, graph_thres=0.3):
 
     return B
 
-def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="eq"):
+def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var="eq", linearity="linear"):
     graph_type, sem_type = "ER", "mlp"
     noise_scale = None if error_var == "eq" else np.random.uniform(0.5,1.0,d)
-    nonlinear_B_true = utils.simulate_dag(d, s0, graph_type)
-    nonlinear_dataset = utils.simulate_nonlinear_sem(nonlinear_B_true, n, sem_type, noise_type=noise_type, noise_scale=noise_scale)
-    # print(f'b_true is {nonlinear_B_true}')
+    B_true = utils.simulate_dag(d, s0, graph_type)
+    if linearity == "linear":
+        dataset = utils.simulate_linear_sem(
+            B_true, n, sem_type=noise_type, noise_scale=noise_scale
+        )
+    else:
+        dataset = utils.simulate_nonlinear_sem(
+            B_true, n, sem_type=sem_type, noise_type=noise_type, noise_scale=noise_scale
+        )    # print(f'b_true is {nonlinear_B_true}')
 
-    train_samples = int(nonlinear_dataset.shape[0] * 0.8)
-    train_dataset = nonlinear_dataset[:train_samples, :]
-    test_dataset = nonlinear_dataset[train_samples:, :]
+    train_samples = int(dataset.shape[0] * 0.8)
+    train_dataset = dataset[:train_samples, :]
+    test_dataset = dataset[train_samples:, :]
 
     # Nonlinear model
     model = flex.MLP(dims=[d, 2, d], num_layers=num_layers, hid_dim=10, activation="sigmoid", bias=True)
@@ -75,7 +81,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var
 
     W_est = postprocess(W_est)
 
-    acc = utils.count_accuracy(nonlinear_B_true, W_est != 0)
+    acc = utils.count_accuracy(B_true, W_est != 0)
     print(f'Results before CAM pruning: {acc}')
 
     to_keep = (torch.from_numpy(W_est) > 0).type(torch.Tensor)
@@ -92,11 +98,11 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss", error_var
         cam_pruning_cutoff = [float(opt['cam_pruning_cutoff'])]
     for cutoff in cam_pruning_cutoff:
         B_est = cam_pruning(B_est, train_dataset, test_dataset, opt, cutoff=cutoff)
-    acc = utils.count_accuracy(nonlinear_B_true, B_est.detach().cpu().numpy() != 0)
+    acc = utils.count_accuracy(B_true, B_est.detach().cpu().numpy() != 0)
     print("Results: ", acc)
     return acc
 
-def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
+def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
     # maximum number of edges with 5 nodes is 10
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
     methods = ["GRAN-DAG"]
@@ -109,7 +115,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         for i in range(trials):
             print(f"Running trial {i} for {d} nodes")
             try:
-                results = grandag_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type, error_var=error_var)
+                results = grandag_aug_lagrangian(n=n, d=d, s0=s0, num_layers=2, noise_type=noise_type, error_var=error_var, linearity=linearity)
                 shd_results["GRAN-DAG"][d].append(results["shd"] / d)
                 sid_results["GRAN-DAG"][d].append(results["sid"] / d)
             except Exception as e:
@@ -158,4 +164,5 @@ nSamples = int(sys.argv[2])
 s0_ratio = float(sys.argv[3])
 noise_type = sys.argv[4]
 error_var = sys.argv[5]
-run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var)
+linearity = sys.argv[6]
+run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var, linearity)
