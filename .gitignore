@@ -16,5 +16,6 @@ examples/example.py
 dist/
 build/
 dagrad/flex/backup/
-cam_pruning/
 **/slurm/**
+**/cam_pruning/**
+**/benchmark.txt
