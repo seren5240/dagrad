@@ -236,16 +236,14 @@ class AugmentedLagrangian(ConstrainedSolver):
         not_nlls = []  # Augmented Lagrangrian minus (pseudo) NLL
         aug_lagrangians_val = []
         nlls_val = []  # NLL on validation
-        constraint_violation_list = []
-        curr_h = [None]
-        curr_reg = [None]
+        hs = []
 
         with torch.no_grad():
             full_adjacency = torch.ones((model.d, model.d)) - torch.eye(model.d)
             constraint_normalization = dag_fn(full_adjacency).item()
 
 
-        for i in tqdm(range(self.num_iter)):
+        for i in range(self.num_iter):
             if end:
                 continue
             # while self.rho < self.rho_max:
@@ -262,11 +260,10 @@ class AugmentedLagrangian(ConstrainedSolver):
                 # DAG constraint
                 w_adj = model.adj()
                 h = dag_fn(w_adj) / constraint_normalization
-                curr_h[0] = h.item()
+                hs.append(h.item())
                 
                 reg = self.l1_coeff * model.compute_penalty([w_adj], p=1)
                 reg /= w_adj.shape[0]**2
-                curr_reg[0] = reg
                 reg_interv = torch.tensor(0)
 
                 lagrangian = loss + reg + reg_interv + self.alpha_multiplier * h
@@ -327,22 +324,21 @@ class AugmentedLagrangian(ConstrainedSolver):
             else:
                 delta_lambda = -np.inf  # do not update lambda nor mu
             
-            if curr_h[-1] > self.h_tol or not acyclic:
+            if hs[-1] > self.h_tol or not acyclic:
                 if abs(delta_lambda) < omega_lambda or delta_lambda > 0:
-                    self.alpha_multiplier += self.rho * curr_h[-1]
+                    self.alpha_multiplier += self.rho * hs[-1]
                     # print("Updated lambda to {}".format(lamb))
 
                     # Did the constraint improve sufficiently?
-                    constraint_violation_list.append(curr_h[0])
                     # if len(hs) >= 2:
-                    if len(constraint_violation_list) >= 2:
-                        if constraint_violation_list[-1] > 0.9 * constraint_violation_list[-2]:
+                    if len(hs) >= 2:
+                        if hs[-1] > 0.9 * hs[-2]:
                             self.rho *= self.rho_scale
                             # print("Updated mu to {}".format(mu))
 
                     # little hack to make sure the moving average is going down.
                     with torch.no_grad():
-                        gap_in_not_nll = curr_reg[0] + 0.5 * self.rho * curr_h[-1] ** 2 + self.alpha_multiplier * curr_h[-1] - not_nlls[-1]
+                        gap_in_not_nll = 0.5 * self.rho * hs[-1] ** 2 + self.alpha_multiplier * hs[-1] - not_nlls[-1]
                         # aug_lagrangian_ma[iter + 1] += gap_in_not_nll
                         aug_lagrangians_val[-1][1] += gap_in_not_nll
 
