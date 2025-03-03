@@ -1,7 +1,11 @@
 from typing import Callable
 from numpy import ndarray
 import numpy as np
+from joblib import Parallel, delayed
+from multiprocessing import Lock
 from dagrad.utils import utils
+
+file_lock = Lock()
 
 
 def run_one_trial(
@@ -14,7 +18,6 @@ def run_one_trial(
     linearity: str,
     graph_type: str,
     benchmark_fns: dict[str, Callable[[ndarray], ndarray]],
-    results: dict[str, list[float]],
 ):
     B_true = utils.simulate_dag(d, edges, graph_type)
     if error_var == "eq":
@@ -35,10 +38,12 @@ def run_one_trial(
     else:
         raise ValueError(f"Unknown linearity: {linearity}")
 
+    results = {}
     for name, benchmark_fn in benchmark_fns.items():
         W_est = benchmark_fn(dataset)
         acc = utils.count_accuracy(B_true, W_est != 0)
-        results[name].append(acc["shd"] / d)
+        results[name] = acc["shd"] / d
+    return results
 
 
 def run_one_benchmark(
@@ -54,9 +59,8 @@ def run_one_benchmark(
     trials: int,
     output_filename: str,
 ):
-    results = {name: [] for name in benchmark_fns.keys()}
-    for _ in range(trials):
-        run_one_trial(
+    results = Parallel(n_jobs=-1, backend="loky")(
+        delayed(run_one_trial)(
             n,
             d,
             edges,
@@ -66,14 +70,22 @@ def run_one_benchmark(
             linearity,
             graph_type,
             benchmark_fns,
-            results,
         )
-    with open(output_filename, "a") as f:
-        for method in results:
-            mean = np.mean(results[method])
-            f.write(
-                f"{method},{n},{d},{edges},{noise_type},{error_var},{linearity},{graph_type},{mean}\n"
-            )
+        for _ in range(trials)
+    )
+    aggregated_results = {
+        name: np.mean([trial[name] for trial in results])
+        for name in benchmark_fns.keys()
+    }
+
+    output_lines = [
+        f"{method},{n},{d},{edges},{noise_type},{error_var},{linearity},{graph_type},{aggregated_results[method]}\n"
+        for method in benchmark_fns.keys()
+    ]
+
+    with file_lock:
+        with open(output_filename, "a") as f:
+            f.writelines(output_lines)
 
 
 def run_benchmarks(
@@ -113,21 +125,23 @@ def run_benchmarks(
             "method,n,d,edges,noise_type,error_var,linearity,graph_type,mean_normalized_shd\n"
         )
 
-    for d, edges in sizes:
-        for noise_type in noise_types:
-            for error_var in error_vars:
-                for linearity in linearities:
-                    for graph_type in graph_types:
-                        run_one_benchmark(
-                            n,
-                            d,
-                            edges,
-                            sem_type,
-                            noise_type,
-                            error_var,
-                            linearity,
-                            graph_type,
-                            benchmark_fns,
-                            trials,
-                            output_filename,
-                        )
+    Parallel(n_jobs=-1, backend="loky")(
+        delayed(run_one_benchmark)(
+            n,
+            d,
+            edges,
+            sem_type,
+            noise_type,
+            error_var,
+            linearity,
+            graph_type,
+            benchmark_fns,
+            trials,
+            output_filename,
+        )
+        for d, edges in sizes
+        for noise_type in noise_types
+        for error_var in error_vars
+        for linearity in linearities
+        for graph_type in graph_types
+    )
