@@ -3,6 +3,7 @@ import torch
 from dagrad.utils.utils import simulate_dag
 from warnings import warn
 from . import functional as F
+from scipy.linalg import expm
 
 __all__ = ["DagFn", "Exp", "LogDet", "Poly", "ExpAbs", "LogDetAbs", "PolyAbs"]
 
@@ -67,3 +68,36 @@ class LogDetAbs(DagFn):
 class PolyAbs(DagFn):
     def eval(self, W):
         return F.poly_abs(W)
+
+class TrExpScipy(torch.autograd.Function):
+    """
+    autograd.Function to compute trace of an exponential of a matrix
+    """
+
+    @staticmethod
+    def forward(ctx, input):
+        with torch.no_grad():
+            # send tensor to cpu in numpy format and compute expm using scipy
+            expm_input = expm(input.detach().cpu().numpy())
+            # transform back into a tensor
+            expm_input = torch.as_tensor(expm_input)
+            if input.is_cuda:
+                # expm_input = expm_input.cuda()
+                assert expm_input.is_cuda
+            # save expm_input to use in backward
+            ctx.save_for_backward(expm_input)
+
+            # return the trace
+            return torch.trace(expm_input)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        with torch.no_grad():
+            (expm_input,) = ctx.saved_tensors
+            return expm_input.t() * grad_output
+
+class TrExp(DagFn):
+    def eval(self, w_adj):
+        d = w_adj.shape[0]
+        assert (w_adj >= 0).detach().cpu().numpy().all()
+        return TrExpScipy.apply(w_adj) - d
