@@ -63,7 +63,7 @@ def grandag_aug_lagrangian(n, d, s0, num_layers=2, noise_type="gauss"):
 
     # Learn the DAG
     W_est = flex.struct_learn(
-        dataset=train_dataset,
+        train_dataset=train_dataset,
         model=model,
         constrained_solver=cons_solver,
         unconstrained_solver=uncons_solver,

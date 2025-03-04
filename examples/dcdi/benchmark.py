@@ -49,7 +49,7 @@ def dcdi_aug_lagrangian(
 
     # Learn the DAG
     W_est = flex.struct_learn(
-        dataset=dataset,
+        train_dataset=dataset,
         model=model,
         constrained_solver=cons_solver,
         unconstrained_solver=uncons_solver,
