@@ -51,13 +51,13 @@ cd examples/grandag
 
 echo "Running benchmark"
 
-# python3 -u "./benchmark.py" 10 1000 1 gauss eq
-python3 -u "./benchmark.py" 10 1000 1 exp eq
-# python3 -u "./benchmark.py" 10 1000 1 gumbel eq
-# python3 -u "./benchmark.py" 10 1000 2 gauss eq
-# python3 -u "./benchmark.py" 10 1000 2 exp eq
-# python3 -u "./benchmark.py" 10 1000 2 gumbel eq
-# python3 -u "./benchmark.py" 10 1000 4 gauss eq
-# python3 -u "./benchmark.py" 10 1000 4 exp eq
-# python3 -u "./benchmark.py" 10 1000 4 gumbel eq
+# python3 -u "./benchmark.py" 10 1000 1 gauss random nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 exp random nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 gumbel random nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 gauss random nonlinear
+python3 -u "./benchmark.py" 10 1000 2 exp random nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 gumbel random nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 gauss random nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 exp random nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 gumbel random nonlinear
 # python3 -u "./benchmark.py"
