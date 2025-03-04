@@ -24,6 +24,10 @@ def dcdi_aug_lagrangian(
         dataset = utils.simulate_nonlinear_sem(
             B_true, n, sem_type=sem_type, noise_type=noise_type, noise_scale=noise_scale
         )
+    train_samples = int(dataset.shape[0] * 0.8)
+    train_dataset = dataset[:train_samples, :]
+    test_dataset = dataset[train_samples:, :]
+
     model = flex.MLP(
         dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True
     )
@@ -49,7 +53,8 @@ def dcdi_aug_lagrangian(
 
     # Learn the DAG
     W_est = flex.struct_learn(
-        train_dataset=dataset,
+        train_dataset=train_dataset,
+        test_dataset=test_dataset,
         model=model,
         constrained_solver=cons_solver,
         unconstrained_solver=uncons_solver,
