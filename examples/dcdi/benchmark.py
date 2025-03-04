@@ -1,4 +1,5 @@
 import sys
+import joblib
 from matplotlib import pyplot as plt
 import numpy as np
 import torch
@@ -71,34 +72,45 @@ def dcdi_aug_lagrangian(
 
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
-    # maximum number of edges with 5 nodes is 10
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
     methods = ["DCDI-G"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
+    def run_trial(d, s0, i):
+        print(f"Running trial {i} for {d} nodes")
+        try:
+            results = dcdi_aug_lagrangian(
+                n=n,
+                d=d,
+                s0=s0,
+                num_layers=2,
+                noise_type=noise_type,
+                error_var=error_var,
+                linearity=linearity,
+            )
+            return (d, results["shd"] / d, results["sid"] / d)
+        except Exception as e:
+            print(e)
+            print(
+                f"Trial {i} with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error"
+            )
+            return (d, None, None)
+
+    num_cores = joblib.cpu_count()
+    print(f"Detected {num_cores} CPU cores. Running trials in parallel.")
+
     for d in num_nodes:
         s0 = int(s0_ratio * d)
+        trial_results = joblib.Parallel(n_jobs=-1, backend="loky")(
+            joblib.delayed(run_trial)(d, s0, i) for i in range(trials)
+        )
 
-        for i in range(trials):
-            print(f"Running trial {i} for {d} nodes")
-            try:
-                results = dcdi_aug_lagrangian(
-                    n=n,
-                    d=d,
-                    s0=s0,
-                    num_layers=2,
-                    noise_type=noise_type,
-                    error_var=error_var,
-                    linearity=linearity,
-                )
-                shd_results["DCDI-G"][d].append(results["shd"] / d)
-                sid_results["DCDI-G"][d].append(results["sid"] / d)
-            except Exception as e:
-                print(e)
-                print(
-                    f"trial with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error"
-                )
+        for d, shd, sid in trial_results:
+            if shd is not None:
+                shd_results["DCDI-G"][d].append(shd)
+            if sid is not None:
+                sid_results["DCDI-G"][d].append(sid)
 
     make_one_plot(
         s0_ratio,
