@@ -130,7 +130,7 @@ benchmark_fns = {
     "GRAN-DAG": grandag,
     "NOTEARS": notears,
     "DAGMA": dagma,
-    "GOLEM": golem_like,
+    # "GOLEM": golem_like,
 }
 # parallelize, tell user how many cores initialized
 run_benchmarks(
@@ -138,9 +138,9 @@ run_benchmarks(
     [[5, 5], [5, 10]],
     ["gauss", "gumbel"],
     ["eq", "random"],
-    ["linear"],
+    ["nonlinear"],
     ["ER"],
     benchmark_fns,
     2,
-    "benchmark.txt",
+    "benchmark_parallel.txt",
 )
