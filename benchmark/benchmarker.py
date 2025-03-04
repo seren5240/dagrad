@@ -1,4 +1,5 @@
 from typing import Callable
+import joblib
 from numpy import ndarray
 import numpy as np
 from joblib import Parallel, delayed
@@ -120,6 +121,10 @@ def run_benchmarks(
     sem_type: str
         ``mlp``, ``mim``, ``gp``, ``gp-add``. Only applicable for nonlinear models.
     """
+
+    num_cores = joblib.cpu_count()
+    print(f"Detected {num_cores} CPU cores. Running benchmarks in parallel.")
+
     with open(output_filename, "w") as f:
         f.write(
             "method,n,d,edges,noise_type,error_var,linearity,graph_type,mean_normalized_shd\n"
