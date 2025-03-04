@@ -7,7 +7,8 @@ import numpy as np
 
 
 def struct_learn(
-    dataset,
+    train_dataset,
+    test_dataset,
     model,
     constrained_solver,
     unconstrained_solver,
@@ -62,13 +63,19 @@ def struct_learn(
     torch.set_default_dtype(dtype)
     device = general_utils.check_device(device)
 
-    n, d = dataset.shape
-    if not isinstance(dataset, torch.Tensor):
-        dataset = torch.tensor(dataset, dtype=dtype, device=device)
+    n, d = train_dataset.shape
+    if not isinstance(train_dataset, torch.Tensor):
+        train_dataset = torch.tensor(train_dataset, dtype=dtype, device=device)
 
-    dataset = dataset.to(dtype=dtype, device=device)
+    train_dataset = train_dataset.to(dtype=dtype, device=device)
     if isinstance(loss_fn, (loss.MSELoss)):
-        dataset = dataset - torch.mean(dataset, dim=0, keepdim=True)
+        train_dataset = train_dataset - torch.mean(train_dataset, dim=0, keepdim=True)
+
+    if not isinstance(test_dataset, torch.Tensor):
+        test_dataset = torch.tensor(test_dataset, dtype=dtype, device=device)
+    test_dataset = test_dataset.to(dtype=dtype, device=device)
+    if isinstance(loss_fn, (loss.MSELoss)):
+        test_dataset = test_dataset - torch.mean(test_dataset, dim=0, keepdim=True)
 
     constrained_solver.dtype = dtype
     constrained_solver.device = device
@@ -81,7 +88,7 @@ def struct_learn(
     unconstrained_solver.vwarn = vwarn 
     
     time_start = time.time()    
-    constrained_solver(dataset, model, unconstrained_solver, loss_fn, dag_fn)
+    constrained_solver(train_dataset, test_dataset, model, unconstrained_solver, loss_fn, dag_fn)
     print(f"Total Time: {time.time() - time_start}")
     
     W_est = model.adjacency.detach().cpu().numpy() #model.adj().detach().cpu().numpy()

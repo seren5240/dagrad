@@ -209,7 +209,7 @@ class AugmentedLagrangian(ConstrainedSolver):
             else:
                 self.num_steps = self.num_iter * [self.unconstrained_solver.num_steps]
 
-    def solve(self, dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn):
+    def solve(self, train_dataset, test_dataset, model: MLP, unconstrained_solver, loss_fn, dag_fn):
         opt = {
             'omega_lambda': 1e-4,
             'stop_crit_win': 100,
@@ -295,7 +295,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                 
                 unconstrained_solver.num_steps = self.num_steps[i]
                 success = unconstrained_solver(
-                    dataset, model, augmented_loss, dag_fn, lr_scale, lr_scheduler
+                    train_dataset, model, augmented_loss, dag_fn, lr_scale, lr_scheduler
                 )
 
                 if not success:
@@ -307,7 +307,9 @@ class AugmentedLagrangian(ConstrainedSolver):
             
             if i % stop_crit_win == 0:
                 with torch.no_grad():
-                    loss_val = augmented_loss(dataset)
+                    x, mask, _ = sample(test_dataset, test_dataset.shape[0])
+                    weights, biases = model.get_parameters()
+                    loss_val = compute_loss(x, mask, model, weights, biases).item()
                     nlls_val.append(loss_val)
                     aug_lagrangians_val.append([i, loss_val + not_nlls[-1]])
                     to_keep = (model.adj() > 0.5).type(torch.Tensor)
@@ -358,7 +360,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                         # compute loss on whole validation set
                         # and then aug lagrangian
                         with torch.no_grad():
-                            x, mask, _ = sample(dataset, 64)
+                            x, mask, _ = sample(test_dataset, test_dataset.shape[0])
                             weights, biases = model.get_parameters()
                             loss_val = compute_loss(x, mask, model, weights, biases).item()
                         aug_lagrangian_val = loss_val + not_nlls[-1]
@@ -389,7 +391,7 @@ class AugmentedLagrangian(ConstrainedSolver):
                     if i % 1000 == 0:
                         # compute loss on whole validation set
                         with torch.no_grad():
-                            x, mask, _ = sample(dataset, 64)
+                            x, mask, _ = sample(test_dataset, test_dataset.shape[0])
                             weights, biases = model.get_parameters()
                             loss_val = compute_loss(x, mask, model, weights, biases).item()
 
