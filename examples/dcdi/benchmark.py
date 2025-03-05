@@ -40,7 +40,7 @@ def dcdi_aug_lagrangian(
         l1_coeff=0.1,
         # weight_decay=0.01,
         rho_init=1e-8,
-        rho_scale=10,
+        rho_scale=2,
     )
 
     # Use Adam to solve the unconstrained problem

@@ -52,12 +52,12 @@ cd examples/dcdi
 echo "Running benchmark"
 
 # python3 -u "./benchmark.py" 10 1000 1 gauss eq
-python3 -u "./benchmark.py" 10 1000 1 exp eq
+# python3 -u "./benchmark.py" 10 1000 1 exp eq
 # python3 -u "./benchmark.py" 10 1000 1 gumbel eq
-# python3 -u "./benchmark.py" 10 1000 2 gauss eq
-# python3 -u "./benchmark.py" 10 1000 2 exp eq
-# python3 -u "./benchmark.py" 10 1000 2 gumbel eq
-# python3 -u "./benchmark.py" 10 1000 4 gauss eq
-# python3 -u "./benchmark.py" 10 1000 4 exp eq
-# python3 -u "./benchmark.py" 10 1000 4 gumbel eq
+# python3 -u "./benchmark.py" 10 1000 2 gauss eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 exp eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 gumbel eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 gauss eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 exp eq nonlinear
+python3 -u "./benchmark.py" 10 1000 4 gumbel eq nonlinear
 # python3 -u "./benchmark.py"
