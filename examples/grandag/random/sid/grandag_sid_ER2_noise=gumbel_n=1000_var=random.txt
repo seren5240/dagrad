@@ -1,0 +1,4 @@
+method,d,mean_normalized_sid
+GRAN-DAG,5,1.14
+GRAN-DAG,10,3.66
+GRAN-DAG,20,8.275
