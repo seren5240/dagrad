@@ -317,6 +317,10 @@ class DcdiMLP(nn.Module):
             penalty += torch.norm(m - target, p=p) ** p
         return penalty
     
+    def l1_loss(self):
+        w_adj = self.adj()
+        return self.compute_penalty([w_adj], p=1)
+    
     def forward_given_params(self, x, weights, biases):
         """
 

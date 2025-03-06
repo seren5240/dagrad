@@ -318,7 +318,7 @@ class DCDIAugmentedLagrangian(ConstrainedSolver):
                 continue
             h_new = None
             while self.rho < self.rho_max:
-                def augmented_loss(output, target):
+                def augmented_loss(target):
                     # Original loss
                     # loss = loss_fn(output, target)
                     weights, biases = model.get_parameters()
