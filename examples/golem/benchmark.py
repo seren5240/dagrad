@@ -158,87 +158,9 @@ def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var
                     f.write(f"{method},{d},{mean_metric}\n")
 
 
-def run_experiment(trials, error_var):
-    """
-    Parameters:
-        trials (int): Number of trials to run for each configuration.
-    
-    Returns:
-        None (Generates and saves plots).
-    """
-    n = 1000
-    num_nodes = [5, 10, 50, 100]
-    s0_ratios = [0.5, 1, 2]
-    noise_types = ["gauss", "exp", "gumbel"]
-    methods = ["GOLEM-NOTEARS-EV", "GOLEM-NOTEARS-NV"]
-
-    shd_results = {method: {sem: {s0: {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
-    sid_results = {method: {sem: {s0: {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
-
-    for d in num_nodes:
-        for sem_type in noise_types:
-            for s0_ratio in s0_ratios:
-                s0 = int(s0_ratio * d)
-
-                for _ in range(trials):
-                    try:
-                        ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
-                        shd_results["GOLEM-NOTEARS-EV"][sem_type][s0_ratio][d].append(ev_result["shd"] / d)
-                        sid_results["GOLEM-NOTEARS-EV"][sem_type][s0_ratio][d].append(ev_result["sid"] / d)
-
-                        nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=sem_type)
-                        shd_results["GOLEM-NOTEARS-NV"][sem_type][s0_ratio][d].append(nv_result["shd"] / d)
-                        sid_results["GOLEM-NOTEARS-NV"][sem_type][s0_ratio][d].append(nv_result["sid"] / d)
-                    except Exception as e:
-                        print(e)
-                        print(f'trial with {d} nodes and {sem_type} noise and s0_ratio {s0_ratio} skipped due to error')
-
-    make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, error_var, shd_results, "shd")
-    make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, error_var, sid_results, "sid")
-
-def make_subplots(s0_ratios, noise_types, methods, num_nodes, trials, n, error_var, results, metric: str):
-    num_rows = len(s0_ratios)
-    num_cols = len(noise_types)
-
-    fig, axes = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), sharex=True, sharey=True)
-
-    for i, s0_ratio in enumerate(s0_ratios):
-        for j, noise in enumerate(noise_types):
-            ax = axes[i, j] if num_rows > 1 else axes[j]
-            
-            for method in methods:
-                means = [
-                    np.mean(results[method][noise][s0_ratio][d])
-                    for d in num_nodes
-                ]
-                ax.plot(num_nodes, means, marker="o", label=method)
-
-            noise_names = {
-                "gauss": "Gaussian",
-                "exp": "Exponential",
-                "gumbel": "Gumbel"
-            }
-
-            ax.set_title(f"{noise_names[noise]} noise, ER{s0_ratio}")
-            ax.set_xlabel("d (Number of Nodes)")
-            if j == 0:
-                ax.set_ylabel(f"Normalized {metric.upper()}")
-            ax.grid(True)
-
-    handles, labels = ax.get_legend_handles_labels()
-    plt.title(f"Trials={trials}, error_var={error_var}")
-    fig.legend(handles, labels, loc="upper center", ncol=len(methods))
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.savefig(f"normalized_{metric}_n={n}_var={error_var}_trials={trials}.png")
-
-if len(sys.argv) < 3:
-    run_experiment(10, 'eq')
-    run_experiment(10, 'random')
-    sys.exit(1)
-else:
-    nTrials = int(sys.argv[1])
-    nSamples = int(sys.argv[2])
-    s0_ratio = float(sys.argv[3])
-    noise_type = sys.argv[4]
-    error_var = sys.argv[5]
-    run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var)
+nTrials = int(sys.argv[1])
+nSamples = int(sys.argv[2])
+s0_ratio = float(sys.argv[3])
+noise_type = sys.argv[4]
+error_var = sys.argv[5]
+run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var)
