@@ -198,6 +198,221 @@ class MLP(nn.Module):
         return W
 
 
+def sample_logistic(shape, uniform):
+    u = uniform.sample(shape)
+    return torch.log(u) - torch.log(1 - u)
+    
+def gumbel_sigmoid(log_alpha, uniform, bs, tau=1, hard=False):
+    shape = tuple([bs] + list(log_alpha.size()))
+    logistic_noise = sample_logistic(shape, uniform)
+
+    y_soft = torch.sigmoid((log_alpha + logistic_noise) / tau)
+
+    if hard:
+        y_hard = (y_soft > 0.5).type(torch.Tensor)
+
+        # This weird line does two things:
+        #   1) at forward, we get a hard sample.
+        #   2) at backward, we differentiate the gumbel sigmoid
+        y = y_hard.detach() - y_soft.detach() + y_soft
+
+    else:
+        y = y_soft
+
+    return y
+
+
+class GumbelAdjacency(torch.nn.Module):
+    """
+    Random matrix M used for the mask. Can sample a matrix and backpropagate using the
+    Gumbel straigth-through estimator.
+    :param int num_vars: number of variables
+    """
+    def __init__(self, num_vars):
+        super(GumbelAdjacency, self).__init__()
+        self.num_vars = num_vars
+        self.log_alpha = torch.nn.Parameter(torch.zeros((num_vars, num_vars)))
+        self.uniform = torch.distributions.uniform.Uniform(0, 1)
+        self.reset_parameters()
+
+    def forward(self, bs, tau=1, drawhard=True):
+        adj = gumbel_sigmoid(self.log_alpha, self.uniform, bs, tau=tau, hard=drawhard)
+        return adj
+
+    def get_proba(self):
+        """Returns probability of getting one"""
+        return torch.sigmoid(self.log_alpha)
+
+    def reset_parameters(self):
+        torch.nn.init.constant_(self.log_alpha, 5)
+    
+
+class DcdiMLP(nn.Module):
+    def __init__(
+        self, dims, num_layers, hid_dim, activation="sigmoid", bias=True, dtype=torch.float64
+    ) -> None:
+        torch.set_default_dtype(dtype)
+        super().__init__()
+        # assert (
+        #     len(dims) >= 2 and dims[-1] == 1
+        # ), "Invalid dimension size or output dimension."
+        self.d = dims[0]
+        self.dims = dims
+        self.num_layers = num_layers
+        self.hid_dim = hid_dim
+        self.bias = bias
+        # self.layers = nn.ModuleList()
+
+        self.adjacency = torch.ones((self.d, self.d)) - torch.eye(
+            self.d
+        )
+        self.gumbel_adjacency = GumbelAdjacency(self.d)
+
+        if activation == "sigmoid":
+            self.activation = torch.sigmoid
+        elif activation == "relu":
+            self.activation = F.relu
+        else:
+            raise ValueError("Activation function not supported.")
+
+        self.weights = nn.ParameterList()
+        self.biases = nn.ParameterList()
+
+        # self.fc2 = nn.ModuleList()
+        for k in range(self.num_layers + 1):
+            in_dim = self.hid_dim
+            out_dim = self.hid_dim
+            if k == 0:
+                in_dim = self.d
+            if k == self.num_layers:
+                out_dim = dims[1]
+            self.weights.append(nn.Parameter(torch.zeros(self.d, out_dim, in_dim)))
+            self.biases.append(nn.Parameter(torch.zeros(self.d, out_dim)))
+
+        self.reset_params()
+
+        extra_params = np.ones((self.d,))
+        np.random.shuffle(extra_params)
+        # each element in the list represents a variable, the size of the element is the number of extra_params per var
+        self.extra_params = nn.ParameterList()
+        for extra_param in extra_params:
+            self.extra_params.append(nn.Parameter(torch.tensor(np.log(extra_param).reshape(1)).type(torch.Tensor)))
+
+
+    @staticmethod
+    def make_hook_function(d):
+        def hook_function(grad):
+            grad_clone = grad.clone()
+            grad_clone = grad_clone.view(d, -1, d)
+            for i in range(d):
+                grad_clone[i, :, i] = 0.0
+            grad_clone = grad_clone.view(-1, d)
+            return grad_clone
+
+        return hook_function
+
+    def compute_penalty(self, list_, p=2, target=0.):
+        penalty = 0
+        for m in list_:
+            penalty += torch.norm(m - target, p=p) ** p
+        return penalty
+    
+    def forward_given_params(self, x, weights, biases):
+        """
+
+        :param x: batch_size x num_vars
+        :param weights: list of lists. ith list contains weights for ith MLP
+        :param biases: list of lists. ith list contains biases for ith MLP
+        :return: batch_size x num_vars * num_params, the parameters of each variable conditional
+        """
+        bs = x.size(0)
+        # num_zero_weights = 0
+        # print(f'num_layers is {num_layers}, len weights are {len(weights)} and len biases is {len(biases)}')
+        for layer in range(self.num_layers + 1):
+            # apply affine operator
+            if layer == 0:
+                M = self.gumbel_adjacency(bs)
+                adj = self.adjacency.unsqueeze(0)
+                x = torch.einsum("tij,bjt,ljt,bj->bti", weights[layer], M, adj, x) 
+                x = x + biases[layer]
+            else:
+                x = torch.einsum("tij,btj->bti", weights[layer], x) + biases[layer]
+
+            # count num of zeros
+            # num_zero_weights += weights[k].numel() - weights[k].nonzero().size(0)
+
+            # apply non-linearity
+            if layer != self.num_layers:
+                x = F.leaky_relu(x) # if self.nonlin == "leaky-relu" else torch.sigmoid(x)
+
+        return torch.unbind(x, 1)
+
+    def adj(self):
+        """Get weighted adjacency matrix"""
+        return self.gumbel_adjacency.get_proba() * self.adjacency
+
+    def reset_params(self):
+        with torch.no_grad():
+            for node in range(self.d):
+                for i, w in enumerate(self.weights):
+                    w = w[node]
+                    nn.init.xavier_uniform_(w, gain=nn.init.calculate_gain('leaky_relu'))
+                for i, b in enumerate(self.biases):
+                    b = b[node]
+                    b.zero_()
+
+    def get_parameters(self):
+        params = []
+        
+        weights = []
+        for w in self.weights:
+            weights.append(w)
+        params.append(weights)
+
+        biases = []
+        for b in self.biases:
+            biases.append(b)
+        params.append(biases)
+
+        return tuple(params)
+
+    def get_distribution(self, dp):
+        return torch.distributions.normal.Normal(dp[0], dp[1])
+
+    def transform_extra_params(self, extra_params):
+        transformed_extra_params = []
+        for extra_param in extra_params:
+            transformed_extra_params.append(torch.exp(extra_param))
+        return transformed_extra_params  # returns std_dev
+
+    
+    def compute_log_likelihood(self, x, weights, biases, detach=False):
+        """
+        Return log-likelihood of the model for each example.
+        WARNING: This is really a joint distribution only if the DAGness constraint on the mask is satisfied.
+                 Otherwise the joint does not integrate to one.
+        :param x: (batch_size, num_vars)
+        :param weights: list of tensor that are coherent with self.weights
+        :param biases: list of tensor that are coherent with self.biases
+        :return: (batch_size, num_vars) log-likelihoods
+        """
+        density_params = self.forward_given_params(x, weights, biases)
+        # print(f'density params are {density_params}')
+
+        # if len(extra_params) != 0:
+        extra_params = self.transform_extra_params(self.extra_params)
+        log_probs = []
+        for i in range(self.d):
+            density_param = list(torch.unbind(density_params[i], 1))
+            if len(extra_params) != 0:
+                density_param.extend(list(torch.unbind(extra_params[i], 0)))
+            conditional = self.get_distribution(density_param)
+            x_d = x[:, i].detach() if detach else x[:, i]
+            log_probs.append(conditional.log_prob(x_d).unsqueeze(1))
+
+        return torch.cat(log_probs, 1)
+
+
 class TopoMLP(nn.Module):
     def __init__(self, dims, activation="sigmoid", bias=True, dtype=torch.float64):
         super(TopoMLP, self).__init__()
