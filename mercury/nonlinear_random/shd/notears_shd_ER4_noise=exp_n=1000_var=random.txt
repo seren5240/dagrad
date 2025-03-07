@@ -1,0 +1,3 @@
+method,d,mean_normalized_shd
+NOTEARS,10,2.11
+NOTEARS,20,2.955

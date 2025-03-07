@@ -1,0 +1,4 @@
+method,d,mean_normalized_sid
+NOTEARS,5,1.52
+NOTEARS,10,3.75
+NOTEARS,20,7.055
