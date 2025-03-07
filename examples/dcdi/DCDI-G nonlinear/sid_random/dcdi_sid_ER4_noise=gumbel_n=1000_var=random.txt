@@ -1,3 +1,5 @@
 method,d,mean_normalized_sid
 DCDI-G,10,6.49
 DCDI-G,20,14.525
+NOTEARS,10,5.540000000000001
+NOTEARS,20,12.6

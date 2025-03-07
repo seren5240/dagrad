@@ -2,3 +2,6 @@ method,d,mean_normalized_shd
 DCDI-G,5,1.48
 DCDI-G,10,2.15
 DCDI-G,20,4.975
+NOTEARS,5,1.0
+NOTEARS,10,1.2
+NOTEARS,20,1.39

@@ -19,14 +19,14 @@ num_rows = len(s0_ratios)
 num_cols = len(noise_types)
 fig, axes = plt.subplots(num_rows, num_cols, figsize=(15, 5 * num_rows), sharex=True, sharey=True)
 
-file_pattern = "dcdi_shd_ER*_noise=*_n=1000_var=eq.txt"
+file_pattern = "dcdi_sid_ER*_noise=*_n=1000_var=random.txt"
 files = sorted(glob.glob(file_pattern))
 
 results = {method: {sem: {str(s0): {d: [] for d in num_nodes} for s0 in s0_ratios} for sem in noise_types} for method in methods}
 
 for file in files:
     base_name = os.path.basename(file)
-    parts = base_name.replace("dcdi_", "").replace("_n=1000_var=eq.txt", "").split("_")
+    parts = base_name.replace("dcdi_", "").replace("_n=1000_var=random.txt", "").split("_")
 
     er_type = parts[1].replace("ER", "")
     noise_type = parts[2].split("=")[1]
@@ -40,7 +40,7 @@ for file in files:
         sub_df = df[df['method'] == method]
         for _, row in sub_df.iterrows():
             d = row["d"]
-            results[method][noise_type][er_type][d].append(row["mean_normalized_shd"])
+            results[method][noise_type][er_type][d].append(row["mean_normalized_sid"])
 
 print(f'results are {results}')
 
@@ -55,10 +55,10 @@ for i, s0_ratio in enumerate(s0_ratios):
         ax.set_title(f"{noise_names[noise]} noise, ER{s0_ratio}")
         ax.set_xlabel("d (Number of Nodes)")
         if j == 0:
-            ax.set_ylabel("Normalized SHD")
+            ax.set_ylabel("Normalized SID")
         ax.grid(True)
 
 handles, labels = ax.get_legend_handles_labels()
 fig.legend(handles, labels, loc="upper center", ncol=len(methods))
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig(f"normalized_shd_n=1000_var=eq_trials=10.png")
+plt.savefig(f"normalized_sid_n=1000_var=random_trials=10.png")
