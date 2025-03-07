@@ -14,8 +14,8 @@
 
 set -e
 
-# module load python/booth/3.12
-# module load R/4.3/4.3.2
+module load python/booth/3.12
+module load R/4.3/4.3.2
 
 pip3 install -e .
 pip3 install matplotlib
@@ -49,13 +49,13 @@ pip3 install matplotlib
 
 echo "Running benchmark"
 
-python3 -u "./benchmark.py" 10 1000 1 gauss eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 1 exp eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 1 gumbel eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 2 gauss eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 2 exp eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 2 gumbel eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 4 gauss eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 4 exp eq nonlinear
-# python3 -u "./benchmark.py" 10 1000 4 gumbel eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 gauss random nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 exp random nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 gumbel random nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 gauss random nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 exp random nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 gumbel random nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 gauss random nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 exp random nonlinear
+python3 -u "./benchmark.py" 10 1000 4 gumbel random nonlinear
 # python3 -u "./benchmark.py"
