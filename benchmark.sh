@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-#SBATCH --job-name=notears_benchmark
+#SBATCH --account=pi-naragam
+#SBATCH --job-name=dcdi_benchmark
 #SBATCH --output=./slurm/out/%j.%N.stdout
 #SBATCH --error=./slurm/out/%j.%N.stderr
-#SBATCH --chdir=/home/serenkwok/dagrad
-#SBATCH --partition=general
+#SBATCH --chdir=/home/skwok1/dagrad
+#SBATCH --partition=standard
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem-per-cpu=4000
-#SBATCH --time=1-00:00:00
-#SBATCH --exclusive
+#SBATCH --mem-per-cpu=2000
+#SBATCH --time=3-00:00:00
 
 set -e
 
@@ -49,13 +49,13 @@ pip3 install matplotlib
 
 echo "Running benchmark"
 
-# python3 -u "./benchmark.py" 10 1000 1 gauss eq linear
-python3 -u "./benchmark.py" 10 1000 1 exp eq linear
-# python3 -u "./benchmark.py" 10 1000 1 gumbel eq linear
-# python3 -u "./benchmark.py" 10 1000 2 gauss eq linear
-# python3 -u "./benchmark.py" 10 1000 2 exp eq linear
-# python3 -u "./benchmark.py" 10 1000 2 gumbel eq linear
-# python3 -u "./benchmark.py" 10 1000 4 gauss eq linear
-# python3 -u "./benchmark.py" 10 1000 4 exp eq linear
-# python3 -u "./benchmark.py" 10 1000 4 gumbel eq linear
+python3 -u "./benchmark.py" 10 1000 1 gauss eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 exp eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 gumbel eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 gauss eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 exp eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 2 gumbel eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 gauss eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 exp eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 gumbel eq nonlinear
 # python3 -u "./benchmark.py"
