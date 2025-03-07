@@ -1,0 +1,5 @@
+method,d,mean_normalized_sid
+DAGMA,5,0.1
+DAGMA,10,0.02
+DAGMA,50,0.136
+DAGMA,100,0.061999999999999986

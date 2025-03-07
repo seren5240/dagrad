@@ -31,91 +31,47 @@ def postprocess(B, graph_thres=0.3):
 
     return B
 
-def golem_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
+def dagma(n, d, s0, graph_type, noise_type, error_var, seed=None):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
     X = torch.from_numpy(X).float()
     model = 'linear' # Define the model
-    W_golem = dagrad(
+    W_dagma = dagrad(
         X,
         model = model,
-        method = 'notears',
+        method = 'dagma',
         compute_lib='torch',
-        loss_fn='user_loss',
-        reg='user_reg',
-        h_fn='user_h',
-        general_options={'user_params': {
-            'equal_variances': True,
-        }}
-    ) # Learn the structure of the DAG using Golem
+        # loss_fn='user_loss',
+        # reg='user_reg',
+        # h_fn='user_h',
+        # general_options={'user_params': {
+        #     'equal_variances': True,
+        # }}
+    ) # Learn the structure of the DAG using DAGMA
     print(f"Linear Model")
     print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
 
-    W_processed = postprocess(W_golem)
-    acc_golem = count_accuracy(B_true, W_processed != 0) # Measure the accuracy of the learned structure using Golem
-    print('Accuracy of Golem:', acc_golem)
+    W_processed = postprocess(W_dagma)
+    acc_dagma = count_accuracy(B_true, W_processed != 0) # Measure the accuracy of the learned structure using Dagma
+    print('Accuracy of dagma:', acc_dagma)
 
-    return acc_golem
-
-def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None):
-    X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
-    X = torch.from_numpy(X).float()
-    model = 'linear' # Define the model
-    W_ev = dagrad(
-        X,
-        model = model,
-        method = 'notears',
-        compute_lib='torch',
-        loss_fn='user_loss',
-        reg='user_reg',
-        h_fn='user_h',
-        general_options={'user_params': {
-            'equal_variances': True,
-        }}
-    ) # Learn the structure of the DAG using Golem
-    print(f"Linear Model")
-    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
-
-    W_ev_processed = postprocess(W_ev)
-    acc_ev = count_accuracy(B_true, W_ev_processed != 0) # Measure the accuracy of the learned structure using Golem
-    print('Accuracy of Golem after EV stage:', acc_ev)
-
-    W_nv = dagrad(
-        X,
-        model = model,
-        method = 'notears',
-        compute_lib='torch',
-        loss_fn='user_loss',
-        reg='user_reg',
-        h_fn='user_h',
-        general_options={'user_params': {
-            'equal_variances': False,
-        },
-        'initialization': W_ev}
-    ) 
-
-    W_processed = postprocess(W_nv)
-    acc_nv = count_accuracy(B_true, W_processed != 0) # Measure the accuracy of the learned structure using Golem
-    print('Accuracy of Golem after NV stage:', acc_nv)
-
-    return acc_nv
+    return acc_dagma
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     num_nodes = [5, 10, 50, 100] if s0_ratio <= 2 else [10, 50, 100]
-    methods = ["GOLEM-NOTEARS-EV", "GOLEM-NOTEARS-NV"]
+    methods = ["DAGMA"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
     def run_trial(d, s0, i):
         print(f"Running trial {i} for {d} nodes")
         try:
-            ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
-            nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
+            nv_result = dagma(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
 
-            return (d, ev_result, nv_result)
+            return (d, nv_result)
         except Exception as e:
             print(e)
             print(f'Trial {i} with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error')
-            return (d, None, None)
+            return (d, None)
 
     num_cores = joblib.cpu_count()
     print(f"Detected {num_cores} CPU cores. Running trials in parallel.")
@@ -126,14 +82,10 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
             delayed(run_trial)(d, s0, i) for i in range(trials)
         )
 
-        for d, ev_result, nv_result in trial_results:
-            if ev_result is not None:
-                shd_results["GOLEM-NOTEARS-EV"][d].append(ev_result["shd"] / d)
-                sid_results["GOLEM-NOTEARS-EV"][d].append(ev_result["sid"] / d)
-
+        for d, nv_result in trial_results:
             if nv_result is not None:
-                shd_results["GOLEM-NOTEARS-NV"][d].append(nv_result["shd"] / d)
-                sid_results["GOLEM-NOTEARS-NV"][d].append(nv_result["sid"] / d)
+                shd_results["DAGMA"][d].append(nv_result["shd"] / d)
+                sid_results["DAGMA"][d].append(nv_result["sid"] / d)
 
     make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, shd_results, "shd")
     make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
@@ -161,9 +113,9 @@ def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
+    plt.savefig(f"dagma_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
 
-    output_filename = f"golem_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
+    output_filename = f"dagma_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:

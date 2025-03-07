@@ -1,0 +1,5 @@
+method,d,mean_normalized_shd
+DAGMA,5,0.0
+DAGMA,10,0.01
+DAGMA,50,0.02
+DAGMA,100,0.002
