@@ -82,7 +82,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
     methods = ["NOTEARS"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
-    # sid_results = {method: {d: [] for d in num_nodes} for method in methods}
+    sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
     for d in num_nodes:
         s0 = int(s0_ratio * d)
@@ -99,7 +99,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
                     linearity=linearity,
                 )
                 shd_results["NOTEARS"][d].append(results["shd"] / d)
-                # sid_results["GRAN-DAG"][d].append(results["sid"] / d)
+                sid_results["NOTEARS"][d].append(results["sid"] / d)
             except Exception as e:
                 print(e)
                 print(
@@ -117,7 +117,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
         shd_results,
         "shd",
     )
-    # make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
+    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
 
 
 def make_one_plot(
