@@ -4,31 +4,22 @@ import numpy as np
 import torch
 from dagrad import flex
 from dagrad.utils import utils
-
+from joblib import Parallel, delayed
+import joblib
 
 def format_ratio(ratio):
     return 0.5 if ratio == 0.5 else int(ratio)
-
 
 def postprocess(B, graph_thres=0.3):
     """Post-process estimated solution:
         (1) Thresholding.
         (2) Remove the edges with smallest absolute weight until a DAG
             is obtained.
-
-    Args:
-        B (numpy.ndarray): [d, d] weighted matrix.
-        graph_thres (float): Threshold for weighted matrix. Default: 0.3.
-
-    Returns:
-        numpy.ndarray: [d, d] weighted matrix of DAG.
     """
     B = np.copy(B)
     B[np.abs(B) <= graph_thres] = 0  # Thresholding
     B, _ = utils.threshold_till_dag(B)
-
     return B
-
 
 def notears_flex(n, d, s0, noise_type="gauss", error_var="eq", linearity="linear"):
     noise_scale = None if error_var == "eq" else np.random.uniform(0.5, 1.0, d)
@@ -76,93 +67,81 @@ def notears_flex(n, d, s0, noise_type="gauss", error_var="eq", linearity="linear
     print("Results: ", acc)
     return acc
 
-
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
-    # maximum number of edges with 5 nodes is 10
+    # Set node numbers based on s0_ratio.
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
     methods = ["NOTEARS"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
+    # Define a helper to run one trial.
+    def run_trial(d, s0, i):
+        print(f"Running trial {i} for {d} nodes")
+        try:
+            results = notears_flex(
+                n=n,
+                d=d,
+                s0=s0,
+                noise_type=noise_type,
+                error_var=error_var,
+                linearity=linearity,
+            )
+            return (d, results["shd"] / d, results["sid"] / d)
+        except Exception as e:
+            print(e)
+            print(f"Trial {i} with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error")
+            return (d, None, None)
+
+    num_cores = joblib.cpu_count()
+    print(f"Detected {num_cores} CPU cores. Running trials in parallel.")
+
     for d in num_nodes:
         s0 = int(s0_ratio * d)
+        trial_results = Parallel(n_jobs=-1, backend="loky")(
+            delayed(run_trial)(d, s0, i) for i in range(trials)
+        )
 
-        for i in range(trials):
-            print(f"Running trial {i} for {d} nodes")
-            try:
-                results = notears_flex(
-                    n=n,
-                    d=d,
-                    s0=s0,
-                    noise_type=noise_type,
-                    error_var=error_var,
-                    linearity=linearity,
-                )
-                shd_results["NOTEARS"][d].append(results["shd"] / d)
-                sid_results["NOTEARS"][d].append(results["sid"] / d)
-            except Exception as e:
-                print(e)
-                print(
-                    f"trial with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error"
-                )
+        for d_val, shd, sid in trial_results:
+            if shd is not None:
+                shd_results["NOTEARS"][d_val].append(shd)
+            if sid is not None:
+                sid_results["NOTEARS"][d_val].append(sid)
 
-    make_one_plot(
-        s0_ratio,
-        noise_type,
-        methods,
-        num_nodes,
-        trials,
-        n,
-        error_var,
-        shd_results,
-        "shd",
-    )
+    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, shd_results, "shd")
     make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
 
-
-def make_one_plot(
-    s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, results, metric: str
-):
+def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, results, metric: str):
     plt.figure(figsize=(8, 6))
 
     for method in methods:
-        means = [
-            np.mean(results[method][d]) if results[method][d] else None
-            for d in num_nodes
-        ]
+        means = [np.mean(results[method][d]) if results[method][d] else None for d in num_nodes]
         plt.plot(num_nodes, means, marker="o", label=method)
 
     noise_names = {"gauss": "Gaussian", "exp": "Exponential", "gumbel": "Gumbel"}
 
-    plt.title(
-        f"{noise_names[noise_type]} Noise, ER{s0_ratio}\n(n={n}, trials={trials}, error_var={error_var})"
-    )
+    plt.title(f"{noise_names[noise_type]} Noise, ER{s0_ratio}\n(n={n}, trials={trials}, error_var={error_var})")
     plt.xlabel("d (Number of Nodes)")
     plt.ylabel(f"Normalized {metric.upper()}")
     plt.grid(True)
     plt.legend()
-
     plt.tight_layout()
-    plt.savefig(
-        f"notears_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png"
-    )
 
+    plt.savefig(f"notears_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
+    
     output_filename = f"notears_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:
             for d in num_nodes:
-                mean_metric = (
-                    np.mean(results[method][d]) if results[method][d] else None
-                )
+                mean_metric = np.mean(results[method][d]) if results[method][d] else None
                 if mean_metric is not None:
                     f.write(f"{method},{d},{mean_metric}\n")
 
-
-nTrials = int(sys.argv[1])
-nSamples = int(sys.argv[2])
-s0_ratio = float(sys.argv[3])
-noise_type = sys.argv[4]
-error_var = sys.argv[5]
-linearity = sys.argv[6]
-run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var, linearity)
+if __name__ == "__main__":
+    nTrials = int(sys.argv[1])
+    nSamples = int(sys.argv[2])
+    s0_ratio = float(sys.argv[3])
+    noise_type = sys.argv[4]
+    error_var = sys.argv[5]
+    linearity = sys.argv[6]
+    run_one_experiment(nTrials, nSamples, s0_ratio, noise_type, error_var, linearity)
