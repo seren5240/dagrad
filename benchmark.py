@@ -7,19 +7,22 @@ from dagrad.utils import utils
 from joblib import Parallel, delayed
 import joblib
 
+
 def format_ratio(ratio):
     return 0.5 if ratio == 0.5 else int(ratio)
 
+
 def postprocess(B, graph_thres=0.3):
     """Post-process estimated solution:
-        (1) Thresholding.
-        (2) Remove the edges with smallest absolute weight until a DAG
-            is obtained.
+    (1) Thresholding.
+    (2) Remove the edges with smallest absolute weight until a DAG
+        is obtained.
     """
     B = np.copy(B)
     B[np.abs(B) <= graph_thres] = 0  # Thresholding
     B, _ = utils.threshold_till_dag(B)
     return B
+
 
 def notears_flex(n, d, s0, noise_type="gauss", error_var="eq", linearity="linear"):
     noise_scale = None if error_var == "eq" else np.random.uniform(0.5, 1.0, d)
@@ -67,6 +70,7 @@ def notears_flex(n, d, s0, noise_type="gauss", error_var="eq", linearity="linear
     print("Results: ", acc)
     return acc
 
+
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
     # Set node numbers based on s0_ratio.
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
@@ -89,7 +93,9 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
             return (d, results["shd"] / d, results["sid"] / d)
         except Exception as e:
             print(e)
-            print(f"Trial {i} with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error")
+            print(
+                f"Trial {i} with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error"
+            )
             return (d, None, None)
 
     num_cores = joblib.cpu_count()
@@ -107,35 +113,68 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
             if sid is not None:
                 sid_results["NOTEARS"][d_val].append(sid)
 
-    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, shd_results, "shd")
-    make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
+    make_one_plot(
+        s0_ratio,
+        noise_type,
+        methods,
+        num_nodes,
+        trials,
+        n,
+        error_var,
+        shd_results,
+        "shd",
+    )
+    make_one_plot(
+        s0_ratio,
+        noise_type,
+        methods,
+        num_nodes,
+        trials,
+        n,
+        error_var,
+        sid_results,
+        "sid",
+    )
 
-def make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, results, metric: str):
+
+def make_one_plot(
+    s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, results, metric: str
+):
     plt.figure(figsize=(8, 6))
 
     for method in methods:
-        means = [np.mean(results[method][d]) if results[method][d] else None for d in num_nodes]
+        means = [
+            np.mean(results[method][d]) if results[method][d] else None
+            for d in num_nodes
+        ]
         plt.plot(num_nodes, means, marker="o", label=method)
 
     noise_names = {"gauss": "Gaussian", "exp": "Exponential", "gumbel": "Gumbel"}
 
-    plt.title(f"{noise_names[noise_type]} Noise, ER{s0_ratio}\n(n={n}, trials={trials}, error_var={error_var})")
+    plt.title(
+        f"{noise_names[noise_type]} Noise, ER{s0_ratio}\n(n={n}, trials={trials}, error_var={error_var})"
+    )
     plt.xlabel("d (Number of Nodes)")
     plt.ylabel(f"Normalized {metric.upper()}")
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
 
-    plt.savefig(f"notears_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png")
-    
+    plt.savefig(
+        f"notears_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.png"
+    )
+
     output_filename = f"notears_{metric}_ER{format_ratio(s0_ratio)}_noise={noise_type}_n={n}_var={error_var}.txt"
     with open(output_filename, "w") as f:
         f.write(f"method,d,mean_normalized_{metric}\n")
         for method in methods:
             for d in num_nodes:
-                mean_metric = np.mean(results[method][d]) if results[method][d] else None
+                mean_metric = (
+                    np.mean(results[method][d]) if results[method][d] else None
+                )
                 if mean_metric is not None:
                     f.write(f"{method},{d},{mean_metric}\n")
+
 
 if __name__ == "__main__":
     nTrials = int(sys.argv[1])
