@@ -8,7 +8,7 @@
 #SBATCH --partition=standard
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=2000
 #SBATCH --time=3-00:00:00
 
@@ -50,13 +50,13 @@ cd examples/golem
 
 echo "Running benchmark"
 
-# python3 -u "./dagma_benchmark.py" 10 1000 1 gauss random
-# python3 -u "./dagma_benchmark.py" 10 1000 1 exp random
-# python3 -u "./dagma_benchmark.py" 10 1000 1 gumbel random
-# python3 -u "./dagma_benchmark.py" 10 1000 2 gauss random
-# python3 -u "./dagma_benchmark.py" 10 1000 2 exp random
-# python3 -u "./dagma_benchmark.py" 10 1000 2 gumbel random
-# python3 -u "./dagma_benchmark.py" 10 1000 4 gauss random
-# python3 -u "./dagma_benchmark.py" 10 1000 4 exp random
-python3 -u "./dagma_benchmark.py" 10 1000 4 gumbel random
-# python3 -u "./dagma_benchmark.py"
+# python3 -u "./benchmark.py" 10 1000 1 gauss random
+# python3 -u "./benchmark.py" 10 1000 1 exp random
+# python3 -u "./benchmark.py" 10 1000 1 gumbel random
+# python3 -u "./benchmark.py" 10 1000 2 gauss random
+# python3 -u "./benchmark.py" 10 1000 2 exp random
+# python3 -u "./benchmark.py" 10 1000 2 gumbel random
+# python3 -u "./benchmark.py" 10 1000 4 gauss random
+# python3 -u "./benchmark.py" 10 1000 4 exp random
+python3 -u "./benchmark.py" 10 1000 4 gumbel random
+# python3 -u "./benchmark.py"
