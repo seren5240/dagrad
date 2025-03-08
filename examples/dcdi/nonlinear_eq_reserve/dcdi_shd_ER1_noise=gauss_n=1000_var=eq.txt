@@ -1,0 +1,4 @@
+method,d,mean_normalized_shd
+DCDI-G,5,0.8
+DCDI-G,10,2.38
+DCDI-G,20,5.75

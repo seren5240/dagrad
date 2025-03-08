@@ -1,0 +1,4 @@
+method,d,mean_normalized_sid
+DCDI-G,5,1.98
+DCDI-G,10,2.9899999999999998
+DCDI-G,20,4.62
