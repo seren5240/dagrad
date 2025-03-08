@@ -1,4 +1,5 @@
 import sys
+from dagrad.flex.prune import cam_pruning
 import joblib
 from matplotlib import pyplot as plt
 import numpy as np
@@ -29,14 +30,12 @@ def dcdi_aug_lagrangian(
     train_dataset = dataset[:train_samples, :]
     test_dataset = dataset[train_samples:, :]
 
-    model = flex.MLP(
-        dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True
-    )
+    model = flex.MLP(dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True)
 
     # Use AML to solve the constrained problem
     cons_solver = flex.AugmentedLagrangian(
         num_iter=1000000,
-        num_steps=[1, 1],
+        num_steps=[1,1],
         l1_coeff=0.1,
         # weight_decay=0.01,
         rho_init=1e-8,
@@ -68,12 +67,29 @@ def dcdi_aug_lagrangian(
 
     acc = utils.count_accuracy(B_true, W_est != 0)
     print("Results: ", acc)
-    return acc
 
+    opt = {
+        "cam_pruning_cutoff": np.logspace(-6, 0, 10),
+        "exp_path": "cam_pruning",
+    }
+    B_est = W_est
+    # print(f'B_est: {B_est}')
+    try:
+        cam_pruning_cutoff = [float(i) for i in opt["cam_pruning_cutoff"]]
+    except:
+        cam_pruning_cutoff = [float(opt["cam_pruning_cutoff"])]
+    for cutoff in cam_pruning_cutoff:
+        B_est = cam_pruning(B_est, train_dataset, test_dataset, opt, cutoff=cutoff)
+    B_est = B_est.detach().cpu().numpy()
+
+    acc = utils.count_accuracy(B_true, B_est != 0)
+    print("After pruning: ", acc)
+
+    return acc
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
-    methods = ["DCDI-G"]
+    methods = ["DCDI-G-CAM"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
@@ -108,9 +124,9 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
 
         for d, shd, sid in trial_results:
             if shd is not None:
-                shd_results["DCDI-G"][d].append(shd)
+                shd_results["DCDI-G-CAM"][d].append(shd)
             if sid is not None:
-                sid_results["DCDI-G"][d].append(sid)
+                sid_results["DCDI-G-CAM"][d].append(sid)
 
     make_one_plot(
         s0_ratio,
