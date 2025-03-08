@@ -31,6 +31,44 @@ def postprocess(B, graph_thres=0.3):
 
     return B
 
+def notears(n, d, s0, graph_type, noise_type, error_var, seed=None):
+    X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
+    X = torch.from_numpy(X).float()
+    model = 'linear' # Define the model
+    W_notears = dagrad(
+        X,
+        model = model,
+        method = 'notears',
+        compute_lib='torch',
+    ) # Learn the structure of the DAG using Golem
+    print(f"Linear Model")
+    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
+
+    W_processed = postprocess(W_notears)
+    acc_notears = count_accuracy(B_true, W_processed != 0) # Measure the accuracy of the learned structure using Golem
+    print('Accuracy of NOTEARS:', acc_notears)
+
+    return acc_notears
+
+def dagma(n, d, s0, graph_type, noise_type, error_var, seed=None):
+    X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
+    X = torch.from_numpy(X).float()
+    model = 'linear' # Define the model
+    W_notears = dagrad(
+        X,
+        model = model,
+        method = 'dagma',
+        compute_lib='torch',
+    ) # Learn the structure of the DAG using Golem
+    print(f"Linear Model")
+    print(f"data size: {n}, graph type: {graph_type}, nodes: {d}, edges: {s0}, error_var: {error_var}, sem type: {noise_type}")
+
+    W_processed = postprocess(W_notears)
+    acc_dagma = count_accuracy(B_true, W_processed != 0) # Measure the accuracy of the learned structure using Golem
+    print('Accuracy of DAGMA:', acc_dagma)
+
+    return acc_dagma
+
 def golem_ev(n, d, s0, graph_type, noise_type, error_var, seed=None):
     X, W_true, B_true = generate_linear_data(n,d,s0,graph_type,noise_type,error_var,seed)
     X = torch.from_numpy(X).float()
@@ -101,7 +139,7 @@ def golem_nv(n, d, s0, graph_type, noise_type, error_var, seed=None):
 
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
     num_nodes = [5, 10, 50, 100] if s0_ratio <= 2 else [10, 50, 100]
-    methods = ["GOLEM-NOTEARS-EV", "GOLEM-NOTEARS-NV"]
+    methods = ["GOLEM-NOTEARS-EV", "GOLEM-NOTEARS-NV", "NOTEARS", "DAGMA"]
     shd_results = {method: {d: [] for d in num_nodes} for method in methods}
     sid_results = {method: {d: [] for d in num_nodes} for method in methods}
 
@@ -110,8 +148,10 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
         try:
             ev_result = golem_ev(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
             nv_result = golem_nv(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
+            notears_result = notears(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
+            dagma_result = dagma(n=n, d=d, s0=s0, graph_type="ER", error_var=error_var, noise_type=noise_type)
 
-            return (d, ev_result, nv_result)
+            return (d, ev_result, nv_result, notears_result, dagma_result)
         except Exception as e:
             print(e)
             print(f'Trial {i} with {d} nodes and {noise_type} noise and s0_ratio {s0_ratio} skipped due to error')
@@ -126,7 +166,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
             delayed(run_trial)(d, s0, i) for i in range(trials)
         )
 
-        for d, ev_result, nv_result in trial_results:
+        for d, ev_result, nv_result, notears_result, dagma_result in trial_results:
             if ev_result is not None:
                 shd_results["GOLEM-NOTEARS-EV"][d].append(ev_result["shd"] / d)
                 sid_results["GOLEM-NOTEARS-EV"][d].append(ev_result["sid"] / d)
@@ -134,6 +174,14 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var):
             if nv_result is not None:
                 shd_results["GOLEM-NOTEARS-NV"][d].append(nv_result["shd"] / d)
                 sid_results["GOLEM-NOTEARS-NV"][d].append(nv_result["sid"] / d)
+
+            if notears_result is not None:
+                shd_results["NOTEARS"][d].append(notears_result['shd'] / d)
+                sid_results["NOTEARS"][d].append(notears_result['sid'] / d)
+
+            if dagma_result is not None:
+                shd_results["DAGMA"][d].append(dagma_result["shd"] / d)
+                sid_results["DAGMA"][d].append(dagma_result["sid"] / d)
 
     make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, shd_results, "shd")
     make_one_plot(s0_ratio, noise_type, methods, num_nodes, trials, n, error_var, sid_results, "sid")
