@@ -245,7 +245,7 @@ class AugmentedLagrangian(ConstrainedSolver):
             constraint_normalization = dag_fn(full_adjacency).item()
 
 
-        for i in tqdm(range(self.num_iter)):
+        for i in range(self.num_iter):
             if end:
                 continue
             # while self.rho < self.rho_max:
