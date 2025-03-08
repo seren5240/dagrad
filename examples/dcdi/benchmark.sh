@@ -8,10 +8,9 @@
 #SBATCH --partition=standard
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=2000
 #SBATCH --time=3-00:00:00
-#SBATCH --exclusive
 
 set -e
 
@@ -51,13 +50,13 @@ cd examples/dcdi
 
 echo "Running benchmark"
 
-# python3 -u "./benchmark.py" 10 1000 1 gauss eq
-# python3 -u "./benchmark.py" 10 1000 1 exp eq
-# python3 -u "./benchmark.py" 10 1000 1 gumbel eq
+# python3 -u "./benchmark.py" 10 1000 1 gauss eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 1 exp eq nonlinear
+python3 -u "./benchmark.py" 10 1000 1 gumbel eq nonlinear
 # python3 -u "./benchmark.py" 10 1000 2 gauss eq nonlinear
 # python3 -u "./benchmark.py" 10 1000 2 exp eq nonlinear
 # python3 -u "./benchmark.py" 10 1000 2 gumbel eq nonlinear
 # python3 -u "./benchmark.py" 10 1000 4 gauss eq nonlinear
 # python3 -u "./benchmark.py" 10 1000 4 exp eq nonlinear
-python3 -u "./benchmark.py" 10 1000 4 gumbel eq nonlinear
+# python3 -u "./benchmark.py" 10 1000 4 gumbel eq nonlinear
 # python3 -u "./benchmark.py"
