@@ -5,6 +5,7 @@ import numpy as np
 from joblib import Parallel, delayed
 from dagrad.utils import utils
 
+
 def run_one_trial(
     n: int,
     d: int,
@@ -42,6 +43,7 @@ def run_one_trial(
         results[name] = acc["shd"] / d
     return results
 
+
 def run_benchmarks(
     n: int,
     sizes: list[tuple[int, int]],
@@ -71,10 +73,28 @@ def run_benchmarks(
                         for _ in range(trials):
                             tasks.append(
                                 delayed(run_one_trial)(
-                                    n, d, edges, sem_type, noise_type, error_var, linearity, graph_type, benchmark_fns
+                                    n,
+                                    d,
+                                    edges,
+                                    sem_type,
+                                    noise_type,
+                                    error_var,
+                                    linearity,
+                                    graph_type,
+                                    benchmark_fns,
                                 )
                             )
-                            keys.append((n, d, edges, noise_type, error_var, linearity, graph_type))
+                            keys.append(
+                                (
+                                    n,
+                                    d,
+                                    edges,
+                                    noise_type,
+                                    error_var,
+                                    linearity,
+                                    graph_type,
+                                )
+                            )
 
     results = Parallel(n_jobs=-1, backend="loky")(tasks)
 
@@ -86,7 +106,9 @@ def run_benchmarks(
             aggregated[key][method].append(value)
 
     with open(output_filename, "w") as f:
-        f.write("method,n,d,edges,noise_type,error_var,linearity,graph_type,mean_normalized_shd\n")
+        f.write(
+            "method,n,d,edges,noise_type,error_var,linearity,graph_type,mean_normalized_shd\n"
+        )
         for key, method_vals in aggregated.items():
             n, d, edges, noise_type, error_var, linearity, graph_type = key
             for method, values in method_vals.items():
