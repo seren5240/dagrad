@@ -1,0 +1,4 @@
+method,d,mean_normalized_sid
+DCDI-G-CAM,5,1.6
+DCDI-G-CAM,10,5.7700000000000005
+DCDI-G-CAM,20,12.075
