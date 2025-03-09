@@ -44,7 +44,11 @@ def run_one_trial(
     benchmark_fn: Callable[[ndarray], ndarray],
 ):
     W_est = benchmark_fn(dataset)
-    acc = utils.count_accuracy(B_true, W_est != 0)
+    try:
+        acc = utils.count_accuracy(B_true, W_est != 0)
+    except ValueError as e:
+        print(f"Error in counting accuracy: {e}")
+        return None
     return acc["shd"] / d
 
 
@@ -113,7 +117,8 @@ def run_benchmarks(
     for key, res in zip(keys, results):
         if key not in aggregated:
             aggregated[key] = []
-        aggregated[key].append(res)
+        if res is not None:
+            aggregated[key].append(res)
 
     with open(output_filename, "w") as f:
         f.write(
