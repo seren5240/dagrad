@@ -7,7 +7,12 @@ import matplotlib.pyplot as plt
 num_nodes = [5, 10, 20]
 s0_ratios = [1, 2, 4]
 noise_types = ["gauss", "exp", "gumbel"]
-methods = ["DCDI-G", "NOTEARS"]
+methods = ["DCDI-G", "DCDI-G-CAM", "NOTEARS"]
+method_names = {
+    "DCDI-G": "DCDI-G",
+    "DCDI-G-CAM": "DCDI-G with CAM pruning",
+    "NOTEARS": "NOTEARS"
+}
 
 noise_names = {
     "gauss": "Gaussian",
@@ -50,7 +55,7 @@ for i, s0_ratio in enumerate(s0_ratios):
 
         for method in methods:
             means = [np.mean(results[method][noise][str(s0_ratio)][d]) for d in num_nodes]
-            ax.plot(num_nodes, means, marker="o", label=method)
+            ax.plot(num_nodes, means, marker="o", label=method_names[method])
 
         ax.set_title(f"{noise_names[noise]} noise, ER{s0_ratio}")
         ax.set_xlabel("d (Number of Nodes)")
