@@ -5,6 +5,7 @@ import numpy as np
 from cdt.utils.R import RPackages, launch_R_script
 import pandas as pd
 import torch
+from filelock import FileLock
 
 def np_to_csv(array, save_path):
     """
@@ -48,8 +49,14 @@ def cam_pruning_(model_adj, train_data, test_data, cutoff, save_path, verbose=Fa
     def retrieve_result():
         return pd.read_csv(arguments['{PATH_RESULTS}']).values
 
-    dag_pruned = launch_R_script("{}/../utils/cam_pruning.R".format(os.path.dirname(os.path.realpath(__file__))),
-                                     arguments, output_function=retrieve_result, verbose=False)
+    lock_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "R_script.lock")
+    with FileLock(lock_path):
+        dag_pruned = launch_R_script(
+            "{}/../utils/cam_pruning.R".format(os.path.dirname(os.path.realpath(__file__))),
+            arguments,
+            output_function=retrieve_result,
+            verbose=False
+        )
 
     # remove the temporary csv files
     os.remove(data_csv_path)
