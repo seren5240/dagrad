@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 from dagrad.utils import utils
 
 
-def run_one_trial(
+def create_one_dataset(
     n: int,
     d: int,
     edges: int,
@@ -15,7 +15,6 @@ def run_one_trial(
     error_var: str,
     linearity: str,
     graph_type: str,
-    benchmark_fns: dict[str, Callable[[ndarray], ndarray]],
 ):
     B_true = utils.simulate_dag(d, edges, graph_type)
     if error_var == "eq":
@@ -35,13 +34,18 @@ def run_one_trial(
         )
     else:
         raise ValueError(f"Unknown linearity: {linearity}")
+    return dataset, B_true
 
-    results = {}
-    for name, benchmark_fn in benchmark_fns.items():
-        W_est = benchmark_fn(dataset)
-        acc = utils.count_accuracy(B_true, W_est != 0)
-        results[name] = acc["shd"] / d
-    return results
+
+def run_one_trial(
+    d: int,
+    dataset: ndarray,
+    B_true: ndarray,
+    benchmark_fn: Callable[[ndarray], ndarray],
+):
+    W_est = benchmark_fn(dataset)
+    acc = utils.count_accuracy(B_true, W_est != 0)
+    return acc["shd"] / d
 
 
 def run_benchmarks(
@@ -71,48 +75,53 @@ def run_benchmarks(
                 for linearity in linearities:
                     for graph_type in graph_types:
                         for _ in range(trials):
-                            tasks.append(
-                                delayed(run_one_trial)(
-                                    n,
-                                    d,
-                                    edges,
-                                    sem_type,
-                                    noise_type,
-                                    error_var,
-                                    linearity,
-                                    graph_type,
-                                    benchmark_fns,
-                                )
+                            dataset, B_true = create_one_dataset(
+                                n,
+                                d,
+                                edges,
+                                sem_type,
+                                noise_type,
+                                error_var,
+                                linearity,
+                                graph_type,
                             )
-                            keys.append(
-                                (
-                                    n,
-                                    d,
-                                    edges,
-                                    noise_type,
-                                    error_var,
-                                    linearity,
-                                    graph_type,
+                            for name, benchmark_fn in benchmark_fns.items():
+                                tasks.append(
+                                    delayed(run_one_trial)(
+                                        n,
+                                        dataset,
+                                        B_true,
+                                        benchmark_fn,
+                                    )
                                 )
-                            )
+                                keys.append(
+                                    (
+                                        name,
+                                        n,
+                                        d,
+                                        edges,
+                                        noise_type,
+                                        error_var,
+                                        linearity,
+                                        graph_type,
+                                    )
+                                )
 
     results = Parallel(n_jobs=-1, backend="loky")(tasks)
 
     aggregated = {}
     for key, res in zip(keys, results):
         if key not in aggregated:
-            aggregated[key] = {method: [] for method in benchmark_fns.keys()}
-        for method, value in res.items():
-            aggregated[key][method].append(value)
+            aggregated[key] = []
+        aggregated[key].append(res)
 
     with open(output_filename, "w") as f:
         f.write(
             "method,n,d,edges,noise_type,error_var,linearity,graph_type,mean_normalized_shd\n"
         )
-        for key, method_vals in aggregated.items():
-            n, d, edges, noise_type, error_var, linearity, graph_type = key
-            for method, values in method_vals.items():
-                mean_normalized_shd = np.mean(values)
-                f.write(
-                    f"{method},{n},{d},{edges},{noise_type},{error_var},{linearity},{graph_type},{mean_normalized_shd}\n"
-                )
+        for key, shds in aggregated.items():
+            method, n, d, edges, noise_type, error_var, linearity, graph_type = key
+            mean_normalized_shd = np.mean(shds)
+            f.write(
+                f"{method},{n},{d},{edges},{noise_type},{error_var},{linearity},{graph_type},{mean_normalized_shd}\n"
+            )
