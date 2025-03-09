@@ -50,13 +50,13 @@ cd examples/golem
 
 echo "Running benchmark"
 
-# python3 -u "./benchmark.py" 10 1000 1 gauss random
-# python3 -u "./benchmark.py" 10 1000 1 exp random
-# python3 -u "./benchmark.py" 10 1000 1 gumbel random
-# python3 -u "./benchmark.py" 10 1000 2 gauss random
-# python3 -u "./benchmark.py" 10 1000 2 exp random
-# python3 -u "./benchmark.py" 10 1000 2 gumbel random
-# python3 -u "./benchmark.py" 10 1000 4 gauss random
-# python3 -u "./benchmark.py" 10 1000 4 exp random
-python3 -u "./benchmark.py" 10 1000 4 gumbel random
+# python3 -u "./benchmark.py" 10 1000 1 gauss eq
+# python3 -u "./benchmark.py" 10 1000 1 exp eq
+# python3 -u "./benchmark.py" 10 1000 1 gumbel eq
+# python3 -u "./benchmark.py" 10 1000 2 gauss eq
+# python3 -u "./benchmark.py" 10 1000 2 exp eq
+# python3 -u "./benchmark.py" 10 1000 2 gumbel eq
+# python3 -u "./benchmark.py" 10 1000 4 gauss eq
+# python3 -u "./benchmark.py" 10 1000 4 exp eq
+python3 -u "./benchmark.py" 10 1000 4 gumbel eq
 # python3 -u "./benchmark.py"
