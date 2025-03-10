@@ -8,7 +8,7 @@
 #SBATCH --partition=standard
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=2000
 #SBATCH --time=3-00:00:00
 #SBATCH --exclusive
@@ -52,4 +52,4 @@ cd benchmark
 
 echo "Running benchmark"
 
-python3 ./runner.py
+time python3 ./runner.py
