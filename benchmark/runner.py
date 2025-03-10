@@ -113,16 +113,16 @@ def grandag(dataset):
     to_keep = (torch.from_numpy(W_est) > 0).type(torch.Tensor)
     B_est = model.adjacency * to_keep
 
-    opt = {
-        "cam_pruning_cutoff": np.logspace(-6, 0, 10),
-        "exp_path": "cam_pruning",
-    }
-    try:
-        cam_pruning_cutoff = [float(i) for i in opt["cam_pruning_cutoff"]]
-    except:
-        cam_pruning_cutoff = [float(opt["cam_pruning_cutoff"])]
-    for cutoff in cam_pruning_cutoff:
-        B_est = cam_pruning(B_est, train_dataset, test_dataset, opt, cutoff=cutoff)
+    # opt = {
+    #     "cam_pruning_cutoff": np.logspace(-6, 0, 10),
+    #     "exp_path": "cam_pruning",
+    # }
+    # try:
+    #     cam_pruning_cutoff = [float(i) for i in opt["cam_pruning_cutoff"]]
+    # except:
+    #     cam_pruning_cutoff = [float(opt["cam_pruning_cutoff"])]
+    # for cutoff in cam_pruning_cutoff:
+    #     B_est = cam_pruning(B_est, train_dataset, test_dataset, opt, cutoff=cutoff)
     return B_est.detach().cpu().numpy()
 
 
@@ -132,15 +132,16 @@ benchmark_fns = {
     "DAGMA": dagma,
     # "GOLEM": golem_like,
 }
+
 # parallelize, tell user how many cores initialized
 run_benchmarks(
     500,
-    [[5, 5], [5, 10]],
-    ["gauss", "gumbel"],
+    [[5, 5], [5, 10], [10, 10], [10, 20], [20, 20], [20, 40]],
+    ["gauss", "exp", "gumbel"],
     ["eq", "random"],
-    ["nonlinear"],
+    ["linear", "nonlinear"],
     ["ER"],
     benchmark_fns,
-    2,
-    "benchmark_parallel.txt",
+    10,
+    "benchmark_parallel_with_methods_max_20_nodes.txt",
 )
