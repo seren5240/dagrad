@@ -100,7 +100,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
                 n=n,
                 d=d,
                 s0=s0,
-                num_layers=2,
+                num_layers=0 if linearity == 'linear' else 2,
                 noise_type=noise_type,
                 error_var=error_var,
                 linearity=linearity,
