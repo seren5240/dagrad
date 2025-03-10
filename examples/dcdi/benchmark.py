@@ -30,12 +30,14 @@ def dcdi_aug_lagrangian(
     train_dataset = dataset[:train_samples, :]
     test_dataset = dataset[train_samples:, :]
 
-    model = flex.MLP(dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True)
+    model = flex.MLP(
+        dims=[d, 1, d], num_layers=num_layers, hid_dim=16, activation="relu", bias=True
+    )
 
     # Use AML to solve the constrained problem
     cons_solver = flex.AugmentedLagrangian(
         num_iter=1000000,
-        num_steps=[1,1],
+        num_steps=[1, 1],
         l1_coeff=0.1,
         # weight_decay=0.01,
         rho_init=1e-8,
@@ -87,6 +89,7 @@ def dcdi_aug_lagrangian(
 
     return acc
 
+
 def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
     num_nodes = [5, 10, 20] if s0_ratio <= 2.0 else [10, 20]
     methods = ["DCDI-G-CAM"]
@@ -100,7 +103,7 @@ def run_one_experiment(trials, n, s0_ratio, noise_type, error_var, linearity):
                 n=n,
                 d=d,
                 s0=s0,
-                num_layers=0 if linearity == 'linear' else 2,
+                num_layers=0 if linearity == "linear" else 2,
                 noise_type=noise_type,
                 error_var=error_var,
                 linearity=linearity,
