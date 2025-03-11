@@ -18,4 +18,4 @@ build/
 dagrad/flex/backup/
 **/slurm/**
 **/cam_pruning/**
-**/benchmark.txt
+**/benchmark**.txt
