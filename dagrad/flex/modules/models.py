@@ -4,6 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 
+from dagrad.flex.modules.loss import MCPLoss
+
 from ...utils.topo_utils import create_new_topo, create_Z
 
 
@@ -104,7 +106,11 @@ class LinearModel(nn.Module):
         return self.W.weight.T
     
     def l1_loss(self):
-        return self.W.weight.abs().sum()
+        return self.mcp_loss()#self.W.weight.abs().sum()
+
+    def mcp_loss(self):
+        loss = MCPLoss()
+        return loss.eval(self.adj())
 
 
 class LogisticModel(nn.Module):
@@ -170,8 +176,11 @@ class MLP(nn.Module):
         return hook_function
 
     def l1_loss(self):
-        """Take l1 norm of fc1 weight"""
-        return torch.sum(torch.abs(self.fc1.weight))
+        return self.mcp_loss()#self.W.weight.abs().sum()
+
+    def mcp_loss(self):
+        loss = MCPLoss()
+        return loss.eval(self.adj())
 
     def forward(self, x):
         x = self.fc1(x)
