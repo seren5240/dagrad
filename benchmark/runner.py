@@ -33,6 +33,256 @@ def notears(dataset):
     return W_est
 
 
+def notears_mcp(dataset):
+    d = dataset.shape[1]
+    model = flex.LinearModelMCP(d)
+
+    cons_solver = flex.AugmentedLagrangian(
+        num_iter=10,
+        num_steps=[3e4, 6e4],
+        l1_coeff=0.03,
+    )
+    uncons_solver = flex.GradientBasedSolver(
+        optimizer=torch.optim.Adam(model.parameters(), lr=3e-4),
+    )
+    loss_fn = flex.MSELoss()
+    dag_fn = flex.Exp()
+    W_est = flex.struct_learn(
+        dataset=dataset,
+        model=model,
+        constrained_solver=cons_solver,
+        unconstrained_solver=uncons_solver,
+        loss_fn=loss_fn,
+        dag_fn=dag_fn,
+        w_threshold=0.3,
+    )
+    return W_est
+
+
+def notears_nonlinear(dataset):
+    d = dataset.shape[1]
+    model = flex.MLP(dims=[d, 10, 1], activation="sigmoid", bias=True)
+
+    # Use AML to solve the constrained problem
+    cons_solver = flex.AugmentedLagrangian(
+        num_iter=10,
+        num_steps=[4e4, 6e4],
+        l1_coeff=0.01,
+        weight_decay=0.01,
+    )
+
+    # Use Adam to solve the unconstrained problem
+    uncons_solver = flex.GradientBasedSolver(
+        optimizer=torch.optim.Adam(model.parameters(), lr=3e-4),
+    )
+
+    # Use MSE loss
+    loss_fn = flex.MSELoss()
+
+    # Use Trace of matrix exponential as DAG function
+    dag_fn = flex.Exp()
+
+    # Learn the DAG
+    W_est = flex.struct_learn(
+        dataset=dataset,
+        model=model,
+        constrained_solver=cons_solver,
+        unconstrained_solver=uncons_solver,
+        loss_fn=loss_fn,
+        dag_fn=dag_fn,
+        w_threshold=0.3,
+    )
+    return W_est
+
+
+def notears_nonlinear_mcp(dataset):
+    d = dataset.shape[1]
+    model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True)
+
+    # Use AML to solve the constrained problem
+    cons_solver = flex.AugmentedLagrangian(
+        num_iter=10,
+        num_steps=[4e4, 6e4],
+        l1_coeff=0.01,
+        weight_decay=0.01,
+    )
+
+    # Use Adam to solve the unconstrained problem
+    uncons_solver = flex.GradientBasedSolver(
+        optimizer=torch.optim.Adam(model.parameters(), lr=3e-4),
+    )
+
+    # Use MSE loss
+    loss_fn = flex.MSELoss()
+
+    # Use Trace of matrix exponential as DAG function
+    dag_fn = flex.Exp()
+
+    # Learn the DAG
+    W_est = flex.struct_learn(
+        dataset=dataset,
+        model=model,
+        constrained_solver=cons_solver,
+        unconstrained_solver=uncons_solver,
+        loss_fn=loss_fn,
+        dag_fn=dag_fn,
+        w_threshold=0.3,
+    )
+    return W_est
+
+
+def flex_dagma(dataset):
+    d = dataset.shape[1]
+    model = flex.LinearModel(d)
+
+    # Use path following to solve the constrained problem
+    cons_solver = flex.PathFollowing(
+        num_iter=5,
+        mu_init=1.0,
+        mu_scale=0.1,
+        logdet_coeff=[1.0, 0.9, 0.8, 0.7, 0.6],
+        num_steps=[3e4, 6e4],
+        l1_coeff=0.03,
+    )
+
+    # use Adam to solve the unconstrained problem
+    uncons_solver = flex.GradientBasedSolver(
+        optimizer=torch.optim.Adam(model.parameters(), lr=3e-4, betas=(0.99, 0.999))
+    )
+
+    # Use MSE loss
+    loss_fn = flex.MSELoss()
+
+    # Use LogDet as DAG function
+    dag_fn = flex.LogDet()
+
+    W_est = flex.struct_learn(
+        dataset=dataset,
+        model=model,
+        constrained_solver=cons_solver,
+        unconstrained_solver=uncons_solver,
+        loss_fn=loss_fn,
+        dag_fn=dag_fn,
+        w_threshold=0.3,
+    )
+    return W_est
+
+
+def dagma_mcp(dataset):
+    d = dataset.shape[1]
+    model = flex.LinearModelMCP(d)
+
+    # Use path following to solve the constrained problem
+    cons_solver = flex.PathFollowing(
+        num_iter=5,
+        mu_init=1.0,
+        mu_scale=0.1,
+        logdet_coeff=[1.0, 0.9, 0.8, 0.7, 0.6],
+        num_steps=[3e4, 6e4],
+        l1_coeff=0.03,
+    )
+
+    # use Adam to solve the unconstrained problem
+    uncons_solver = flex.GradientBasedSolver(
+        optimizer=torch.optim.Adam(model.parameters(), lr=3e-4, betas=(0.99, 0.999))
+    )
+
+    # Use MSE loss
+    loss_fn = flex.MSELoss()
+
+    # Use LogDet as DAG function
+    dag_fn = flex.LogDet()
+
+    W_est = flex.struct_learn(
+        dataset=dataset,
+        model=model,
+        constrained_solver=cons_solver,
+        unconstrained_solver=uncons_solver,
+        loss_fn=loss_fn,
+        dag_fn=dag_fn,
+        w_threshold=0.3,
+    )
+    return W_est
+
+
+def flex_dagma_nonlinear(dataset):
+    d = dataset.shape[1]
+    model = flex.MLP(dims=[d, 10, 1], activation="sigmoid", bias=True)
+
+    # Use path following to solve the constrained problem
+    cons_solver = flex.PathFollowing(
+        num_iter=4,
+        mu_init=0.1,
+        mu_scale=0.1,
+        logdet_coeff=1.0,
+        num_steps=[5e4, 8e4],
+        weight_decay=0.02,
+        l1_coeff=0.005,
+    )
+
+    # use Adam to solve the unconstrained problem
+    uncons_solver = flex.GradientBasedSolver(
+        optimizer=torch.optim.Adam(model.parameters(), lr=2e-4, betas=(0.99, 0.999))
+    )
+
+    # Use NLL loss
+    loss_fn = flex.NLLLoss()
+
+    # Use LogDet as DAG function
+    dag_fn = flex.LogDet()
+
+    # Learn the DAG
+    W_est = flex.struct_learn(
+        dataset=dataset,
+        model=model,
+        constrained_solver=cons_solver,
+        unconstrained_solver=uncons_solver,
+        loss_fn=loss_fn,
+        dag_fn=dag_fn,
+        w_threshold=0.3,
+    )
+    return W_est
+
+
+def flex_dagma_nonlinear_mcp(dataset):
+    d = dataset.shape[1]
+    model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True)
+
+    # Use path following to solve the constrained problem
+    cons_solver = flex.PathFollowing(
+        num_iter=4,
+        mu_init=0.1,
+        mu_scale=0.1,
+        logdet_coeff=1.0,
+        num_steps=[5e4, 8e4],
+        weight_decay=0.02,
+        l1_coeff=0.005,
+    )
+
+    # use Adam to solve the unconstrained problem
+    uncons_solver = flex.GradientBasedSolver(
+        optimizer=torch.optim.Adam(model.parameters(), lr=2e-4, betas=(0.99, 0.999))
+    )
+
+    # Use NLL loss
+    loss_fn = flex.NLLLoss()
+
+    # Use LogDet as DAG function
+    dag_fn = flex.LogDet()
+
+    # Learn the DAG
+    W_est = flex.struct_learn(
+        dataset=dataset,
+        model=model,
+        constrained_solver=cons_solver,
+        unconstrained_solver=uncons_solver,
+        loss_fn=loss_fn,
+        dag_fn=dag_fn,
+        w_threshold=0.3,
+    )
+    return W_est
+
+
 def dagma(dataset):
     return dagrad(dataset, model="linear", method="dagma")
 
@@ -127,21 +377,37 @@ def grandag(dataset):
 
 
 benchmark_fns = {
-    "GRAN-DAG": grandag,
-    "NOTEARS": notears,
-    "DAGMA": dagma,
+    # "GRAN-DAG": grandag,
+    "NOTEARS": notears_nonlinear,
+    "DAGMA": flex_dagma_nonlinear,
+    "NOTEARS-MCP": notears_nonlinear_mcp,
+    "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
 }
 
+large_sizes = [
+    [5, 5],
+    [5, 10],
+    [10, 10],
+    [10, 20],
+    [10, 40],
+    [50, 50],
+    [50, 100],
+    [50, 200],
+    [100, 100],
+    [100, 200],
+    [100, 400],
+]
+
 # parallelize, tell user how many cores initialized
 run_benchmarks(
-    500,
-    [[5, 5], [5, 10], [10, 10], [10, 20], [20, 20], [20, 40]],
+    1000,
+    large_sizes,
     ["gauss", "exp", "gumbel"],
     ["eq", "random"],
-    ["linear", "nonlinear"],
+    ["nonlinear"],
     ["ER"],
     benchmark_fns,
     10,
-    "benchmark_parallel_with_methods_max_20_nodes.txt",
+    "benchmark_parallel_nonlinear_mcp_loss.txt",
 )
