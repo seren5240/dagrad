@@ -264,8 +264,9 @@ class AugmentedLagrangian(ConstrainedSolver):
                 h = dag_fn(w_adj) / constraint_normalization
                 curr_h[0] = h.item()
                 
-                reg = self.l1_coeff * model.compute_penalty([w_adj], p=1)
-                reg /= w_adj.shape[0]**2
+                # reg = self.l1_coeff * model.compute_penalty([w_adj], p=1)
+                # reg /= w_adj.shape[0]**2
+                reg = self.l1_coeff * model.mcp_loss()
                 curr_reg[0] = reg
                 reg_interv = torch.tensor(0)
 

@@ -4,6 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 
+from dagrad.flex.modules.loss import MCPLoss
+
 from ...utils.topo_utils import create_new_topo, create_Z
 
 
@@ -197,6 +199,10 @@ class MLP(nn.Module):
             penalty += torch.norm(m - target, p=p) ** p
         return penalty
     
+    def mcp_loss(self):
+        loss = MCPLoss()
+        return loss.eval(self.adj())
+
     def forward_given_params(self, x, weights, biases):
         """
 
