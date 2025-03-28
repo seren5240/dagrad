@@ -612,4 +612,4 @@ def dagma_nonlinear(X,
     W_est[np.abs(W_est) < w_threshold] = 0
     time_end = time.time()
     vprint(f"Total Time: {time_end - time_start}")
-    return W_est 
+    return W_est
