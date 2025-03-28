@@ -335,7 +335,8 @@ def simulate_nonlinear_sem(B:np.ndarray,
     """
     def generate_noise(n, scale, noise_type):
         if noise_type == 'gauss':
-            return np.random.normal(scale=scale, size=n)
+            return (0.4 * (np.random.randn(n, 1) + random.choice([2, -2]))).flatten()
+            # return np.random.normal(scale=scale, size=n)
         elif noise_type == 'exp':
             return np.random.exponential(scale=scale, size=n)
         elif noise_type == 'gumbel':
@@ -348,12 +349,19 @@ def simulate_nonlinear_sem(B:np.ndarray,
     def compute_x(X, z, sem_type):
         pa_size = X.shape[1]
         if sem_type == 'mlp':
-            hidden = 100
+            hidden = 20
             W1 = np.random.uniform(0.5, 2.0, size=(pa_size, hidden))
             W1[np.random.rand(*W1.shape) < 0.5] *= -1
             W2 = np.random.uniform(0.5, 2.0, size=hidden)
             W2[np.random.rand(hidden) < 0.5] *= -1
             return sigmoid(X @ W1) @ W2 + z
+            # hidden = 20
+            # W1 = np.random.uniform(0.5, 2.0, size=(pa_size, hidden))
+            # W1[np.random.rand(*W1.shape) < 0.5] *= -1
+            # W2 = np.random.uniform(0.5, 2.0, size=(hidden, 1))
+            # W2[np.random.rand(*W2.shape) < 0.5] *= -1
+            # return np.squeeze(np.tanh(X @ W1) @ W2 + z)
+
         elif sem_type == 'mim':
             weights = [np.random.uniform(0.5, 2.0, size=pa_size) for _ in range(3)]
             for w in weights:
