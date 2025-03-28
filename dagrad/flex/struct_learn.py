@@ -13,6 +13,7 @@ def struct_learn(
     unconstrained_solver,
     loss_fn,
     dag_fn,
+    reg_fn=None,
     w_threshold=0.3,
     device="cpu",
     dtype=torch.double,
@@ -81,7 +82,7 @@ def struct_learn(
     unconstrained_solver.vwarn = vwarn 
     
     time_start = time.time()    
-    constrained_solver(dataset, model, unconstrained_solver, loss_fn, dag_fn)
+    constrained_solver(dataset, model, unconstrained_solver, loss_fn, dag_fn, reg_fn)
     print(f"Total Time: {time.time() - time_start}")
     
     W_est = model.adj().detach().cpu().numpy()

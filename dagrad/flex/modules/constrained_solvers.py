@@ -78,7 +78,7 @@ class PathFollowing(ConstrainedSolver):
             if not hasattr(self.model, "l1_loss"):
                 raise ValueError("Model does not have l1_loss method")
 
-    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn):
+    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn, reg_fn):
         torch.set_default_dtype(self.dtype)
         self.model = model
         self.unconstrained_solver = unconstrained_solver
@@ -168,7 +168,7 @@ class AugmentedLagrangian(ConstrainedSolver):
             if not hasattr(self.model, "l1_loss"):
                 raise ValueError("Model does not have l1_loss method")
 
-    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn):
+    def solve(self, dataset, model, unconstrained_solver, loss_fn, dag_fn, reg_fn):
         torch.set_default_dtype(self.dtype)
         self.model = model
         self.unconstrained_solver = unconstrained_solver
