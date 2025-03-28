@@ -91,7 +91,10 @@ class PathFollowing(ConstrainedSolver):
             def new_loss(output, target):
                 total_loss = loss_fn(output, target)
                 if self.l1_coeff > 0:
-                    total_loss += self.l1_coeff * model.l1_loss()
+                    if reg_fn is not None:
+                        total_loss += self.l1_coeff * reg_fn(model.adj())
+                    else:
+                        total_loss += self.l1_coeff * model.l1_loss()
                 if self.weight_decay > 0:
                     l2_loss = torch.tensor(0.0).to(self.device)
                     for param in model.parameters():
@@ -194,7 +197,10 @@ class AugmentedLagrangian(ConstrainedSolver):
                         loss += 0.5 * self.weight_decay * l2_loss
                         
                     if self.l1_coeff > 0:
-                        loss += self.l1_coeff * model.l1_loss()
+                        if reg_fn is not None:
+                            loss += self.l1_coeff * reg_fn(model.adj())
+                        else:
+                            loss += self.l1_coeff * model.l1_loss()
                         
                     # DAG constraint
                     h = dag_fn(model.adj())
