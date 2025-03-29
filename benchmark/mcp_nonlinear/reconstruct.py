@@ -53,7 +53,7 @@ def make_error_var_plot(error_var):
     plt.savefig(f"normalized_shd_n=1000_var={error_var}_trials=10.png")
 
 
-file_name = "benchmark_parallel_nonlinear_mcp_loss.txt"
+file_name = "mcp_loss.txt"
 
 df = pd.read_csv(file_name)
 
