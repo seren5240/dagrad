@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-num_nodes = [5, 10, 20, 50]
+num_nodes = [5, 10, 20, 50, 100]
 s0_ratios = [1, 2, 4]
 noise_types = ["gauss", "exp", "gumbel"]
 methods = ["NOTEARS", "NOTEARS-MCP", "DAGMA", "DAGMA-MCP"]
