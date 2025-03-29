@@ -50,6 +50,7 @@ def make_error_var_plot(error_var):
     handles, labels = ax.get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper center", ncol=len(methods))
     plt.tight_layout(rect=[0, 0, 1, 0.95])
+    plt.suptitle(f"Nonlinear SEM, var={error_var}", y=0.97)
     plt.savefig(f"normalized_shd_n=1000_var={error_var}_trials=10.png")
 
 
