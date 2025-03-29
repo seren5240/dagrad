@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-num_nodes = [5, 10, 50, 100]
+num_nodes = [5, 10, 20, 50]
 s0_ratios = [1, 2, 4]
 noise_types = ["gauss", "exp", "gumbel"]
 methods = ["NOTEARS", "NOTEARS-MCP", "DAGMA", "DAGMA-MCP"]
@@ -53,7 +53,7 @@ def make_error_var_plot(error_var):
     plt.savefig(f"normalized_shd_n=1000_var={error_var}_trials=10.png")
 
 
-file_name = "mcp_loss.txt"
+file_name = "benchmark_parallel_nonlinear_mcp_loss.txt"
 
 df = pd.read_csv(file_name)
 
