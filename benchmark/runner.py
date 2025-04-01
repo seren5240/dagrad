@@ -104,7 +104,6 @@ def notears_nonlinear_mcp(dataset):
         num_iter=10,
         num_steps=[4e4, 6e4],
         l1_coeff=0.01,
-        weight_decay=0.01,
     )
 
     # Use Adam to solve the unconstrained problem
@@ -378,9 +377,9 @@ def grandag(dataset):
 
 benchmark_fns = {
     # "GRAN-DAG": grandag,
-    "NOTEARS": notears,
+    "NOTEARS": notears_nonlinear,
     # "DAGMA": flex_dagma_nonlinear,
-    "NOTEARS-MCP": notears_mcp,
+    "NOTEARS-MCP": notears_nonlinear_mcp,
     # "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
 }
@@ -397,9 +396,9 @@ large_sizes = [
     [50, 50],
     [50, 100],
     [50, 200],
-    [100, 100],
-    [100, 200],
-    [100, 400],
+    # [100, 100],
+    # [100, 200],
+    # [100, 400],
 ]
 
 # parallelize, tell user how many cores initialized
@@ -408,9 +407,9 @@ run_benchmarks(
     large_sizes,
     ["gauss", "exp", "gumbel"],
     ["eq", "random"],
-    ["linear"],
+    ["nonlinear"],
     ["ER"],
     benchmark_fns,
     10,
-    "benchmark_parallel_notears_linear_mcp_loss.txt",
+    "benchmark_parallel_notears_nonlinear_mcp_loss.txt",
 )
