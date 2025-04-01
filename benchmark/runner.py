@@ -40,7 +40,7 @@ def notears_mcp(dataset):
     cons_solver = flex.AugmentedLagrangian(
         num_iter=10,
         num_steps=[3e4, 6e4],
-        l1_coeff=0.03,
+        l1_coeff=0.01,
     )
     uncons_solver = flex.GradientBasedSolver(
         optimizer=torch.optim.Adam(model.parameters(), lr=3e-4),
