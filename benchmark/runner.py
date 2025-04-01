@@ -378,9 +378,9 @@ def grandag(dataset):
 
 benchmark_fns = {
     # "GRAN-DAG": grandag,
-    "NOTEARS": notears_nonlinear,
+    "NOTEARS": notears,
     # "DAGMA": flex_dagma_nonlinear,
-    "NOTEARS-MCP": notears_nonlinear_mcp,
+    "NOTEARS-MCP": notears_mcp,
     # "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
 }
@@ -412,5 +412,5 @@ run_benchmarks(
     ["ER"],
     benchmark_fns,
     10,
-    "benchmark_parallel_nonlinear_mcp_loss.txt",
+    "benchmark_parallel_notears_linear_mcp_loss.txt",
 )
