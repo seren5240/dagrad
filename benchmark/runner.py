@@ -379,9 +379,9 @@ def grandag(dataset):
 benchmark_fns = {
     # "GRAN-DAG": grandag,
     "NOTEARS": notears_nonlinear,
-    "DAGMA": flex_dagma_nonlinear,
+    # "DAGMA": flex_dagma_nonlinear,
     "NOTEARS-MCP": notears_nonlinear_mcp,
-    "DAGMA-MCP": flex_dagma_nonlinear_mcp,
+    # "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
 }
 
@@ -405,7 +405,7 @@ run_benchmarks(
     large_sizes,
     ["gauss", "exp", "gumbel"],
     ["eq", "random"],
-    ["nonlinear"],
+    ["linear"],
     ["ER"],
     benchmark_fns,
     10,
