@@ -35,15 +35,20 @@ def notears(dataset):
 
 def notears_mcp(dataset):
     d = dataset.shape[1]
-    model = flex.LinearModelMCP(d)
+    # general_options = {'gamma':0.4, 'lambda1':0.1} # Define the general options
+    model = flex.LinearModelMCP(d, gamma=0.4)
 
+    # method_options = {'verbose': False, 'rho':0.1}
     cons_solver = flex.AugmentedLagrangian(
         num_iter=10,
-        num_steps=[3e4, 6e4],
+        num_steps=[3e4, 5e3],
         l1_coeff=0.01,
+        rho_init=0.1
     )
+    # optimizer_options = {'lr':0.01,'num_steps':5000, 'check_iterate':500, 'tol':1e-5} # Define the optimizer options
     uncons_solver = flex.GradientBasedSolver(
         optimizer=torch.optim.Adam(model.parameters(), lr=3e-4),
+        tol=1e-5,
     )
     loss_fn = flex.MSELoss()
     dag_fn = flex.Exp()
@@ -245,7 +250,7 @@ def flex_dagma_nonlinear(dataset):
 
 def flex_dagma_nonlinear_mcp(dataset):
     d = dataset.shape[1]
-    model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True)
+    model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True, gamma=0.4)
 
     # Use path following to solve the constrained problem
     cons_solver = flex.PathFollowing(
@@ -259,8 +264,10 @@ def flex_dagma_nonlinear_mcp(dataset):
     )
 
     # use Adam to solve the unconstrained problem
+    # optimizer_options = {'lr':0.01,'num_steps':5000, 'check_iterate':500, 'tol':1e-5} # Define the optimizer options
     uncons_solver = flex.GradientBasedSolver(
-        optimizer=torch.optim.Adam(model.parameters(), lr=2e-4, betas=(0.99, 0.999))
+        optimizer=torch.optim.Adam(model.parameters(), lr=2e-4, betas=(0.99, 0.999)),
+        tol=1e-5,
     )
 
     # Use NLL loss
@@ -377,10 +384,10 @@ def grandag(dataset):
 
 benchmark_fns = {
     # "GRAN-DAG": grandag,
-    "NOTEARS": notears_nonlinear,
-    # "DAGMA": flex_dagma_nonlinear,
-    "NOTEARS-MCP": notears_nonlinear_mcp,
-    # "DAGMA-MCP": flex_dagma_nonlinear_mcp,
+    # "NOTEARS": notears,
+    "DAGMA": flex_dagma_nonlinear,
+    # "NOTEARS-MCP": notears_mcp,
+    "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
 }
 
@@ -411,5 +418,5 @@ run_benchmarks(
     ["ER"],
     benchmark_fns,
     10,
-    "benchmark_parallel_notears_nonlinear_mcp_loss.txt",
+    "benchmark_dagma_nonlinear_hyperparams_mcp_loss.txt",
 )
