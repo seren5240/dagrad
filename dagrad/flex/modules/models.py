@@ -271,7 +271,7 @@ class MLPMCP(nn.Module):
 
     def mcp_loss(self):
         loss = MCPLoss()
-        return loss.eval(self.adj())
+        return loss.eval(self.fc1.weight)
 
     def forward(self, x):
         x = self.fc1(x)
