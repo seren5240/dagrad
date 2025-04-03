@@ -200,7 +200,7 @@ class MLP(nn.Module):
         return penalty
     
     def mcp_loss(self):
-        loss = MCPLoss()
+        loss = MCPLoss(gamma=0.4)
         return loss.eval(self.adj())
 
     def forward_given_params(self, x, weights, biases):
