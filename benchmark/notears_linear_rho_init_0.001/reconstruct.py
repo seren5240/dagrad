@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 num_nodes = [5, 10, 20, 50, 100]
 s0_ratios = [1, 2, 4]
 noise_types = ["gauss", "exp", "gumbel"]
-methods = ["NOTEARS", "NOTEARS-MCP", "NOTEARS-MCP-RHO-INIT"]
+methods = ["NOTEARS", "NOTEARS-MCP", "NOTEARS-MCP-RHO-INIT", "NOTEARS-MCP-RHO-SCALE"]
 
 noise_names = {"gauss": "Gaussian", "exp": "Exponential", "gumbel": "Gumbel"}
 error_vars = ["eq", "random"]
