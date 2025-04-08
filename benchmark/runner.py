@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import torch
 from benchmark.benchmarker import run_benchmarks
@@ -6,6 +7,13 @@ from dagrad.core import dagrad
 from dagrad.flex.prune import cam_pruning
 from dagrad.utils import utils
 
+# first command line argument is lmd, second is gamma
+g  = float(sys.argv[1])
+a = float(sys.argv[2])
+rho_init = float(sys.argv[3])
+lmd = g
+gamma = a * g
+print(f'using lmd: {lmd}, gamma: {gamma}, rho_init: {rho_init}')
 
 def notears(dataset):
     d = dataset.shape[1]
@@ -36,14 +44,15 @@ def notears(dataset):
 def notears_mcp(dataset):
     d = dataset.shape[1]
     # general_options = {'gamma':0.4, 'lambda1':0.1} # Define the general options
-    model = flex.LinearModelMCP(d, gamma=0.4)
+    model = flex.LinearModelMCP(d, lmd=lmd, gamma=gamma)
 
     # method_options = {'verbose': False, 'rho':0.1}
     cons_solver = flex.AugmentedLagrangian(
         num_iter=10,
         num_steps=[3e4, 5e3],
         l1_coeff=0.01,
-        rho_init=0.1
+        rho_init=rho_init,
+        # rho_scale=2,
     )
     # optimizer_options = {'lr':0.01,'num_steps':5000, 'check_iterate':500, 'tol':1e-5} # Define the optimizer options
     uncons_solver = flex.GradientBasedSolver(
@@ -250,7 +259,7 @@ def flex_dagma_nonlinear(dataset):
 
 def flex_dagma_nonlinear_mcp(dataset):
     d = dataset.shape[1]
-    model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True, gamma=0.4)
+    model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True, lmd=lmd, gamma=gamma)
 
     # Use path following to solve the constrained problem
     cons_solver = flex.PathFollowing(
@@ -385,9 +394,9 @@ def grandag(dataset):
 benchmark_fns = {
     # "GRAN-DAG": grandag,
     # "NOTEARS": notears,
-    "DAGMA": flex_dagma_nonlinear,
-    # "NOTEARS-MCP": notears_mcp,
-    "DAGMA-MCP": flex_dagma_nonlinear_mcp,
+    # "DAGMA": flex_dagma_nonlinear,
+    "NOTEARS-MCP": notears_mcp,
+    # "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
 }
 
@@ -403,9 +412,9 @@ large_sizes = [
     [50, 50],
     [50, 100],
     [50, 200],
-    # [100, 100],
-    # [100, 200],
-    # [100, 400],
+    [100, 100],
+    [100, 200],
+    [100, 400],
 ]
 
 # parallelize, tell user how many cores initialized
@@ -414,9 +423,9 @@ run_benchmarks(
     large_sizes,
     ["gauss", "exp", "gumbel"],
     ["eq", "random"],
-    ["nonlinear"],
+    ["linear"],
     ["ER"],
     benchmark_fns,
     10,
-    "benchmark_dagma_nonlinear_hyperparams_mcp_loss.txt",
+    f"benchmark_notears_linear_lmd={lmd}_gamma={gamma}_rho_init={rho_init}_mcp_loss.txt",
 )
