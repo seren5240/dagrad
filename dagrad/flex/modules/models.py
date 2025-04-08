@@ -110,8 +110,9 @@ class LinearModel(nn.Module):
 
 
 class LinearModelMCP(nn.Module):
-    def __init__(self, d, bias=False, dtype=torch.double, gamma=1.0,):
+    def __init__(self, d, bias=False, dtype=torch.double, lmd=0.1, gamma=1.0,):
         super().__init__()
+        self.lmd = lmd
         self.gamma = gamma
         self.W = nn.Linear(d, d, bias=bias, dtype=dtype)
         nn.init.zeros_(self.W.weight)
@@ -128,7 +129,7 @@ class LinearModelMCP(nn.Module):
         return self.mcp_loss()  # self.W.weight.abs().sum()
 
     def mcp_loss(self):
-        loss = MCPLoss(gamma=self.gamma)
+        loss = MCPLoss(lmd=self.lmd, gamma=self.gamma)
         return loss.eval(self.adj())
 
 
@@ -225,7 +226,7 @@ class MLP(nn.Module):
 
 class MLPMCP(nn.Module):
     def __init__(
-        self, dims, activation="sigmoid", bias=True, dtype=torch.float64, gamma=1.0
+        self, dims, activation="sigmoid", bias=True, dtype=torch.float64, lmd=0.1, gamma=1.0
     ) -> None:
         torch.set_default_dtype(dtype)
         super().__init__()
@@ -254,6 +255,7 @@ class MLPMCP(nn.Module):
             )
 
         self.fc1.weight.register_hook(self.make_hook_function(self.d))
+        self.lmd = lmd
         self.gamma = gamma
 
     @staticmethod
@@ -272,7 +274,7 @@ class MLPMCP(nn.Module):
         return self.mcp_loss()  # self.W.weight.abs().sum()
 
     def mcp_loss(self):
-        loss = MCPLoss(gamma=self.gamma)
+        loss = MCPLoss(lmd=self.lmd, gamma=self.gamma)
         return loss.eval(self.fc1.weight)
 
     def forward(self, x):

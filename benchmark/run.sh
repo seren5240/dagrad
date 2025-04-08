@@ -11,7 +11,6 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=2000
 #SBATCH --time=3-00:00:00
-#SBATCH --exclusive
 
 set -e
 
@@ -52,4 +51,4 @@ cd benchmark
 
 echo "Running benchmark"
 
-time python3 ./runner.py
+time python3 ./runner.py 0.1 3.0 1.0
