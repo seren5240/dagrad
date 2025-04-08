@@ -8,12 +8,13 @@ from dagrad.flex.prune import cam_pruning
 from dagrad.utils import utils
 
 # first command line argument is lmd, second is gamma
-g  = float(sys.argv[1])
+g = float(sys.argv[1])
 a = float(sys.argv[2])
 rho_init = float(sys.argv[3])
 lmd = g
 gamma = a * g
-print(f'using lmd: {lmd}, gamma: {gamma}, rho_init: {rho_init}')
+print(f"using lmd: {lmd}, gamma: {gamma}, rho_init: {rho_init}")
+
 
 def notears(dataset):
     d = dataset.shape[1]
@@ -259,7 +260,9 @@ def flex_dagma_nonlinear(dataset):
 
 def flex_dagma_nonlinear_mcp(dataset):
     d = dataset.shape[1]
-    model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True, lmd=lmd, gamma=gamma)
+    model = flex.MLPMCP(
+        dims=[d, 10, 1], activation="sigmoid", bias=True, lmd=lmd, gamma=gamma
+    )
 
     # Use path following to solve the constrained problem
     cons_solver = flex.PathFollowing(
