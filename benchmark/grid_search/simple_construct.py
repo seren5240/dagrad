@@ -111,7 +111,7 @@ def make_error_var_plot(error_var):
     )
     plt.tight_layout(rect=[0, 0.05, 1, 0.95])
     plt.suptitle(f"Linear SEM, var={error_var}", y=0.97)
-    plt.savefig(f"normalized_shd_n=1000_var={error_var}_top5_plus_baseline.png")
+    plt.savefig(f"normalized_shd_n=1000_var={error_var}_top5.png")
 
 
 make_error_var_plot("eq")
