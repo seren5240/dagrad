@@ -13,7 +13,7 @@ error_vars = ["eq", "random"]
 
 pattern = re.compile(r"notears_linear_lmd=(.*?)_gamma=(.*?)_rho_init=(.*?)_mcp_loss\.txt")
 
-param_set = []
+param_set = ['Base NOTEARS']
 
 for filename in os.listdir("."):
     match = pattern.match(filename)
@@ -37,6 +37,18 @@ for filename in os.listdir("."):
     if match:
         lmd, gamma, rho_init = match.groups()
         key = f"lmd={lmd}, gamma={gamma}, rho_init={rho_init}"
+        df = pd.read_csv(filename)
+        for _, row in df.iterrows():
+            d = row["d"]
+            edges = int(row["edges"])
+            error_var = row["error_var"]
+            noise_type = row["noise_type"]
+            er_type = str(int(edges / d))
+            results[key][error_var][noise_type][er_type][d].append(
+                row["mean_normalized_shd"]
+            )
+    elif filename == 'notears_basic.txt':
+        key='Base NOTEARS'
         df = pd.read_csv(filename)
         for _, row in df.iterrows():
             d = row["d"]
