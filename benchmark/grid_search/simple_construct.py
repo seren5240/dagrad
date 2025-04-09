@@ -38,45 +38,40 @@ for filename in os.listdir("."):
         lmd, gamma, rho_init = match.groups()
         key = f"lmd={lmd}, gamma={gamma}, rho_init={rho_init}"
         df = pd.read_csv(filename)
-        for _, row in df.iterrows():
-            d = row["d"]
-            edges = int(row["edges"])
-            error_var = row["error_var"]
-            noise_type = row["noise_type"]
-            er_type = str(int(edges / d))
-            results[key][error_var][noise_type][er_type][d].append(
-                row["mean_normalized_shd"]
-            )
     elif filename == 'notears_basic.txt':
-        key='Base NOTEARS'
+        key = 'Base NOTEARS'
         df = pd.read_csv(filename)
-        for _, row in df.iterrows():
-            d = row["d"]
-            edges = int(row["edges"])
-            error_var = row["error_var"]
-            noise_type = row["noise_type"]
-            er_type = str(int(edges / d))
-            results[key][error_var][noise_type][er_type][d].append(
-                row["mean_normalized_shd"]
-            )
+    else:
+        continue
 
-config_means = {}
-for ps in param_set:
-    values = []
-    for ev in error_vars:
+    for _, row in df.iterrows():
+        d = row["d"]
+        edges = int(row["edges"])
+        error_var = row["error_var"]
+        noise_type = row["noise_type"]
+        er_type = str(int(edges / d))
+        results[key][error_var][noise_type][er_type][d].append(row["mean_normalized_shd"])
+
+top_configs_by_error_var = {}
+
+for ev in error_vars:
+    config_means = {}
+    for ps in param_set:
+        if ps == "Base NOTEARS":
+            continue
+        values = []
         for noise in noise_types:
             for s0 in s0_ratios:
                 for d in num_nodes:
                     values.extend(results[ps][ev][noise][str(s0)][d])
-    config_means[ps] = np.mean(values) if values else float("inf")
-
-top_configs = sorted(config_means, key=config_means.get)[:5]
-
-print("Top 5 configs by mean SHD:")
-for i, cfg in enumerate(top_configs, 1):
-    print(f"{i}. {cfg} (mean SHD: {config_means[cfg]:.4f})")
+        config_means[ps] = np.mean(values) if values else float("inf")
+    
+    top5 = sorted(config_means, key=config_means.get)[:5]
+    top_configs_by_error_var[ev] = ["Base NOTEARS"] + top5
 
 def make_error_var_plot(error_var):
+    top_configs = top_configs_by_error_var[error_var]
+
     num_rows = len(s0_ratios)
     num_cols = len(noise_types)
     fig, axes = plt.subplots(
@@ -112,11 +107,11 @@ def make_error_var_plot(error_var):
 
     fig.legend(
         top_handles, top_labels,
-        loc="lower center", ncol=4, bbox_to_anchor=(0.5, 0), fontsize="small"
+        loc="lower center", ncol=3, bbox_to_anchor=(0.5, 0), fontsize="small"
     )
     plt.tight_layout(rect=[0, 0.05, 1, 0.95])
     plt.suptitle(f"Linear SEM, var={error_var}", y=0.97)
-    plt.savefig(f"normalized_shd_n=1000_var={error_var}_top5.png")
+    plt.savefig(f"normalized_shd_n=1000_var={error_var}_top5_plus_baseline.png")
 
 
 make_error_var_plot("eq")
