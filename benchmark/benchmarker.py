@@ -125,7 +125,7 @@ def run_benchmarks(
                             for name, benchmark_fn in benchmark_fns.items():
                                 tasks.append(
                                     delayed(run_one_trial)(
-                                        n,
+                                        d,
                                         dataset,
                                         B_true,
                                         benchmark_fn,
