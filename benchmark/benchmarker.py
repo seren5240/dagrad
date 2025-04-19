@@ -65,8 +65,24 @@ def run_benchmarks(
     sem_type: str = "mlp",
 ):
     """
-    Run benchmarks on multiple vertex/edge combinations and benchmark functions,
-    flattening the nested parallelism so that each trial is scheduled as an individual task.
+    Run benchmarks on multiple vertex/edge combinations and benchmark functions.
+
+    Parameters
+    ----------
+    n: int
+        Number of samples
+    sizes: list[tuple[int, int]]
+        List of node/edge combinations
+    noise_type: list[str]
+        list of ``gauss``, ``exp``, ``gumbel``, ``uniform``, ``logistic``, ``poisson``
+    error_var: str
+        list of ``eq``, ``random``
+    linearities: str
+        list of ``linear``, ``nonlinear``
+    graph_types: str
+        list of ``ER``, ``SF``, ``BP``
+    sem_type: str
+        ``mlp``, ``mim``, ``gp``, ``gp-add``. Only applicable for nonlinear models.
     """
     num_cores = joblib.cpu_count()
     print(f"Detected {num_cores} CPU cores. Running benchmarks in parallel.")
