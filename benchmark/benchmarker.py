@@ -81,6 +81,12 @@ def run_benchmarks(
         list of ``linear``, ``nonlinear``
     graph_types: str
         list of ``ER``, ``SF``, ``BP``
+    benchmark_fns: dict[str, Callable[[ndarray], ndarray]]
+        Dictionary of benchmark functions to run. Keys are method names, values are functions that take a dataset and return an estimated adjacency matrix.
+    trials: int
+        Number of trials to run for each combination of parameters.
+    output_filename: str
+        Name of the output file to save the results.
     sem_type: str
         ``mlp``, ``mim``, ``gp``, ``gp-add``. Only applicable for nonlinear models.
     """
