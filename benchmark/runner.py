@@ -8,12 +8,12 @@ from dagrad.flex.prune import cam_pruning
 from dagrad.utils import utils
 
 # first command line argument is lmd, second is gamma
-g = float(sys.argv[1])
-a = float(sys.argv[2])
-rho_init = float(sys.argv[3])
-lmd = g
-gamma = a * g
-print(f"using lmd: {lmd}, gamma: {gamma}, rho_init: {rho_init}")
+# g = float(sys.argv[1])
+# a = float(sys.argv[2])
+# rho_init = float(sys.argv[3])
+# lmd = g
+# gamma = a * g
+# print(f"using lmd: {lmd}, gamma: {gamma}, rho_init: {rho_init}")
 
 
 def notears(dataset):
@@ -42,18 +42,36 @@ def notears(dataset):
     return W_est
 
 
+def notears_mcp_base(dataset):
+    general_options = {"gamma": 0.4, "lambda1": 0.1}
+    optimizer_options = {
+        "lr": 0.01,
+        "num_steps": 5000,
+        "check_iterate": 500,
+        "tol": 1e-5,
+    }
+    return dagrad(
+        dataset,
+        model="linear",
+        method="notears",
+        reg="mcp",
+        optimizer="adam",
+        compute_lib="numpy",
+        general_options=general_options,
+        optimizer_options=optimizer_options,
+    )
+
+
 def notears_mcp_flex(dataset):
     d = dataset.shape[1]
     # general_options = {'gamma':0.4, 'lambda1':0.1} # Define the general options
-    model = flex.LinearModelMCP(d, lmd=lmd, gamma=gamma)
+    model = flex.LinearModelMCP(d, lmd=0.1, gamma=0.4)
 
     # method_options = {'verbose': False, 'rho':0.1}
     cons_solver = flex.AugmentedLagrangian(
         num_iter=10,
-        num_steps=[3e4, 5e3],
-        l1_coeff=0.01,
-        rho_init=rho_init,
-        # rho_scale=2,
+        num_steps=[3e4, 6e4],
+        l1_coeff=0.03,
     )
     # optimizer_options = {'lr':0.01,'num_steps':5000, 'check_iterate':500, 'tol':1e-5} # Define the optimizer options
     uncons_solver = flex.GradientBasedSolver(
@@ -398,9 +416,11 @@ benchmark_fns = {
     # "GRAN-DAG": grandag,
     # "NOTEARS": notears,
     # "DAGMA": flex_dagma_nonlinear,
-    "NOTEARS-MCP": notears_mcp_flex,
+    # "NOTEARS-MCP": notears_mcp_flex,
     # "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
+    "NOTEARS-BASE": notears_mcp_base,
+    "NOTEARS-FLEX": notears_mcp_flex,
 }
 
 large_sizes = [
@@ -430,5 +450,5 @@ run_benchmarks(
     ["ER"],
     benchmark_fns,
     10,
-    f"benchmark_notears_linear_lmd={lmd}_gamma={gamma}_rho_init={rho_init}_mcp_loss.txt",
+    "benchmark_notears_mcp_flex_vs_base.txt",
 )
