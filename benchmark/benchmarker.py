@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional
 import joblib
 from numpy import ndarray
 import numpy as np
@@ -42,14 +42,19 @@ def run_one_trial(
     dataset: ndarray,
     B_true: ndarray,
     benchmark_fn: Callable[[ndarray], ndarray],
+    metric: Optional[tuple[str, Callable[[ndarray, ndarray], int]]] = None,
 ):
     W_est = benchmark_fn(dataset)
     try:
-        acc = utils.count_accuracy(B_true, W_est != 0)
+        if metric is None:
+            acc = utils.count_accuracy(B_true, W_est != 0)
+            val = acc["shd"] / d
+        else:
+            val = metric[1](B_true, W_est)
     except ValueError as e:
         print(f"Error in counting accuracy: {e}")
         return None
-    return acc["shd"] / d
+    return val
 
 
 def run_benchmarks(
@@ -63,6 +68,7 @@ def run_benchmarks(
     trials: int,
     output_filename: str,
     sem_type: str = "mlp",
+    metric: Optional[tuple[str, Callable[[ndarray, ndarray], int]]] = None,
 ):
     """
     Run benchmarks on multiple vertex/edge combinations and benchmark functions.
@@ -89,6 +95,11 @@ def run_benchmarks(
         Name of the output file to save the results.
     sem_type: str
         ``mlp``, ``mim``, ``gp``, ``gp-add``. Only applicable for nonlinear models.
+    metric: Optional[tuple[str, Callable[[ndarray, ndarray], int]]]
+        An optional tuple containing the name of the metric and a function that:
+            - Accepts parameters ``(B_true, W_est)``
+            - Returns a numeric metric value
+        If not provided, normalized SHD will be used.
     """
     num_cores = joblib.cpu_count()
     print(f"Detected {num_cores} CPU cores. Running benchmarks in parallel.")
@@ -118,6 +129,7 @@ def run_benchmarks(
                                         dataset,
                                         B_true,
                                         benchmark_fn,
+                                        metric,
                                     )
                                 )
                                 keys.append(
@@ -144,11 +156,11 @@ def run_benchmarks(
 
     with open(output_filename, "w") as f:
         f.write(
-            "method,n,d,edges,noise_type,error_var,linearity,graph_type,mean_normalized_shd\n"
+            f"method,n,d,edges,noise_type,error_var,linearity,graph_type,{'mean_normalized_shd' if metric is None else metric[0]}\n"
         )
-        for key, shds in aggregated.items():
+        for key, vals in aggregated.items():
             method, n, d, edges, noise_type, error_var, linearity, graph_type = key
-            mean_normalized_shd = np.mean(shds)
+            mean_metric = np.mean(vals)
             f.write(
-                f"{method},{n},{d},{edges},{noise_type},{error_var},{linearity},{graph_type},{mean_normalized_shd}\n"
+                f"{method},{n},{d},{edges},{noise_type},{error_var},{linearity},{graph_type},{mean_metric}\n"
             )
