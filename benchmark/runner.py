@@ -42,7 +42,7 @@ def notears(dataset):
     return W_est
 
 
-def notears_mcp(dataset):
+def notears_mcp_flex(dataset):
     d = dataset.shape[1]
     # general_options = {'gamma':0.4, 'lambda1':0.1} # Define the general options
     model = flex.LinearModelMCP(d, lmd=lmd, gamma=gamma)
@@ -110,7 +110,7 @@ def notears_nonlinear(dataset):
     return W_est
 
 
-def notears_nonlinear_mcp(dataset):
+def notears_nonlinear_mcp_flex(dataset):
     d = dataset.shape[1]
     model = flex.MLPMCP(dims=[d, 10, 1], activation="sigmoid", bias=True)
 
@@ -182,7 +182,7 @@ def flex_dagma(dataset):
     return W_est
 
 
-def dagma_mcp(dataset):
+def dagma_mcp_flex(dataset):
     d = dataset.shape[1]
     model = flex.LinearModelMCP(d)
 
@@ -258,7 +258,7 @@ def flex_dagma_nonlinear(dataset):
     return W_est
 
 
-def flex_dagma_nonlinear_mcp(dataset):
+def dagma_nonlinear_mcp_flex(dataset):
     d = dataset.shape[1]
     model = flex.MLPMCP(
         dims=[d, 10, 1], activation="sigmoid", bias=True, lmd=lmd, gamma=gamma
@@ -398,7 +398,7 @@ benchmark_fns = {
     # "GRAN-DAG": grandag,
     # "NOTEARS": notears,
     # "DAGMA": flex_dagma_nonlinear,
-    "NOTEARS-MCP": notears_mcp,
+    "NOTEARS-MCP": notears_mcp_flex,
     # "DAGMA-MCP": flex_dagma_nonlinear_mcp,
     # "GOLEM": golem_like,
 }
