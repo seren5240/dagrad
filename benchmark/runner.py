@@ -1,4 +1,5 @@
 import sys
+from benchmark.cpdag_shd import shd_cpdag
 import numpy as np
 import torch
 from benchmark.benchmarker import run_benchmarks
@@ -276,47 +277,47 @@ def flex_dagma_nonlinear(dataset):
     return W_est
 
 
-def dagma_nonlinear_mcp_flex(dataset):
-    d = dataset.shape[1]
-    model = flex.MLPMCP(
-        dims=[d, 10, 1], activation="sigmoid", bias=True, lmd=lmd, gamma=gamma
-    )
+# def dagma_nonlinear_mcp_flex(dataset):
+#     d = dataset.shape[1]
+#     model = flex.MLPMCP(
+#         dims=[d, 10, 1], activation="sigmoid", bias=True, lmd=lmd, gamma=gamma
+#     )
 
-    # Use path following to solve the constrained problem
-    cons_solver = flex.PathFollowing(
-        num_iter=4,
-        mu_init=0.1,
-        mu_scale=0.1,
-        logdet_coeff=1.0,
-        num_steps=[5e4, 8e4],
-        weight_decay=0.02,
-        l1_coeff=0.005,
-    )
+#     # Use path following to solve the constrained problem
+#     cons_solver = flex.PathFollowing(
+#         num_iter=4,
+#         mu_init=0.1,
+#         mu_scale=0.1,
+#         logdet_coeff=1.0,
+#         num_steps=[5e4, 8e4],
+#         weight_decay=0.02,
+#         l1_coeff=0.005,
+#     )
 
-    # use Adam to solve the unconstrained problem
-    # optimizer_options = {'lr':0.01,'num_steps':5000, 'check_iterate':500, 'tol':1e-5} # Define the optimizer options
-    uncons_solver = flex.GradientBasedSolver(
-        optimizer=torch.optim.Adam(model.parameters(), lr=2e-4, betas=(0.99, 0.999)),
-        tol=1e-5,
-    )
+#     # use Adam to solve the unconstrained problem
+#     # optimizer_options = {'lr':0.01,'num_steps':5000, 'check_iterate':500, 'tol':1e-5} # Define the optimizer options
+#     uncons_solver = flex.GradientBasedSolver(
+#         optimizer=torch.optim.Adam(model.parameters(), lr=2e-4, betas=(0.99, 0.999)),
+#         tol=1e-5,
+#     )
 
-    # Use NLL loss
-    loss_fn = flex.NLLLoss()
+#     # Use NLL loss
+#     loss_fn = flex.NLLLoss()
 
-    # Use LogDet as DAG function
-    dag_fn = flex.LogDet()
+#     # Use LogDet as DAG function
+#     dag_fn = flex.LogDet()
 
-    # Learn the DAG
-    W_est = flex.struct_learn(
-        dataset=dataset,
-        model=model,
-        constrained_solver=cons_solver,
-        unconstrained_solver=uncons_solver,
-        loss_fn=loss_fn,
-        dag_fn=dag_fn,
-        w_threshold=0.3,
-    )
-    return W_est
+#     # Learn the DAG
+#     W_est = flex.struct_learn(
+#         dataset=dataset,
+#         model=model,
+#         constrained_solver=cons_solver,
+#         unconstrained_solver=uncons_solver,
+#         loss_fn=loss_fn,
+#         dag_fn=dag_fn,
+#         w_threshold=0.3,
+#     )
+#     return W_est
 
 
 def dagma(dataset):
@@ -410,6 +411,12 @@ def grandag(dataset):
     # for cutoff in cam_pruning_cutoff:
     #     B_est = cam_pruning(B_est, train_dataset, test_dataset, opt, cutoff=cutoff)
     return B_est.detach().cpu().numpy()
+
+
+def cpdag_metric(B_true, W_est):
+    d = B_true.shape[0]
+    cpdag = shd_cpdag(B_true, W_est)
+    return cpdag / d
 
 
 benchmark_fns = {
