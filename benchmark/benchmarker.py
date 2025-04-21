@@ -4,6 +4,7 @@ from numpy import ndarray
 import numpy as np
 from joblib import Parallel, delayed
 from dagrad.utils import utils
+import os
 
 
 def create_one_dataset(
@@ -101,8 +102,12 @@ def run_benchmarks(
             - Returns a numeric metric value
         If not provided, normalized SHD will be used.
     """
-    num_cores = joblib.cpu_count()
-    print(f"Detected {num_cores} CPU cores. Running benchmarks in parallel.")
+    num_allowed_cores = (
+        int(os.environ["SLURM_CPUS_PER_TASK"])
+        if "SLURM_CPUS_PER_TASK" in os.environ
+        else joblib.cpu_count()
+    )
+    print(f"{f"SLURM_CPUS_PER_TASK={num_allowed_cores}" if "SLURM_CPUS_PER_TASK" in os.environ else f"Detected {num_allowed_cores} CPU cores"}. Running benchmarks in parallel.")
 
     tasks = []
     keys = []
@@ -145,7 +150,7 @@ def run_benchmarks(
                                     )
                                 )
 
-    results = Parallel(n_jobs=-1, backend="loky")(tasks)
+    results = Parallel(n_jobs=num_allowed_cores, backend="loky")(tasks)
 
     aggregated = {}
     for key, res in zip(keys, results):
