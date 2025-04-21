@@ -107,9 +107,10 @@ def run_benchmarks(
         if "SLURM_CPUS_PER_TASK" in os.environ
         else joblib.cpu_count()
     )
-    print(
-        f"{f"SLURM_CPUS_PER_TASK={num_allowed_cores}" if "SLURM_CPUS_PER_TASK" in os.environ else f"Detected {num_allowed_cores} CPU cores"}. Running benchmarks in parallel."
-    )
+    if "SLURM_CPUS_PER_TASK" in os.environ:
+        print(f"SLURM_CPUS_PER_TASK={num_allowed_cores}. Running benchmarks in parallel.")
+    else:
+        print(f"Detected {num_allowed_cores} CPU cores. Running benchmarks in parallel.")
 
     tasks = []
     keys = []
