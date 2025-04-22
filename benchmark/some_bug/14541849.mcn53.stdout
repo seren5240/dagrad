@@ -1,0 +1,165 @@
+==========================================
+SLURM_JOB_ID = 14541849
+SLURM_SUBMIT_DIR = /home/skwok1/dagrad/benchmark
+SLURM_JOB_NODELIST = mcn53
+==========================================
+Defaulting to user installation because normal site-packages is not writeable
+Obtaining file:///home/skwok1/dagrad
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting notears@ git+https://github.com/xunzheng/notears.git (from dagrad==0.0.1)
+  Cloning https://github.com/xunzheng/notears.git to /hpc_temp/pip-install-ax6f88d5/notears_6b49ca2722dd47ab88818a01fdd3a835
+  Resolved https://github.com/xunzheng/notears.git to commit eb06eaf08ca90501a8caa4062d62466747ba3cec
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Requirement already satisfied: numpy in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from dagrad==0.0.1) (1.26.4)
+Requirement already satisfied: dagma in /home/skwok1/.local/lib/python3.12/site-packages (from dagrad==0.0.1) (1.1.1)
+Requirement already satisfied: scipy in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from dagrad==0.0.1) (1.15.2)
+Requirement already satisfied: python-igraph in /home/skwok1/.local/lib/python3.12/site-packages (from dagrad==0.0.1) (0.11.8)
+Requirement already satisfied: torch in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from dagrad==0.0.1) (2.6.0)
+Requirement already satisfied: scikit-learn in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from dagrad==0.0.1) (1.6.1)
+Requirement already satisfied: tqdm in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from dagma->dagrad==0.0.1) (4.67.1)
+Requirement already satisfied: igraph in /home/skwok1/.local/lib/python3.12/site-packages (from dagma->dagrad==0.0.1) (0.11.8)
+Requirement already satisfied: texttable>=1.6.2 in /home/skwok1/.local/lib/python3.12/site-packages (from igraph->dagma->dagrad==0.0.1) (1.7.0)
+Requirement already satisfied: joblib>=1.2.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from scikit-learn->dagrad==0.0.1) (1.4.2)
+Requirement already satisfied: threadpoolctl>=3.1.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from scikit-learn->dagrad==0.0.1) (3.6.0)
+Requirement already satisfied: filelock in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (3.18.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (4.13.0)
+Requirement already satisfied: networkx in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (3.4.2)
+Requirement already satisfied: jinja2 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (3.1.6)
+Requirement already satisfied: fsspec in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (2025.3.0)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.4.127 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (12.4.127)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.4.127 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (12.4.127)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.4.127 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (12.4.127)
+Requirement already satisfied: nvidia-cudnn-cu12==9.1.0.70 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (9.1.0.70)
+Requirement already satisfied: nvidia-cublas-cu12==12.4.5.8 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (12.4.5.8)
+Requirement already satisfied: nvidia-cufft-cu12==11.2.1.3 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (11.2.1.3)
+Requirement already satisfied: nvidia-curand-cu12==10.3.5.147 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (10.3.5.147)
+Requirement already satisfied: nvidia-cusolver-cu12==11.6.1.9 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (11.6.1.9)
+Requirement already satisfied: nvidia-cusparse-cu12==12.3.1.170 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (12.3.1.170)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.6.2 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (0.6.2)
+Requirement already satisfied: nvidia-nccl-cu12==2.21.5 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (2.21.5)
+Requirement already satisfied: nvidia-nvtx-cu12==12.4.127 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (12.4.127)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.4.127 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (12.4.127)
+Requirement already satisfied: triton==3.2.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (3.2.0)
+Requirement already satisfied: setuptools in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (78.1.0)
+Requirement already satisfied: sympy==1.13.1 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from torch->dagrad==0.0.1) (1.13.1)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from sympy==1.13.1->torch->dagrad==0.0.1) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from jinja2->torch->dagrad==0.0.1) (3.0.2)
+Installing collected packages: dagrad
+  Attempting uninstall: dagrad
+    Found existing installation: dagrad 0.0.1
+    Uninstalling dagrad-0.0.1:
+      Successfully uninstalled dagrad-0.0.1
+  Running setup.py develop for dagrad
+Successfully installed dagrad-0.0.1
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: matplotlib in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (3.10.1)
+Requirement already satisfied: contourpy>=1.0.1 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (1.3.1)
+Requirement already satisfied: cycler>=0.10 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (4.56.0)
+Requirement already satisfied: kiwisolver>=1.3.1 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (1.4.8)
+Requirement already satisfied: numpy>=1.23 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (1.26.4)
+Requirement already satisfied: packaging>=20.0 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (24.2)
+Requirement already satisfied: pillow>=8 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (11.1.0)
+Requirement already satisfied: pyparsing>=2.3.1 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (3.2.3)
+Requirement already satisfied: python-dateutil>=2.7 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from matplotlib) (2.9.0.post0)
+Requirement already satisfied: six>=1.5 in /apps/python/RHEL8/3.12/3.12.9/lib/python3.12/site-packages (from python-dateutil>=2.7->matplotlib) (1.17.0)
+Running benchmark
+Detected 64 CPU cores. Running benchmarks in parallel.
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Using Original DAGMA Implementation for Linear Model
+Total Time: 58.40239214897156
+Total Time: 57.21356511116028
+Total Time: 59.01627564430237
+Total Time: 59.21342492103577
+Total Time: 61.49419713020325
+Total Time: 59.59070539474487
+Total Time: 63.15020680427551
+Total Time: 65.23340034484863
+Total Time: 61.51535177230835
+Total Time: 67.08020329475403
+Total Time: 64.22815537452698
+Total Time: 62.99728345870972
+Total Time: 62.41108965873718
+Total Time: 65.58034038543701
+Total Time: 65.79103970527649
+Total Time: 68.2185537815094
+Total Time: 66.91588401794434
+Total Time: 77.77304244041443
+Total Time: 66.54227375984192
+Total Time: 67.55843424797058
+Total Time: 69.39414238929749
+Total Time: 71.17569708824158
+Total Time: 71.67838335037231
+Total Time: 70.70787239074707
+Total Time: 71.56705570220947
+Total Time: 70.16100120544434
+Total Time: 70.56519484519958
+Total Time: 71.54134178161621
+Total Time: 72.90761613845825
+Total Time: 72.99911284446716
+Total Time: 73.44740772247314
+Total Time: 72.53588533401489
+Total Time: 74.33265519142151
+Total Time: 74.47086453437805
+Total Time: 78.33837294578552
+Total Time: 78.3547613620758
+Total Time: 81.76356506347656
+Total Time: 79.19765639305115
+Total Time: 79.19346189498901
+Total Time: 82.32754015922546
+Total Time: 83.86445474624634
+Total Time: 86.3030321598053
+Total Time: 91.46897149085999
+Total Time: 95.30004501342773
+Total Time: 97.12690901756287
+Total Time: 109.02214002609253
+Total Time: 101.59630107879639
+Total Time: 111.8603241443634

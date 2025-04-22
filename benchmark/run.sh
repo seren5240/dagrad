@@ -11,7 +11,6 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=2000
 #SBATCH --time=3-00:00:00
-#SBATCH --exclusive
 
 set -e
 
@@ -21,6 +20,7 @@ module load R/4.3/4.3.2
 cd ..
 pip3 install -e .
 pip3 install matplotlib
+pip3 install causal-learn
 cd benchmark
 
 # echo "Installing R packages"

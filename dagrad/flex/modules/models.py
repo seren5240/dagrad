@@ -4,6 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 
+from dagrad.flex.modules.loss import MCPLoss
+
 from ...utils.topo_utils import create_new_topo, create_Z
 
 
@@ -102,9 +104,33 @@ class LinearModel(nn.Module):
 
     def adj(self):
         return self.W.weight.T
-    
+
     def l1_loss(self):
         return self.W.weight.abs().sum()
+
+
+class LinearModelMCP(nn.Module):
+    def __init__(self, d, bias=False, dtype=torch.double, lmd=0.1, gamma=1.0,):
+        super().__init__()
+        self.lmd = lmd
+        self.gamma = gamma
+        self.W = nn.Linear(d, d, bias=bias, dtype=dtype)
+        nn.init.zeros_(self.W.weight)
+        if bias:
+            nn.init.zeros_(self.W.bias)
+
+    def forward(self, x):
+        return self.W(x)
+
+    def adj(self):
+        return self.W.weight.T
+
+    def l1_loss(self):
+        return self.mcp_loss()  # self.W.weight.abs().sum()
+
+    def mcp_loss(self):
+        loss = MCPLoss(lmd=self.lmd, gamma=self.gamma)
+        return loss.eval(self.adj())
 
 
 class LogisticModel(nn.Module):
@@ -120,7 +146,7 @@ class LogisticModel(nn.Module):
 
     def adj(self):
         return self.W.weight.T
-    
+
     def l1_loss(self):
         return self.W.weight.abs().sum()
 
@@ -196,6 +222,85 @@ class MLP(nn.Module):
         W = torch.sqrt(A)
         W = W.cpu().detach().numpy()  # [i, j]
         return W
+
+
+class MLPMCP(nn.Module):
+    def __init__(
+        self, dims, activation="sigmoid", bias=True, dtype=torch.float64, lmd=0.1, gamma=1.0
+    ) -> None:
+        torch.set_default_dtype(dtype)
+        super().__init__()
+        assert len(dims) >= 2 and dims[-1] == 1, (
+            "Invalid dimension size or output dimension."
+        )
+        self.d = dims[0]
+        self.dims = dims
+        self.bias = bias
+        self.layers = nn.ModuleList()
+
+        self.fc1 = nn.Linear(self.d, self.d * dims[1], bias=bias, dtype=dtype)
+        nn.init.zeros_(self.fc1.weight)
+        nn.init.zeros_(self.fc1.bias)
+
+        if activation == "sigmoid":
+            self.activation = torch.sigmoid
+        elif activation == "relu":
+            self.activation = F.relu
+        else:
+            raise ValueError("Activation function not supported.")
+        self.fc2 = nn.ModuleList()
+        for k in range(len(dims) - 2):
+            self.fc2.append(
+                LocallyConnected(self.d, dims[k + 1], dims[k + 2], bias=bias)
+            )
+
+        self.fc1.weight.register_hook(self.make_hook_function(self.d))
+        self.lmd = lmd
+        self.gamma = gamma
+
+    @staticmethod
+    def make_hook_function(d):
+        def hook_function(grad):
+            grad_clone = grad.clone()
+            grad_clone = grad_clone.view(d, -1, d)
+            for i in range(d):
+                grad_clone[i, :, i] = 0.0
+            grad_clone = grad_clone.view(-1, d)
+            return grad_clone
+
+        return hook_function
+
+    def l1_loss(self):
+        return self.mcp_loss()  # self.W.weight.abs().sum()
+
+    def mcp_loss(self):
+        loss = MCPLoss(lmd=self.lmd, gamma=self.gamma)
+        return loss.eval(self.fc1.weight)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = x.view(-1, self.dims[0], self.dims[1])
+        for fc in self.fc2:
+            x = self.activation(x)
+            x = fc(x)
+        x = x.squeeze(dim=2)
+        return x
+
+    def adj(self):
+        fc1_weight = self.fc1.weight
+        fc1_weight = fc1_weight.view(self.d, -1, self.d)
+        A = torch.sum(fc1_weight**2, dim=1).t()
+        return A
+
+    @torch.no_grad()
+    def fc1_to_adj(self):
+        fc1_weight = self.fc1.weight
+        fc1_weight = fc1_weight.view(self.d, -1, self.d)
+        A = torch.sum(fc1_weight**2, dim=1).t()
+        W = torch.sqrt(A)
+        W = W.cpu().detach().numpy()  # [i, j]
+        return W
+
 
 class GrandagLocallyConnected(nn.Module):
     """
